@@ -20,7 +20,6 @@ create_new_shape(G_POSITION shape[], int size)
 {
 	int i;
 
-	randomize();
 	for (i = 0; i < size; i++) {
 		if (i == 0) {
 			shape[i].x = 0;
@@ -78,20 +77,15 @@ get_shape_min_x(G_POSITION shape[], int size)
 int
 get_shape_max_y(G_POSITION shape[], int size, int x)
 {
-	int result, rnd, i;
+	int result, i;
 	result = -1;
-	rnd = rand() % 4;
 
 	for (i = 0; i < size; i++){
 		if ((shape[i].x == x) && (shape[i].y > result)) {
 			result = shape[i].y;
 		} else {
-			if ((rnd > 0) && (shape[i].x - 1 == x) && (shape[i].y - 1 > result)) {
+			if ((i > 0) && (shape[i].x - 1 == x) && (shape[i].y - 1 > result))
 				result = shape[i].y - 1;
-			} else {
-				if ((rnd > 0) && (shape[i].x + 1 == x) && (shape[i].y - 1 > result))
-					result = shape[i].y - 1;
-			}
 		}
 	}
 
