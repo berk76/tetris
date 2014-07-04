@@ -21,6 +21,7 @@ typedef struct {
 	int y;
 	int color;
 	G_POSITION shape[NUM_OF_BRICK_ELEMENTS];
+	G_POSITION current[NUM_OF_BRICK_ELEMENTS];
 	int shape_size;
 } BRICK;
 
@@ -35,11 +36,11 @@ static int color_vec[] = 	{LIGHTBLUE,
 				WHITE};
 
 
-
 static int create_new_brick(BRICK *b);
 static int is_free_space_for_brick(BRICK *b);
+static int is_current(BRICK *b, int x, int y);
+static void clear_current(BRICK *b);
 static void draw_brick(BRICK *b);
-static void hide_brick(BRICK *b);
 static int move_down(BRICK *b);
 static int move_left(BRICK *b);
 static int move_right(BRICK *b);
@@ -76,6 +77,7 @@ create_new_brick(BRICK *b)
 	b->y = create_new_shape(b->shape, b->shape_size);
 	b->x = 5;
 
+	clear_current(b);
 	if (!is_free_space_for_brick(b)) {
 		return -1;
 	}
@@ -90,7 +92,8 @@ is_free_space_for_brick(BRICK *b)
 	int i;
 
 	for (i = 0; i < b->shape_size; i++) {
-		if (!g_is_mesh_pixel_free(b->x + b->shape[i].x, b->y + b->shape[i].y)) {
+		if (!g_is_mesh_pixel_free(b->x + b->shape[i].x, b->y + b->shape[i].y)
+			&& !is_current(b, b->x + b->shape[i].x, b->y + b->shape[i].y)) {
 			return G_FALSE;
 		}
 	}
@@ -98,40 +101,54 @@ is_free_space_for_brick(BRICK *b)
 	return G_TRUE;
 }
 
+int
+is_current(BRICK *b, int x, int y)
+{
+	int i;
+
+	for (i = 0; i < b->shape_size; i++) {
+		if ((b->current[i].x == x) && (b->current[i].y == y))
+			return G_TRUE;
+	}
+
+	return G_FALSE;
+}
+
+void
+clear_current(BRICK *b)
+{
+	int i;
+
+	for (i = 0; i < b->shape_size; i++) {
+		b->current[i].x = 0;
+		b->current[i].y = 0;
+	}
+
+}
+
 void
 draw_brick(BRICK *b)
 {
 	int i;
 
-	for (i = 0; i < b->shape_size; i++) {
-		g_put_mesh_pixel(b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
-		/*
-		if ((b->shape[i].x == 0) && (b->shape[i].y == 0)) {
-			g_put_mesh_pixel(b->x + b->shape[i].x, b->y + b->shape[i].y, RED);
-		} else {
-			g_put_mesh_pixel(b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
-		}
-		*/
-	}
-}
-
-void
-hide_brick(BRICK *b)
-{
-	int i;
+	for (i = 0; i < b->shape_size; i++)
+		g_empty_mesh_pixel(b->current[i].x, b->current[i].y);
 
 	for (i = 0; i < b->shape_size; i++)
-		g_empty_mesh_pixel(b->x + b->shape[i].x, b->y + b->shape[i].y);
+		g_put_mesh_pixel(b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
+
+	for (i = 0; i < b->shape_size; i++) {
+		b->current[i].x = b->x + b->shape[i].x;
+		b->current[i].y = b->y + b->shape[i].y;
+	}
 }
 
 int
 move_down(BRICK *b)
 {
-	hide_brick(b);
 	b->y++;
 	if (!is_free_space_for_brick(b)) {
 		b->y--;
-		draw_brick(b);
 		return -1;
 	}
 	draw_brick(b);
@@ -142,11 +159,9 @@ move_down(BRICK *b)
 int
 move_left(BRICK *b)
 {
-	hide_brick(b);
 	b->x--;
 	if (!is_free_space_for_brick(b)) {
 		b->x++;
-		draw_brick(b);
 		return -1;
 	}
 	draw_brick(b);
@@ -157,11 +172,9 @@ move_left(BRICK *b)
 int
 move_right(BRICK *b)
 {
-	hide_brick(b);
 	b->x++;
 	if (!is_free_space_for_brick(b)) {
 		b->x--;
-		draw_brick(b);
 		return -1;
 	}
 	draw_brick(b);
@@ -172,11 +185,9 @@ move_right(BRICK *b)
 int
 rotate(BRICK *b)
 {
-	hide_brick(b);
 	rotate_shape(b->shape, b->shape_size, 1);
 	if (!is_free_space_for_brick(b)) {
 		rotate_shape(b->shape, b->shape_size, -1);
-		draw_brick(b);
 		return -1;
 	}
 	draw_brick(b);
