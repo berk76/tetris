@@ -19,7 +19,12 @@ static int error_code;
 static int MESH_HEIGHT;
 static int MESH_WIDTH;
 static int MESH_BK_COLOR;
+static int MESH_COLOR;
 static int GRID_SIZE;
+
+
+static void g_print_controls();
+static void fill_rect(int x, int y, int width, int height, int color, int fill_type);
 
 
 int
@@ -75,19 +80,23 @@ g_draw_mesh(int height, int width, int grid_size, int bk_color)
 {
 	int i;
 
+	cleardevice();
+
+	MESH_COLOR = BLUE;
 	MESH_HEIGHT = height;
 	MESH_WIDTH = width;
 	MESH_BK_COLOR = bk_color;
 	GRID_SIZE = grid_size;
 
-
-	line(getmaxx()/2, 0, getmaxx()/2, getmaxy());
-	line(0, getmaxy()/2, getmaxx(), getmaxy()/2);
+	/*
+	 *  line(getmaxx()/2, 0, getmaxx()/2, getmaxy());
+	 * line(0, getmaxy()/2, getmaxx(), getmaxy()/2);
+	 */
 
 	origin.x = getmaxx()/2 - MESH_WIDTH/2 * GRID_SIZE;
 	origin.y = getmaxy()/2 - MESH_HEIGHT/2 * GRID_SIZE;
 
-	setcolor(BLUE);
+	setcolor(MESH_COLOR);
 	setbkcolor(MESH_BK_COLOR);
 	moveto(origin.x, origin.y);
 
@@ -101,30 +110,42 @@ g_draw_mesh(int height, int width, int grid_size, int bk_color)
 		linerel(MESH_WIDTH * GRID_SIZE, 0);
 		moverel(-MESH_WIDTH * GRID_SIZE, GRID_SIZE);
 	}
+
+	g_print_controls();
+	g_update_score(0);
+}
+
+void
+g_print_controls()
+{
+}
+
+void
+g_update_score(int score)
+{
+	int x, y;
+
+	x = origin.x - 200;
+	y = origin.y + 8;
+	setcolor(BLACK);
+	fill_rect(x, y, 100, 8, BLACK, SOLID_FILL);
+	setcolor(WHITE);
+	g_printf(&x, &y, "Score: %d", score);
 }
 
 void
 g_put_mesh_pixel(int x, int y, int color)
 {
-	G_POSITION vert[4];
-
-	vert[0].x = origin.x + x * GRID_SIZE;
-	vert[0].y = origin.y + y * GRID_SIZE;
-	vert[1].x = vert[0].x + GRID_SIZE;
-	vert[1].y = vert[0].y;
-	vert[2].x = vert[0].x + GRID_SIZE;
-	vert[2].y = vert[0].y + GRID_SIZE;
-	vert[3].x = vert[0].x;
-	vert[3].y = vert[0].y + GRID_SIZE;
-
-	setfillstyle(SOLID_FILL, color);
-	fillpoly(4, (int *) vert);
+	setcolor(MESH_COLOR);
+	fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE, 
+		GRID_SIZE, GRID_SIZE, color, SOLID_FILL);
 }
 
 
 void
 g_empty_mesh_pixel(int x, int y)
 {
+	setcolor(MESH_COLOR);
 	g_put_mesh_pixel(x, y, MESH_BK_COLOR);
 }
 
@@ -149,7 +170,7 @@ g_is_mesh_pixel_free(int x, int y)
 	return result;
 }
 
-int 
+int
 g_copy_upper_line(int y)
 {
 	int x, color, empty;
@@ -171,6 +192,45 @@ g_copy_upper_line(int y)
 
 	return empty;
 }
+
+void
+g_print_message(char *msg)
+{
+	#define MSG_BORDER 20
+	#define MSG_BK_COLOR GREEN
+
+	G_POSITION vert[4];
+	struct textsettingstype t_type;
+	int x, y, width, height;
+
+	gettextsettings(&t_type);
+	width = 2 * MSG_BORDER + t_type.charsize * 8 * strlen(msg);
+	height = 2 * MSG_BORDER + t_type.charsize * 8;
+
+	x = getmaxx() / 2 - width / 2;
+	y = getmaxy() / 2 - height / 2;
+
+	fill_rect(x, y, width, height, MSG_BK_COLOR, SOLID_FILL);
+	outtextxy(x + MSG_BORDER, y + MSG_BORDER + t_type.vert / 2, msg);
+}
+
+void 
+fill_rect(int x, int y, int width, int height, int color, int fill_type) 
+{
+	G_POSITION vert[4];
+	vert[0].x = x;
+	vert[0].y = y;
+	vert[1].x = x + width;
+	vert[1].y = y;
+	vert[2].x = x + width;
+	vert[2].y = y + height;
+	vert[3].x = x;
+	vert[3].y = y + height;
+
+	setfillstyle(fill_type, color);
+	fillpoly(4, (int *) vert);
+}
+
 
 int
 g_printf(int *xloc, int *yloc, char *fmt, ...)

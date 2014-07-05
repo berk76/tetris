@@ -35,6 +35,8 @@ static int color_vec[] = 	{LIGHTBLUE,
     				YELLOW,
 				WHITE};
 
+static int score;
+
 
 static int create_new_brick(BRICK *b);
 static int is_free_space_for_brick(BRICK *b);
@@ -45,7 +47,7 @@ static int move_down(BRICK *b);
 static int move_left(BRICK *b);
 static int move_right(BRICK *b);
 static int rotate(BRICK *b);
-static void check_lines();
+static int check_lines();
 static int is_line_full(int y);
 static void destroy_line(int y);
 static void wait(BRICK *b);
@@ -57,14 +59,16 @@ t_run()
 {
 	BRICK brick;
 
+	score = 0;
 	while (create_new_brick(&brick) != -1) {
 		do {
 			wait(&brick);
 		} while (move_down(&brick) != -1);
-		check_lines();
+		score += check_lines();
+		g_update_score(score);
 	}
 
-	return 0;
+	return score;
 }
 
 int
@@ -195,15 +199,20 @@ rotate(BRICK *b)
 	return 0;
 }
 
-void
+int
 check_lines()
 {
-	int i;
+	int i, lines;
+
+	lines = 0;
 	for (i = g_mesh_height() - 1; i >= 0; i--) {
 		while (is_line_full(i)) {
 			destroy_line(i);
+			lines++;
 		}
 	}
+
+	return lines;
 }
 
 int
