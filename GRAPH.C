@@ -96,6 +96,11 @@ g_draw_mesh(int height, int width, int grid_size, int bk_color)
 	origin.x = getmaxx()/2 - MESH_WIDTH/2 * GRID_SIZE;
 	origin.y = getmaxy()/2 - MESH_HEIGHT/2 * GRID_SIZE;
 
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+	setcolor(WHITE);
+	outtextxy(origin.x, origin.y - 32, "Tetris");
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+
 	setcolor(MESH_COLOR);
 	setbkcolor(MESH_BK_COLOR);
 	moveto(origin.x, origin.y);
@@ -118,6 +123,17 @@ g_draw_mesh(int height, int width, int grid_size, int bk_color)
 void
 g_print_controls()
 {
+	int x, y;
+
+	x = origin.x - 150;
+	y = origin.y + 4 * 8;
+	setcolor(LIGHTGRAY);
+	g_printf(&x, &y, "Controls:");
+	g_printf(&x, &y, "Left   ... 7");
+	g_printf(&x, &y, "Right  ... 9");
+	g_printf(&x, &y, "Rotate ... 8");
+	g_printf(&x, &y, "Drop   ... 4");
+	g_printf(&x, &y, "Quit   ... Q");
 }
 
 void
@@ -125,7 +141,7 @@ g_update_score(int score)
 {
 	int x, y;
 
-	x = origin.x - 200;
+	x = origin.x - 150;
 	y = origin.y + 8;
 	setcolor(BLACK);
 	fill_rect(x, y, 100, 8, BLACK, SOLID_FILL);
@@ -137,7 +153,7 @@ void
 g_put_mesh_pixel(int x, int y, int color)
 {
 	setcolor(MESH_COLOR);
-	fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE, 
+	fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
 		GRID_SIZE, GRID_SIZE, color, SOLID_FILL);
 }
 
@@ -199,7 +215,6 @@ g_print_message(char *msg)
 	#define MSG_BORDER 20
 	#define MSG_BK_COLOR GREEN
 
-	G_POSITION vert[4];
 	struct textsettingstype t_type;
 	int x, y, width, height;
 
@@ -214,8 +229,8 @@ g_print_message(char *msg)
 	outtextxy(x + MSG_BORDER, y + MSG_BORDER + t_type.vert / 2, msg);
 }
 
-void 
-fill_rect(int x, int y, int width, int height, int color, int fill_type) 
+void
+fill_rect(int x, int y, int width, int height, int color, int fill_type)
 {
 	G_POSITION vert[4];
 	vert[0].x = x;
