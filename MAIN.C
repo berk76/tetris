@@ -29,7 +29,7 @@ main()
 		g_print_message("GAME OVER");
 		wait_for_any_key();
 
-		g_print_message("n = New Game, q = Quit");
+		g_print_message("(N)ew Game, (Q)uit");
 		c = wait_for_key("nNqQ");
 
 	} while ((c == 'n') || (c == 'N'));
