@@ -1,0 +1,36 @@
+berk's Tetris
+
+Home location:	https://bitbucket.org/berk76/tetris
+Author:		Jaroslav Beran
+Contact:	jaroslav.beran@gmail.com
+License:	GNU/GPL3
+====================================================
+
+1 Introduction
+--------------
+berk's tetris is simple tetris game written in Turbo C 2.01. Aim of this project
+is to build a skeleton of Tetris game for old computers in c language.
+
+Feel free to contact author, contribute or even to make your own fork.
+
+2 How to build
+--------------
+This paragraph describes how to build tetris from sources:
+
+	a) download and install Turbo C:
+	   http://edn.embarcadero.com/article/20841
+	b) download a nd extract Tetris sources into some directory
+	c) copy *.BGI drivers from Turbo C directory to tetris sources directory
+	d) run Turbo C
+	e) go to Project->Project name and choose TETRIS.PRJ
+	f) go to Compile->Make EXE file
+	g) also you can run it directly from IDE by Run->Run
+
+3 To do
+-------
+	a) double buffering in order to disable blinking effects
+	b) to improve graphics
+	c) sound playing on background
+
+
+
