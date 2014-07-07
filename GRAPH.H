@@ -28,7 +28,7 @@ extern void g_put_mesh_pixel(int x, int y, int color);
 extern void g_empty_mesh_pixel(int x, int y);
 extern int g_is_mesh_pixel_free(int x, int y);
 extern int g_copy_upper_line(int y);
-extern void g_print_message(char *msg);
+extern void fill_rect(int x, int y, int width, int height, int color, int fill_type);
 extern int g_printf(int *xloc, int *yloc, char *fmt, ...);
 
 #endif
