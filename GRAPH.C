@@ -24,7 +24,6 @@ static int GRID_SIZE;
 
 
 static void g_print_controls();
-static void fill_rect(int x, int y, int width, int height, int color, int fill_type);
 
 
 int
@@ -129,10 +128,13 @@ g_print_controls()
 	y = origin.y + 4 * 8;
 	setcolor(LIGHTGRAY);
 	g_printf(&x, &y, "Controls:");
+	g_printf(&x, &y, " ");
 	g_printf(&x, &y, "Left   ... 7");
 	g_printf(&x, &y, "Right  ... 9");
 	g_printf(&x, &y, "Rotate ... 8");
 	g_printf(&x, &y, "Drop   ... 4");
+	g_printf(&x, &y, " ");
+	g_printf(&x, &y, "Pause  ... P");
 	g_printf(&x, &y, "Quit   ... Q");
 }
 
@@ -209,25 +211,6 @@ g_copy_upper_line(int y)
 	return empty;
 }
 
-void
-g_print_message(char *msg)
-{
-	#define MSG_BORDER 20
-	#define MSG_BK_COLOR GREEN
-
-	struct textsettingstype t_type;
-	int x, y, width, height;
-
-	gettextsettings(&t_type);
-	width = 2 * MSG_BORDER + t_type.charsize * 8 * strlen(msg);
-	height = 2 * MSG_BORDER + t_type.charsize * 8;
-
-	x = getmaxx() / 2 - width / 2;
-	y = getmaxy() / 2 - height / 2;
-
-	fill_rect(x, y, width, height, MSG_BK_COLOR, SOLID_FILL);
-	outtextxy(x + MSG_BORDER, y + MSG_BORDER + t_type.vert / 2, msg);
-}
 
 void
 fill_rect(int x, int y, int width, int height, int color, int fill_type)

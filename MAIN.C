@@ -11,14 +11,15 @@
 #include <graphics.h>
 #include "graph.h"
 #include "tetris.h"
+#include "guicntls.h"
 
-static int wait_for_key(char *s);
-static int wait_for_any_key();
+
 
 int
 main()
 {
 	int x, y, c;
+	GUI_CNTL *cntl;
 
 	g_initialize();
 
@@ -26,11 +27,13 @@ main()
 		g_draw_mesh(20, 10, 15, BLACK);
 		t_run();
 
-		g_print_message("GAME OVER");
-		wait_for_any_key();
+		cntl = gui_show_message("GAME OVER");
+		gui_wait_for_any_key();
+		gui_delete_message(cntl);
 
-		g_print_message("(N)ew Game, (Q)uit");
-		c = wait_for_key("nNqQ");
+		cntl = gui_show_message("(N)ew Game, (Q)uit");
+		c = gui_wait_for_key("nNqQ");
+		gui_delete_message(cntl);
 
 	} while ((c == 'n') || (c == 'N'));
 
@@ -38,32 +41,5 @@ main()
 	return 0;
 }
 
-int
-wait_for_key(char *s)
-{
-	int c;
-
-	while (1) {
-		while (kbhit()) {
-			c = getch();
-			if (strchr(s, c) != NULL)
-				return c;
-		}
-		delay(100);
-	}
-}
-
-int
-wait_for_any_key()
-{
-	while (kbhit()) {
-		getch();
-	}
-
-	while (!kbhit()) {
-		delay(100);
-	}
-	getch();
-}
 
 

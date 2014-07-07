@@ -13,6 +13,7 @@
 #include <graphics.h>
 #include "graph.h"
 #include "shape.h"
+#include "guicntls.h"
 
 
 #define NUM_OF_BRICK_ELEMENTS	4
@@ -258,6 +259,8 @@ void
 process_user_input(BRICK *b)
 {
 	while (kbhit()) {
+
+		GUI_CNTL *cntl;
 		int c;
 		c = getch();
 
@@ -274,6 +277,11 @@ process_user_input(BRICK *b)
 			case '4':
 				while(move_down(b) != -1)
 					delay(50);
+				break;
+			case 'p':
+				cntl = gui_show_message("Paused");
+				gui_wait_for_any_key();
+				gui_delete_message(cntl);
 				break;
 			case 'q':
 				exit(0);
