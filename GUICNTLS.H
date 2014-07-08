@@ -8,19 +8,9 @@
 #ifndef _GUICNTLS_
 #define _GUICNTLS_
 
-typedef struct {
-	int x;
-	int y;
-	int width;
-	int height;
-	void *buff;
-} GUI_CNTL;
-
-
-extern GUI_CNTL *gui_show_message(char *msg);
-extern void gui_delete_message(GUI_CNTL *cntl);
-extern int gui_wait_for_key(char *s);
-extern int gui_wait_for_any_key();
+extern void gui_message(char *msg);
+extern int gui_confirm(char *msg);
+extern int gui_option(char *msg, char *options);
 
 #endif
 

@@ -18,23 +18,16 @@
 int
 main()
 {
-	int x, y, c;
-	GUI_CNTL *cntl;
+	int c;
 
 	g_initialize();
 
 	do {
 		g_draw_mesh(20, 10, 15, BLACK);
+		gui_message("Press any key to start ...");
 		t_run();
-
-		cntl = gui_show_message("GAME OVER");
-		gui_wait_for_any_key();
-		gui_delete_message(cntl);
-
-		cntl = gui_show_message("(N)ew Game, (Q)uit");
-		c = gui_wait_for_key("nNqQ");
-		gui_delete_message(cntl);
-
+		gui_message("GAME OVER");
+		c = gui_option("(N)ew Game, (Q)uit", "nNqQ");
 	} while ((c == 'n') || (c == 'N'));
 
 	g_close();

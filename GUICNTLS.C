@@ -12,10 +12,61 @@
 
 #define MSG_BORDER 20
 #define MSG_BK_COLOR GREEN
+#define MSG_TXT_COLOR WHITE
 
+
+typedef struct {
+	int x;
+	int y;
+	int width;
+	int height;
+	void *buff;
+} GUI_CNTL;
+
+
+static GUI_CNTL *gui_draw_message(char *msg);
+static void gui_delete_message(GUI_CNTL *cntl);
+static int gui_wait_for_key(char *s);
+static int gui_wait_for_any_key();
+
+
+void 
+gui_message(char *msg)
+{
+	GUI_CNTL *cntl;
+
+	cntl = gui_draw_message(msg);
+	gui_wait_for_any_key();
+	gui_delete_message(cntl);
+}
+
+int 
+gui_confirm(char *msg)
+{
+	GUI_CNTL *cntl;
+	int c;
+
+	cntl = gui_draw_message(msg);
+	c = gui_wait_for_key("yYnN");
+	gui_delete_message(cntl);
+
+	return ((c == 'y') || (c == 'Y')) ? G_TRUE : G_FALSE;
+}
+
+int gui_option(char *msg, char *options)
+{
+	GUI_CNTL *cntl;
+	int c;
+
+	cntl = gui_draw_message(msg);
+	c = gui_wait_for_key(options);
+	gui_delete_message(cntl);
+
+	return c;
+}
 
 GUI_CNTL *
-gui_show_message(char *msg)
+gui_draw_message(char *msg)
 {
 	GUI_CNTL *result;
 	struct textsettingstype t_type;
@@ -39,6 +90,7 @@ gui_show_message(char *msg)
 
 	fill_rect(result->x, result->y, result->width, result->height, 
 		MSG_BK_COLOR, SOLID_FILL);
+	setcolor(MSG_TXT_COLOR);
 	outtextxy(result->x + MSG_BORDER, result->y + MSG_BORDER + t_type.vert / 2, msg);
 
 	return result;
