@@ -260,7 +260,6 @@ process_user_input(BRICK *b)
 {
 	while (kbhit()) {
 
-		GUI_CNTL *cntl;
 		int c;
 		c = getch();
 
@@ -279,12 +278,11 @@ process_user_input(BRICK *b)
 					delay(50);
 				break;
 			case 'p':
-				cntl = gui_show_message("Paused");
-				gui_wait_for_any_key();
-				gui_delete_message(cntl);
+				gui_message("Paused");
 				break;
 			case 'q':
-				exit(0);
+				if (gui_confirm("Do you want to quit game? (Y/N)") == G_TRUE)
+					exit(0);
 		}
 	}
 }
