@@ -77,8 +77,6 @@ g_report_status()
 void
 g_draw_mesh(int height, int width, int grid_size, int bk_color)
 {
-	int i;
-
 	cleardevice();
 
 	MESH_COLOR = BLUE;
@@ -102,18 +100,11 @@ g_draw_mesh(int height, int width, int grid_size, int bk_color)
 
 	setcolor(MESH_COLOR);
 	setbkcolor(MESH_BK_COLOR);
-	moveto(origin.x, origin.y);
 
-	for (i = 0; i <= MESH_WIDTH; i++) {
-		linerel(0, MESH_HEIGHT * GRID_SIZE);
-		moverel(GRID_SIZE, -MESH_HEIGHT * GRID_SIZE);
-	}
-
-	moveto(origin.x, origin.y);
-	for (i = 0; i <= MESH_HEIGHT; i++) {
-		linerel(MESH_WIDTH * GRID_SIZE, 0);
-		moverel(-MESH_WIDTH * GRID_SIZE, GRID_SIZE);
-	}
+	rectangle(origin.x - 1,
+		origin.y - 1,
+		origin.x + GRID_SIZE * MESH_WIDTH + 1,
+		origin.y + GRID_SIZE * MESH_HEIGHT + 1);
 
 	g_print_controls();
 	g_update_score(0);
@@ -163,8 +154,10 @@ g_put_mesh_pixel(int x, int y, int color)
 void
 g_empty_mesh_pixel(int x, int y)
 {
-	setcolor(MESH_COLOR);
-	g_put_mesh_pixel(x, y, MESH_BK_COLOR);
+	setcolor(MESH_BK_COLOR);
+	fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
+		GRID_SIZE, GRID_SIZE + 1, MESH_BK_COLOR, SOLID_FILL);
+
 }
 
 
@@ -197,15 +190,17 @@ g_copy_upper_line(int y)
 	for (x = 0; x < MESH_WIDTH; x++) {
 		if (y != 0) {
 			color = getpixel(origin.x + x * GRID_SIZE + 1, \
-		    		origin.y + (y - 1) * GRID_SIZE + 1);
+				origin.y + (y - 1) * GRID_SIZE + 1);
 		} else {
 			color = MESH_BK_COLOR;
 		}
 
-		g_put_mesh_pixel(x, y, color);
-
-		if (color != MESH_BK_COLOR)
+		if (color != MESH_BK_COLOR) {
+			g_put_mesh_pixel(x, y, color);
 			empty = G_FALSE;
+		} else {
+			g_empty_mesh_pixel(x, y);
+		}
 	}
 
 	return empty;
