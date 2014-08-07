@@ -7,7 +7,7 @@
 #ifndef _TETRIS_
 #define _TETRIS_
 
-extern int t_run();
+extern int t_run(int num_of_brick_elements, int delay_ms);
 
 #endif
 
