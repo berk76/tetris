@@ -16,13 +16,12 @@
 #include "guicntls.h"
 
 
-#define NUM_OF_BRICK_ELEMENTS	4
 typedef struct {
 	int x;
 	int y;
 	int color;
-	G_POSITION shape[NUM_OF_BRICK_ELEMENTS];
-	G_POSITION current[NUM_OF_BRICK_ELEMENTS];
+	G_POSITION *shape;
+	G_POSITION *current;
 	int shape_size;
 } BRICK;
 
@@ -36,7 +35,9 @@ static int color_vec[] = 	{LIGHTBLUE,
     				YELLOW,
 				WHITE};
 
+static int _delay_ms;
 static int score;
+
 
 
 static int create_new_brick(BRICK *b);
@@ -56,11 +57,16 @@ static void process_user_input(BRICK *b);
 
 
 int
-t_run()
+t_run(int num_of_brick_elements, int delay_ms)
 {
 	BRICK brick;
 
+	brick.shape_size = num_of_brick_elements;
+	brick.shape = (G_POSITION *) malloc(brick.shape_size * sizeof(G_POSITION));
+	brick.current = (G_POSITION *) malloc(brick.shape_size * sizeof(G_POSITION));
+        _delay_ms = delay_ms;
 	score = 0;
+	
 	while (create_new_brick(&brick) != -1) {
 		do {
 			wait(&brick);
@@ -68,6 +74,9 @@ t_run()
 		score += check_lines();
 		g_update_score(score);
 	}
+	
+	free((void *) brick.shape);
+	free((void *) brick.current);	
 
 	return score;
 }
@@ -78,7 +87,6 @@ create_new_brick(BRICK *b)
 	srand(time(NULL) % 37);
 
 	b->color = color_vec[rand() % COLOR_VEC_SIZE];
-	b->shape_size = NUM_OF_BRICK_ELEMENTS;
 	b->y = create_new_shape(b->shape, b->shape_size);
 	b->x = 5;
 
@@ -250,7 +258,7 @@ wait(BRICK *b)
 
 	for (i = 0; i < 5; i++) {
 		process_user_input(b);
-		delay(50);
+		delay(_delay_ms);
 	}
 	process_user_input(b);
 }
@@ -275,7 +283,7 @@ process_user_input(BRICK *b)
 				break;
 			case '4':
 				while(move_down(b) != -1)
-					delay(50);
+					delay(_delay_ms);
 				break;
 			case 'p':
 				gui_message("Paused");

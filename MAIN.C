@@ -25,7 +25,7 @@ main()
 	do {
 		g_draw_mesh(20, 10, 15, BLACK);
 		gui_message("Press any key to start ...");
-		t_run();
+		t_run(4, 50);
 		gui_message("GAME OVER");
 		c = gui_option("(N)ew Game, (Q)uit", "nNqQ");
 	} while ((c == 'n') || (c == 'N'));
