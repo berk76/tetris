@@ -2,17 +2,15 @@
 *	main.c
 *	Jaroslav Beran - jaroslav.beran@gmail.com
 *	28.6.2014
+*	redistributable under the terms of the GNU/GPLv3
 */
 
 #include <stdio.h>
 #include <string.h>
-#include <conio.h>
-#include <dos.h>
-#include <graphics.h>
 #include "graph.h"
 #include "tetris.h"
 #include "guicntls.h"
-
+#include "multi.h"
 
 
 int
@@ -23,7 +21,7 @@ main()
 	g_initialize();
 
 	do {
-		g_draw_mesh(20, 10, 15, BLACK);
+		g_draw_mesh(20, 10, 15, M_BLACK);
 		gui_message("Press any key to start ...");
 		t_run(4, 50);
 		gui_message("GAME OVER");

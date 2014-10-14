@@ -2,17 +2,18 @@
 *	guicntls.c
 *	Jaroslav Beran - jaroslav.beran@gmail.com
 *	28.6.2014
+*	redistributable under the terms of the GNU/GPLv3
 */
 
 #include <stdlib.h>
-#include <graphics.h>
 #include "graph.h"
+#include "multi.h"
 #include "guicntls.h"
 
 
 #define MSG_BORDER 20
-#define MSG_BK_COLOR GREEN
-#define MSG_TXT_COLOR WHITE
+#define MSG_BK_COLOR M_GREEN
+#define MSG_TXT_COLOR M_WHITE
 
 
 typedef struct {
@@ -30,7 +31,7 @@ static int gui_wait_for_key(char *s);
 static int gui_wait_for_any_key();
 
 
-void 
+void
 gui_message(char *msg)
 {
 	GUI_CNTL *cntl;
@@ -40,7 +41,7 @@ gui_message(char *msg)
 	gui_delete_message(cntl);
 }
 
-int 
+int
 gui_confirm(char *msg)
 {
 	GUI_CNTL *cntl;
@@ -69,29 +70,27 @@ GUI_CNTL *
 gui_draw_message(char *msg)
 {
 	GUI_CNTL *result;
-	struct textsettingstype t_type;
 	int x, y, width, height;
 	unsigned size;
 
 	result = (GUI_CNTL *) malloc(sizeof(GUI_CNTL));
 
-	gettextsettings(&t_type);
-	result->width = 2 * MSG_BORDER + t_type.charsize * 8 * strlen(msg);
-	result->height = 2 * MSG_BORDER + t_type.charsize * 8;
+	result->width = 2 * MSG_BORDER + m_gettextsize() * 8 * strlen(msg);
+	result->height = 2 * MSG_BORDER + m_gettextsize() * 8;
 
-	result->x = getmaxx() / 2 - result->width / 2;
-	result->y = getmaxy() / 2 - result->height / 2;
+	result->x = m_get_max_x() / 2 - result->width / 2;
+	result->y = m_get_max_y() / 2 - result->height / 2;
 
-	size = imagesize(result->x, result->y, 
+	size = m_imagesize(result->x, result->y,
 		result->x + result->width, result->y + result->height);
 	result->buff = malloc(size);
-	getimage(result->x, result->y, 
+	m_getimage(result->x, result->y,
 		result->x + result->width, result->y + result->height, result->buff);
 
-	fill_rect(result->x, result->y, result->width, result->height, 
-		MSG_BK_COLOR, SOLID_FILL);
-	setcolor(MSG_TXT_COLOR);
-	outtextxy(result->x + MSG_BORDER, result->y + MSG_BORDER + t_type.vert / 2, msg);
+	g_fill_rect(result->x, result->y, result->width, result->height,
+		MSG_BK_COLOR);
+	m_setcolor(MSG_TXT_COLOR);
+	m_outtextxy(result->x + MSG_BORDER, result->y + MSG_BORDER + m_gettextsize() * 8 / 2, msg);
 
 	return result;
 }
@@ -99,7 +98,7 @@ gui_draw_message(char *msg)
 void 
 gui_delete_message(GUI_CNTL *cntl)
 {
-	putimage(cntl->x, cntl->y, cntl->buff, COPY_PUT);
+	m_putimage(cntl->x, cntl->y, cntl->buff);
 	free((void *) cntl->buff);
 	free((void *) cntl);
 }
@@ -110,24 +109,24 @@ gui_wait_for_key(char *s)
 	int c;
 
 	while (1) {
-		while (kbhit()) {
+		while (m_kbhit()) {
 			c = getch();
 			if (strchr(s, c) != NULL)
 				return c;
 		}
-		delay(100);
+		m_delay(100);
 	}
 }
 
 int
 gui_wait_for_any_key()
 {
-	while (kbhit()) {
+	while (m_kbhit()) {
 		getch();
 	}
 
-	while (!kbhit()) {
-		delay(100);
+	while (!m_kbhit()) {
+		m_delay(100);
 	}
 	getch();
 }

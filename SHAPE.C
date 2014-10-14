@@ -2,6 +2,7 @@
 *	shape.c
 *	Jaroslav Beran - jaroslav.beran@gmail.com
 *	28.6.2014
+*	redistributable under the terms of the GNU/GPLv3
 */
 
 #include <stdlib.h>
