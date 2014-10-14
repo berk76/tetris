@@ -2,17 +2,15 @@
 *	tetris.c
 *	Jaroslav Beran - jaroslav.beran@gmail.com
 *	28.6.2014
+*	redistributable under the terms of the GNU/GPLv3
 */
 
-
-#include <dos.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
-#include <graphics.h>
 #include "graph.h"
 #include "shape.h"
+#include "multi.h"
 #include "guicntls.h"
 
 
@@ -27,13 +25,13 @@ typedef struct {
 
 
 #define COLOR_VEC_SIZE		7
-static int color_vec[] = 	{LIGHTBLUE,
-    				LIGHTGREEN,
-	    			LIGHTCYAN,
-    				LIGHTRED,
-    				LIGHTMAGENTA,
-    				YELLOW,
-				WHITE};
+static int color_vec[] = 	{M_LIGHTBLUE,
+				M_LIGHTGREEN,
+				M_LIGHTCYAN,
+				M_LIGHTRED,
+				M_LIGHTMAGENTA,
+				M_YELLOW,
+				M_WHITE};
 
 static int _delay_ms;
 static int score;
@@ -258,7 +256,7 @@ wait(BRICK *b)
 
 	for (i = 0; i < 5; i++) {
 		process_user_input(b);
-		delay(_delay_ms);
+		m_delay(_delay_ms);
 	}
 	process_user_input(b);
 }
@@ -266,7 +264,7 @@ wait(BRICK *b)
 void
 process_user_input(BRICK *b)
 {
-	while (kbhit()) {
+	while (m_kbhit()) {
 
 		int c;
 		c = getch();
@@ -283,7 +281,7 @@ process_user_input(BRICK *b)
 				break;
 			case '4':
 				while(move_down(b) != -1)
-					delay(_delay_ms);
+					m_delay(_delay_ms);
 				break;
 			case 'p':
 				gui_message("Paused");

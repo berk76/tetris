@@ -2,19 +2,17 @@
 *	graph.c
 *	Jaroslav Beran - jaroslav.beran@gmail.com
 *	28.6.2014
+*	redistributable under the terms of the GNU/GPLv3
 */
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <graphics.h>
+#include "multi.h"
 #include "graph.h"
 
 static G_POSITION origin;
-static int graph_driver;
-static int graph_mode;
-static int error_code;
 
 static int MESH_HEIGHT;
 static int MESH_WIDTH;
@@ -41,45 +39,22 @@ g_mesh_width()
 void
 g_initialize()
 {
-	graph_driver = DETECT;
-	initgraph(&graph_driver, &graph_mode, "");
-	error_code = graphresult();
-	if (error_code != grOk) {
-		printf("Graphics system error: %s\n", grapherrormsg(error_code));
-		exit(1);
-	}
+	m_init_graph();
 }
 
 void
 g_close()
 {
-	closegraph();
+	m_close_graph();
 }
 
-void
-g_report_status()
-{
-	char *driver, *mode;
-	int x, y;
-
-	x = 10;
-	y = 4;
-
-	driver = getdrivername();
-	mode = getmodename(graph_mode);
-
-	g_printf( &x, &y, "Graphics device    : %-20s (%d)", driver, graph_driver );
-	g_printf( &x, &y, "Graphics mode      : %-20s (%d)", mode, graph_mode );
-	g_printf( &x, &y, "Screen resolution  : ( 0, 0, %d, %d )", getmaxx(), getmaxy() );
-	g_printf( &x, &y, "Colors available   : %d", getmaxcolor() + 1 );
-}
 
 void
 g_draw_mesh(int height, int width, int grid_size, int bk_color)
 {
-	cleardevice();
+	m_clear_screen();
 
-	MESH_COLOR = BLUE;
+	MESH_COLOR = M_BLUE;
 	MESH_HEIGHT = height;
 	MESH_WIDTH = width;
 	MESH_BK_COLOR = bk_color;
@@ -90,18 +65,18 @@ g_draw_mesh(int height, int width, int grid_size, int bk_color)
 	 * line(0, getmaxy()/2, getmaxx(), getmaxy()/2);
 	 */
 
-	origin.x = getmaxx()/2 - MESH_WIDTH/2 * GRID_SIZE;
-	origin.y = getmaxy()/2 - MESH_HEIGHT/2 * GRID_SIZE;
+	origin.x = m_get_max_x()/2 - MESH_WIDTH/2 * GRID_SIZE;
+	origin.y = m_get_max_y()/2 - MESH_HEIGHT/2 * GRID_SIZE;
 
-	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-	setcolor(WHITE);
-	outtextxy(origin.x, origin.y - 32, "Tetris");
-	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+	m_setcolor(M_WHITE);
+	m_settextsize(2);
+	m_outtextxy(origin.x, origin.y - 32, "Tetris");
+	m_settextsize(1);
 
-	setcolor(MESH_COLOR);
-	setbkcolor(MESH_BK_COLOR);
+	m_setcolor(MESH_COLOR);
+	m_setbkcolor(MESH_BK_COLOR);
 
-	rectangle(origin.x - 1,
+	m_rectangle(origin.x - 1,
 		origin.y - 1,
 		origin.x + GRID_SIZE * MESH_WIDTH + 1,
 		origin.y + GRID_SIZE * MESH_HEIGHT + 1);
@@ -117,7 +92,7 @@ g_print_controls()
 
 	x = origin.x - 150;
 	y = origin.y + 4 * 8;
-	setcolor(LIGHTGRAY);
+	m_setcolor(M_LIGHTGRAY);
 	g_printf(&x, &y, "Controls:");
 	g_printf(&x, &y, " ");
 	g_printf(&x, &y, "Left   ... 7");
@@ -136,27 +111,27 @@ g_update_score(int score)
 
 	x = origin.x - 150;
 	y = origin.y + 8;
-	setcolor(BLACK);
-	fill_rect(x, y, 100, 8, BLACK, SOLID_FILL);
-	setcolor(WHITE);
+	m_setcolor(M_BLACK);
+	g_fill_rect(x, y, 100, 8, M_BLACK);
+	m_setcolor(M_WHITE);
 	g_printf(&x, &y, "Score: %d", score);
 }
 
 void
 g_put_mesh_pixel(int x, int y, int color)
 {
-	setcolor(MESH_COLOR);
-	fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
-		GRID_SIZE, GRID_SIZE, color, SOLID_FILL);
+	m_setcolor(MESH_COLOR);
+	g_fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
+		GRID_SIZE, GRID_SIZE, color);
 }
 
 
 void
 g_empty_mesh_pixel(int x, int y)
 {
-	setcolor(MESH_BK_COLOR);
-	fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
-		GRID_SIZE, GRID_SIZE + 1, MESH_BK_COLOR, SOLID_FILL);
+	m_setcolor(MESH_BK_COLOR);
+	g_fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
+		GRID_SIZE, GRID_SIZE + 1, MESH_BK_COLOR);
 
 }
 
@@ -168,7 +143,7 @@ g_is_mesh_pixel_free(int x, int y)
 
 	result = G_TRUE;
 
-	if (getpixel(origin.x + x * GRID_SIZE + 1, \
+	if (m_getpixel(origin.x + x * GRID_SIZE + 1, \
             origin.y + y * GRID_SIZE + 1) != MESH_BK_COLOR)
 		result = G_FALSE;
 
@@ -189,7 +164,7 @@ g_copy_upper_line(int y)
 	empty = G_TRUE;
 	for (x = 0; x < MESH_WIDTH; x++) {
 		if (y != 0) {
-			color = getpixel(origin.x + x * GRID_SIZE + 1, \
+			color = m_getpixel(origin.x + x * GRID_SIZE + 1, \
 				origin.y + (y - 1) * GRID_SIZE + 1);
 		} else {
 			color = MESH_BK_COLOR;
@@ -208,20 +183,9 @@ g_copy_upper_line(int y)
 
 
 void
-fill_rect(int x, int y, int width, int height, int color, int fill_type)
+g_fill_rect(int x, int y, int width, int height, int color)
 {
-	G_POSITION vert[4];
-	vert[0].x = x;
-	vert[0].y = y;
-	vert[1].x = x + width;
-	vert[1].y = y;
-	vert[2].x = x + width;
-	vert[2].y = y + height;
-	vert[3].x = x;
-	vert[3].y = y + height;
-
-	setfillstyle(fill_type, color);
-	fillpoly(4, (int *) vert);
+	m_fill_rect(x, y, width, height, color);
 }
 
 
@@ -234,8 +198,8 @@ g_printf(int *xloc, int *yloc, char *fmt, ...)
 
 	va_start(argptr, format);
 	cnt = vsprintf(str, fmt, argptr);
-	outtextxy(*xloc, *yloc, str);
-	*yloc += textheight("H") + 2;
+	m_outtextxy(*xloc, *yloc, str);
+	*yloc += m_gettextsize() * 8 + 2;
 	va_end(argptr);
 
 	return cnt;

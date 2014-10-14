@@ -2,6 +2,7 @@
 *	graph.h
 *	Jaroslav Beran - jaroslav.beran@gmail.com
 *	28.6.2014
+*	redistributable under the terms of the GNU/GPLv3
 */
 
 
@@ -28,7 +29,7 @@ extern void g_put_mesh_pixel(int x, int y, int color);
 extern void g_empty_mesh_pixel(int x, int y);
 extern int g_is_mesh_pixel_free(int x, int y);
 extern int g_copy_upper_line(int y);
-extern void fill_rect(int x, int y, int width, int height, int color, int fill_type);
+extern void g_fill_rect(int x, int y, int width, int height, int color);
 extern int g_printf(int *xloc, int *yloc, char *fmt, ...);
 
 #endif
