@@ -196,7 +196,7 @@ g_printf(int *xloc, int *yloc, char *fmt, ...)
 	char str[140];
 	int cnt;
 
-	va_start(argptr, format);
+	va_start(argptr, fmt);
 	cnt = vsprintf(str, fmt, argptr);
 	m_outtextxy(*xloc, *yloc, str);
 	*yloc += m_gettextsize() * 8 + 2;

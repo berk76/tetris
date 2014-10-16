@@ -264,10 +264,8 @@ wait(BRICK *b)
 void
 process_user_input(BRICK *b)
 {
-	while (m_kbhit()) {
-
-		int c;
-		c = getch();
+	int c;
+	while (c = m_kbhit()) {
 
 		switch (c) {
 			case '7':

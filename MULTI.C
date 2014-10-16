@@ -90,7 +90,7 @@ m_clear_screen(void)
 int 
 m_kbhit(void)
 {
-	return kbhit();
+	return (kbhit()) ? getch() : 0;
 }
 
 
