@@ -109,8 +109,7 @@ gui_wait_for_key(char *s)
 	int c;
 
 	while (1) {
-		while (m_kbhit()) {
-			c = getch();
+		while (c = m_kbhit()) {
 			if (strchr(s, c) != NULL)
 				return c;
 		}
@@ -122,13 +121,11 @@ int
 gui_wait_for_any_key()
 {
 	while (m_kbhit()) {
-		getch();
 	}
 
 	while (!m_kbhit()) {
 		m_delay(100);
 	}
-	getch();
 }
 
 
