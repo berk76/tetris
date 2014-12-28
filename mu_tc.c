@@ -65,6 +65,13 @@ m_setcolor(int color)
 }
 
 
+int
+m_getcolor(void)
+{
+	return getcolor();
+}
+
+
 void 
 m_setbkcolor(int color)
 {
@@ -72,10 +79,23 @@ m_setbkcolor(int color)
 }
 
 
-void 
-m_putpixel(int x, int y, int color)
+int
+m_getbkcolor(void)
 {
-	putpixel(x, y, color);
+	return getbkcolor();
+}
+
+
+void 
+m_putpixel(int x, int y)
+{
+	putpixel(x, y, getcolor());
+}
+
+void
+m_unputpixel(int x, int y)
+{
+	putpixel(x, y, getbkcolor());
 }
 
 
@@ -140,8 +160,9 @@ struct _position {
 	int y;
 };
 
+
 void
-m_fill_rect(int x, int y, int width, int height, int color)
+m_fill_rect(int x, int y, int width, int height)
 {
 	struct _position vert[4];
 	vert[0].x = x;
@@ -153,7 +174,25 @@ m_fill_rect(int x, int y, int width, int height, int color)
 	vert[3].x = x;
 	vert[3].y = y + height;
 
-	setfillstyle(SOLID_FILL, color);
+	setfillstyle(SOLID_FILL, getcolor());
+	fillpoly(4, (int *) vert);
+}
+
+
+void
+m_unfill_rect(int x, int y, int width, int height)
+{
+	struct _position vert[4];
+	vert[0].x = x;
+	vert[0].y = y;
+	vert[1].x = x + width;
+	vert[1].y = y;
+	vert[2].x = x + width;
+	vert[2].y = y + height;
+	vert[3].x = x;
+	vert[3].y = y + height;
+
+	setfillstyle(SOLID_FILL, getbkcolor());
 	fillpoly(4, (int *) vert);
 }
 

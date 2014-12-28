@@ -74,10 +74,24 @@ m_setcolor(int color)
 }
 
 
+int
+m_getcolor(void)
+{
+	return 1;
+}
+
+
 void 
 m_setbkcolor(int color)
 {
 	setbkcolor(color);
+}
+
+
+int
+m_getbkcolor(void)
+{
+	return 0;
 }
 
 

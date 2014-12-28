@@ -68,7 +68,7 @@ int gui_option(char *msg, char *options)
 	return c;
 }
 
-#ifdef GETPUTIMAGE
+#ifdef __TURBOC__
 
 GUI_CNTL *
 gui_draw_message(char *msg)
@@ -142,7 +142,7 @@ gui_wait_for_key(char *s)
 	int c;
 
 	while (1) {
-		while (c = m_kbhit()) {
+		while ((c = m_kbhit()) != 0) {
 			if (strchr(s, c) != NULL)
 				return c;
 		}

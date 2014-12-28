@@ -84,7 +84,7 @@ g_print_controls()
 	int x, y;
 
 	x = 1;
-	y = origin.y + 4 * 8;
+	y = origin.y + 5 * 8;
 	m_setcolor(M_LIGHTGRAY);
 	m_outtextxy(x, y, "Controls:");
 	y += 10;
@@ -108,20 +108,21 @@ g_print_controls()
 void
 g_update_score(int score)
 {
-	int x, y, s;
+	int x, y, c;
 	char str[100];
 
-	str[0] = '\0';
+	c = m_getcolor();
 	x = 1;
-	y = origin.y + 15;
-	//m_setcolor(M_BLACK);
-	//g_fill_rect(x, y, 100, 8, M_BLACK);
-	//m_setcolor(M_WHITE);
-	//sprintf(str, "Score: %d", score);
+	y = origin.y + 3 * 8;
+
+	m_setcolor(m_getbkcolor());
+	m_unfill_rect(x + 60, y, 20, 10);
+
+	m_setcolor(M_WHITE);
 	itoa(score, str, 10);
 	m_outtextxy(x, y, "Score: ");
-	m_unfill_rect(x + 30, y, 20, 10);
-	m_outtextxy(x + 30, y, str);
+	m_outtextxy(x + 60, y, str);
+	m_setcolor(c);
 }
 
 void
