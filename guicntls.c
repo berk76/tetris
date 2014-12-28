@@ -116,13 +116,13 @@ gui_draw_message(char *msg)
 	GUI_CNTL *result;
 	result = (GUI_CNTL *) malloc(sizeof(GUI_CNTL));
 
-	result->x = 0;
-	result->y = 172;
-	result->width = 255;
-	result->height = 20;
+	result->x = 1;
+	result->y = 180;
+	result->width = 200;
+	result->height = 10;
 	
-	m_rectangle(result->x, result->y, result->x + result->width, result->y + result->height);
-	m_outtextxy(result->x + 5, result->y + 5, msg);
+	//m_rectangle(result->x, result->y, result->x + result->width, result->y + result->height);
+	m_outtextxy(result->x, result->y, msg);
 
 	return result;
 }

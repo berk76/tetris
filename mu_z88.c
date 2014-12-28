@@ -157,19 +157,17 @@ m_fill_rect(int x, int y, int width, int height)
 	for (i = x; i < x + width; i++)
 		for (j = y; j < y + height; j++)
 			plot(i, j);
-
 }
 
 void 
 m_unfill_rect(int x, int y, int width, int height)
 {
 	int i, j;
+
 	for (i = x; i < x + width; i++)
 		for (j = y; j < y + height; j++)
 			unplot(i, j);
 }
-
-
 
 
 unsigned 
