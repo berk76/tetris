@@ -266,7 +266,7 @@ void
 process_user_input(BRICK *b)
 {
 	int c;
-	while (c = m_kbhit()) {
+	while ((c = m_kbhit()) != 0) {
 
 		switch (c) {
 			case '7':

@@ -73,9 +73,19 @@ enum M_COLORS {
 extern void m_setcolor(int color);
 
 /*
+* Vrati aktualni barvu pera
+*/
+extern int m_getcolor(void);
+
+/*
 * Nastaveni barvy papiru
 */
 extern void m_setbkcolor(int color);
+
+/*
+* Vrati aktualni barvu papiru
+*/
+extern int m_getbkcolor(void);
 
 /*
 * Vykresleni bodu na obrazovku
