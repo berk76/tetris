@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-/* #include <stdarg.h> */
 #include "multi.h"
 #include "graph.h"
 
@@ -22,7 +21,6 @@ static int GRID_SIZE;
 
 
 static void g_print_controls();
-
 
 int
 g_mesh_height()
@@ -60,11 +58,6 @@ g_draw_mesh(int height, int width)
 	MESH_BK_COLOR = M_BLACK;
 	GRID_SIZE = (m_get_max_y() - 20) / height;
 
-	/*
-	 *  line(getmaxx()/2, 0, getmaxx()/2, getmaxy());
-	 * line(0, getmaxy()/2, getmaxx(), getmaxy()/2);
-	 */
-
 	origin.x = m_get_max_x()/2 - MESH_WIDTH/2 * GRID_SIZE;
 	origin.y = (m_get_max_y() - 20) /2 - MESH_HEIGHT/2 * GRID_SIZE;
 
@@ -82,7 +75,7 @@ g_draw_mesh(int height, int width)
 		origin.y + GRID_SIZE * MESH_HEIGHT + 1);
 
 	g_print_controls();
-	g_update_score(10);
+	g_update_score(0);
 }
 
 void
@@ -115,35 +108,76 @@ g_print_controls()
 void
 g_update_score(int score)
 {
-	int x, y;
+	int x, y, s;
 	char str[100];
 
 	str[0] = '\0';
 	x = 1;
-	y = origin.y + 8;
+	y = origin.y + 15;
 	//m_setcolor(M_BLACK);
 	//g_fill_rect(x, y, 100, 8, M_BLACK);
 	//m_setcolor(M_WHITE);
 	//sprintf(str, "Score: %d", score);
-	m_outtextxy(x, y, str);
+	itoa(score, str, 10);
+	m_outtextxy(x, y, "Score: ");
+	m_unfill_rect(x + 30, y, 20, 10);
+	m_outtextxy(x + 30, y, str);
 }
 
 void
 g_put_mesh_pixel(int x, int y, int color)
 {
+	int i, j;
+
 	m_setcolor(color);
+
+	/*
 	m_fill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
 		GRID_SIZE, GRID_SIZE);
+	*/
+
+	x = origin.x + x * GRID_SIZE;
+	y = origin.y + y * GRID_SIZE;
+
+	for (i = x+1; i < x + GRID_SIZE-1; i++)
+		m_putpixel(i, y);
+	
+	for (j = y+1; j < y + GRID_SIZE-1; j++) {
+		m_putpixel(x, j);
+		m_putpixel(x + GRID_SIZE-1, j);
+	}
+
+	for (i = x+1; i < x + GRID_SIZE-1; i++)
+		m_putpixel(i, y + GRID_SIZE-1);
+
 }
 
 
 void
 g_empty_mesh_pixel(int x, int y)
 {
+	int i, j;
+
 	m_setcolor(MESH_BK_COLOR);
+
+	/*
 	m_unfill_rect(origin.x + x * GRID_SIZE, origin.y + y * GRID_SIZE,
 		GRID_SIZE, GRID_SIZE);
+	*/
 
+	x = origin.x + x * GRID_SIZE;
+	y = origin.y + y * GRID_SIZE;
+
+	for (i = x+1; i < x + GRID_SIZE-1; i++)
+		m_unputpixel(i, y);
+
+	for (j = y+1; j < y + GRID_SIZE-1; j++) {
+		m_unputpixel(x, j);
+		m_unputpixel(x + GRID_SIZE-1, j);
+	}
+
+	for (i = x+1; i < x + GRID_SIZE-1; i++)
+		m_unputpixel(i, y + GRID_SIZE-1);
 }
 
 
@@ -155,7 +189,7 @@ g_is_mesh_pixel_free(int x, int y)
 	result = G_TRUE;
 
 	if (m_getpixel(origin.x + x * GRID_SIZE + 1, \
-            origin.y + y * GRID_SIZE + 1) != 0)
+            origin.y + y * GRID_SIZE + 0) != 0)
 		result = G_FALSE;
 
 	if ((x < 0) || (x >= MESH_WIDTH))
@@ -176,7 +210,7 @@ g_copy_upper_line(int y)
 	for (x = 0; x < MESH_WIDTH; x++) {
 		if (y != 0) {
 			color = m_getpixel(origin.x + x * GRID_SIZE + 1, \
-				origin.y + (y - 1) * GRID_SIZE + 1);
+				origin.y + (y - 1) * GRID_SIZE + 0);
 		} else {
 			color = MESH_BK_COLOR;
 		}
@@ -218,3 +252,4 @@ g_printf(int *xloc, int *yloc, char *fmt, ...)
 	return cnt;
 }
 */
+
