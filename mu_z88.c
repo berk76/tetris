@@ -139,7 +139,7 @@ m_delay(unsigned milliseconds)
 void 
 m_settextsize(int charsize)
 {
-	/* always 1 */
+	setusercharsize(charsize,1,1,1);
 }
 
 

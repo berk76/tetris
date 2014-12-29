@@ -56,10 +56,10 @@ g_draw_mesh(int height, int width)
 	MESH_HEIGHT = height;
 	MESH_WIDTH = width;
 	MESH_BK_COLOR = M_BLACK;
-	GRID_SIZE = (m_get_max_y() - 20) / height;
+	GRID_SIZE = (m_get_max_y() - m_get_max_y() / 5) / height;
 
-	origin.x = m_get_max_x()/2 - MESH_WIDTH/2 * GRID_SIZE;
-	origin.y = (m_get_max_y() - 20) /2 - MESH_HEIGHT/2 * GRID_SIZE;
+	origin.x = m_get_max_x()/2 - 5 * GRID_SIZE;
+	origin.y = (m_get_max_y() - m_get_max_y() / 5) / 2 - MESH_HEIGHT/2 * GRID_SIZE + m_get_max_y() / 10;
 
 	m_setcolor(M_WHITE);
 	m_settextsize(2);
