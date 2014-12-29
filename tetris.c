@@ -83,11 +83,11 @@ t_run(int num_of_brick_elements, int delay_ms)
 int
 create_new_brick(BRICK *b)
 {
-	srand(time(NULL) % 37);
+	/* srand(time(NULL) % 37); */
 
 	b->color = color_vec[rand() % COLOR_VEC_SIZE];
 	b->y = create_new_shape(b->shape, b->shape_size);
-	b->x = 5;
+	b->x = g_mesh_width() / 2;
 
 	clear_current(b);
 	if (!is_free_space_for_brick(b)) {
