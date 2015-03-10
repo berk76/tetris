@@ -1,0 +1,4 @@
+#include "resource.h"
+
+IDR_MAIN ICON "tetris.ico"
+
