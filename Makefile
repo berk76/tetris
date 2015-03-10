@@ -1,24 +1,23 @@
-# TETRIS (C) 2014 Jaroslav Beran
 
-CFLAGS = +zx -c -o $@
-CC = zcc
-objects = main.o tetris.o graph.o shape.o guicntls.o multi.o
+CFLAGS = -O2 -Wall -c -o $@
 
-tetris: $(objects)
-	$(CC) +zx -lndos -lmalloc -lx11 -o$@ -create-app $(objects)
+all: tetris
 
-main.o: main.c graph.h tetris.h guicntls.h multi.h
+tetris: src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res
+	$(CC) -Wall -o $@ src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res -lgdi32 -mwindows
 
-tetris.o: tetris.c tetris.h graph.h shape.h multi.h guicntls.h
 
-graph.o: graph.c graph.h multi.h
+src/main.o: src/main.c src/tetris.h src/graph.h src/resource.h
 
-shape.o: shape.c shape.h graph.h
+src/tetris.o: src/tetris.h src/shape.h src/graph.h
 
-guicntls.o: guicntls.c guicntls.h multi.h
+src/shape.o: src/shape.h
 
-multi.o: multi.c multi.h mu_tc.c mu_z88.c
+src/graph.o: src/graph.h src/tetris.h
+
+src/resource.res: src/resource.rc src/resource.h
+	windres src/resource.rc -O coff -o src/resource.res
 
 clean:
-	rm -f $(objects) *.bak tetris *.exe *.tap zcc_opt.def
+	rm -f src/*.o *.exe src/*.res 
 

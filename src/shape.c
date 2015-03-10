@@ -6,20 +6,17 @@
 */
 
 #include <stdlib.h>
-#include "graph.h"
 #include "shape.h"
 
-/* 
- * #define round(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
- */
 
-static int get_shape_width(G_POSITION shape[], int size);
-static int get_shape_min_x(G_POSITION shape[], int size);
-static int get_shape_max_y(G_POSITION shape[], int size, int x);
-static int centre_shape(G_POSITION shape[], int size);
+static int get_shape_width(POSITION_T shape[], int size);
+static int get_shape_min_x(POSITION_T shape[], int size);
+static int get_shape_max_y(POSITION_T shape[], int size, int x);
+static int centre_shape(POSITION_T shape[], int size);
+
 
 int
-create_new_shape(G_POSITION shape[], int size)
+create_new_shape(POSITION_T shape[], int size)
 {
 	int i;
 
@@ -40,8 +37,9 @@ create_new_shape(G_POSITION shape[], int size)
 	return centre_shape(shape, size);
 }
 
+
 int
-get_shape_width(G_POSITION shape[], int size)
+get_shape_width(POSITION_T shape[], int size)
 {
 	int result;
 
@@ -64,8 +62,9 @@ get_shape_width(G_POSITION shape[], int size)
 	return result;
 }
 
+
 int
-get_shape_min_x(G_POSITION shape[], int size)
+get_shape_min_x(POSITION_T shape[], int size)
 {
 	int result, i;
 	result = 0;
@@ -77,8 +76,9 @@ get_shape_min_x(G_POSITION shape[], int size)
 	return result;
 }
 
+
 int
-get_shape_max_y(G_POSITION shape[], int size, int x)
+get_shape_max_y(POSITION_T shape[], int size, int x)
 {
 	int result, i;
 	result = -1;
@@ -95,8 +95,9 @@ get_shape_max_y(G_POSITION shape[], int size, int x)
 	return result;
 }
 
+
 int
-centre_shape(G_POSITION shape[], int size)
+centre_shape(POSITION_T shape[], int size)
 {
 	/*
 	 * double	sum_x, sum_y;
@@ -127,8 +128,9 @@ centre_shape(G_POSITION shape[], int size)
 	return cy;
 }
 
+
 void
-rotate_shape(G_POSITION shape[], int size, int direction)
+rotate_shape(POSITION_T shape[], int size, int direction)
 {
 	int i, x, y;
 
@@ -139,5 +141,3 @@ rotate_shape(G_POSITION shape[], int size, int direction)
 		shape[i].y = y;
 	}
 }
-
-
