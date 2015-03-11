@@ -35,7 +35,7 @@ static int copy_upper_line(HDC hdc, TETRIS_T *tetris, int y);
 
 
 void 
-t_create_game(TETRIS_T *tetris, int x_size, int y_size)
+t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size)
 {
         int i, ii;
         
@@ -52,7 +52,7 @@ t_create_game(TETRIS_T *tetris, int x_size, int y_size)
         }
         tetris->element_size = 1;
         tetris->score = 0;
-        tetris->brick.shape_size = 4;
+        tetris->brick.shape_size = brick_size;
 	tetris->brick.shape = (POSITION_T *) malloc(tetris->brick.shape_size * sizeof(POSITION_T));
 	tetris->brick.current = (POSITION_T *) malloc(tetris->brick.shape_size * sizeof(POSITION_T));
         tetris->is_initialized = 0;
@@ -79,14 +79,14 @@ t_go(HDC hdc, TETRIS_T *tetris)
         int result;
         
         if (!tetris->is_initialized) {
-                create_new_brick(hdc, tetris);
-                tetris->is_initialized = 1;
-        }
-        
-        result = t_move_down(hdc, tetris);
-        if (result == -1) {
-                tetris->score += check_lines(hdc, tetris);
                 result = create_new_brick(hdc, tetris);
+                tetris->is_initialized = 1;
+        } else {
+                result = t_move_down(hdc, tetris);
+                if (result == -1) {
+                        tetris->score += check_lines(hdc, tetris);
+                        result = create_new_brick(hdc, tetris);
+                }
         }
                 
         return result;
