@@ -56,7 +56,7 @@ enum M_COLORS {
 #define TETRIS_BK_COLOR         0x000000
 
                                 
-extern void t_create_game(TETRIS_T *tetris, int x_size, int y_size);
+extern void t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
 extern void t_delete_game(TETRIS_T *tetris);
 extern int t_go(HDC hdc, TETRIS_T *tetris);
 extern int t_move_down(HDC hdc, TETRIS_T *tetris);

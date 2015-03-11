@@ -12,14 +12,13 @@
 #include "graph.h"
 #include "resource.h"
 
- 
-
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
 #define _TimerClock 1
 
 HINSTANCE g_hInstance;
 HWND g_hwndMain;
+HWND g_hwndButtonNewGame;
 MSG msg;
 TETRIS_T g_tetris;
 
@@ -73,15 +72,25 @@ BOOL InitApp() {
                 g_hInstance, // handle instance
                 NULL); // další "uživatelská" data
                 
-        if ( g_hwndMain == NULL )
+        if (g_hwndMain == NULL)
+                return FALSE;
+                
+        g_hwndButtonNewGame = CreateWindowEx(0,
+                TEXT("BUTTON"),
+                TEXT("New Game"),
+                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                10, 50, 75, 25,
+                g_hwndMain,
+                (HMENU)NULL,
+                g_hInstance,
+                NULL);
+        if (g_hwndButtonNewGame == NULL)
                 return FALSE;
         
-        t_create_game(&g_tetris, 10, 20);
+        t_create_game(&g_tetris, 10, 20, 4);
                 
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
         UpdateWindow(g_hwndMain);
-
-        SetTimer(g_hwndMain, _TimerClock, 600, NULL);
                                   
         return TRUE;
 }
@@ -90,6 +99,7 @@ BOOL InitApp() {
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         HDC hdc;
         TCHAR chText[100];
+        int ret;
         
         switch (uMsg) {
                 case WM_KEYDOWN:
@@ -111,12 +121,30 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         }
                         ReleaseDC(g_hwndMain, hdc);
                         break;
+                case WM_COMMAND:
+                        if (lParam == (LPARAM)g_hwndButtonNewGame) {
+                                t_delete_game(&g_tetris);
+                                t_create_game(&g_tetris, 10, 20, 4);
+                                hdc = GetDC(g_hwndMain);
+                                paintGrid(hdc);
+                                ReleaseDC(g_hwndMain, hdc);
+                                SetTimer(g_hwndMain, _TimerClock, 600, NULL);
+                                SetFocus(g_hwndMain);                                
+                        }
+                        break;
                 case WM_TIMER:
                         hdc = GetDC(g_hwndMain);
-                        t_go(hdc, &g_tetris);
+                        ret = t_go(hdc, &g_tetris);
                         ReleaseDC(g_hwndMain, hdc);
                         _stprintf(chText, "Tetris - score: %d", g_tetris.score);
                         SetWindowText(g_hwndMain, chText);
+                        
+                        if (ret == -1) {
+                                KillTimer(g_hwndMain, _TimerClock);
+                                _stprintf(chText, "Game Over! Your score is %d", g_tetris.score);
+                                MessageBox(hwnd, chText, _AppName, MB_OK | MB_ICONINFORMATION);
+                        }
+                        
                         break;
                 case WM_PAINT:
                         onPaint();
@@ -125,9 +153,12 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         PostQuitMessage(0);
                         break;
                 case WM_CLOSE:
-                        if ( MessageBox(hwnd, "Opravdu konèit?", _AppName,
-                                MB_YESNO | MB_ICONQUESTION) != IDYES )
+                        KillTimer(g_hwndMain, _TimerClock);
+                        if (MessageBox(hwnd, "Do you want quit?", _AppName,
+                                MB_YESNO | MB_ICONQUESTION) != IDYES) {
+                                        SetTimer(g_hwndMain, _TimerClock, 600, NULL);
                                         return 0;
+                                }
                         t_delete_game(&g_tetris);
                         break;
         }

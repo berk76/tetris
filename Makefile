@@ -1,9 +1,9 @@
 
 CFLAGS = -O2 -Wall -c -o $@
 
-all: tetris
+all: Tetris
 
-tetris: src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res
+Tetris: src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res
 	$(CC) -Wall -o $@ src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res -lgdi32 -mwindows
 
 
