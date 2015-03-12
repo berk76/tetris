@@ -30,7 +30,8 @@ typedef struct {
         int element_size;
         BRICK_T brick;
         int score;
-        int is_initialized;       
+        int is_initialized;
+        int is_paused;       
 } TETRIS_T;
 
 
