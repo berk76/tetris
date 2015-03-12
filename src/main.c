@@ -20,6 +20,7 @@ HINSTANCE g_hInstance;
 HWND g_hwndMain;
 HWND g_hwndButtonNewGame;
 HWND g_hwndButtonNewGame2;
+HWND g_hwndButtonNewGame3;
 HWND g_hwndButtonPause;
 MSG msg;
 TETRIS_T g_tetris;
@@ -79,7 +80,7 @@ BOOL InitApp() {
                 
         g_hwndButtonNewGame = CreateWindowEx(0,
                 TEXT("BUTTON"),
-                TEXT("New Game"),
+                TEXT("Tetris"),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 10, 75, 25,
                 g_hwndMain,
@@ -91,7 +92,7 @@ BOOL InitApp() {
         
         g_hwndButtonNewGame2 = CreateWindowEx(0,
                 TEXT("BUTTON"),
-                TEXT("New Game 2"),
+                TEXT("Pentis"),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 45, 75, 25,
                 g_hwndMain,
@@ -101,11 +102,23 @@ BOOL InitApp() {
         if (g_hwndButtonNewGame2 == NULL)
                 return FALSE;
                 
+        g_hwndButtonNewGame3 = CreateWindowEx(0,
+                TEXT("BUTTON"),
+                TEXT("Sextis"),
+                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                10, 80, 75, 25,
+                g_hwndMain,
+                (HMENU)NULL,
+                g_hInstance,
+                NULL);
+        if (g_hwndButtonNewGame3 == NULL)
+                return FALSE;
+                
         g_hwndButtonPause = CreateWindowEx(0,
                 TEXT("BUTTON"),
                 TEXT("Pause"),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                10, 80, 75, 25,
+                10, 115, 75, 25,
                 g_hwndMain,
                 (HMENU)NULL,
                 g_hInstance,
@@ -116,6 +129,7 @@ BOOL InitApp() {
         HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
         SendMessage(g_hwndButtonNewGame, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         SendMessage(g_hwndButtonNewGame2, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
+        SendMessage(g_hwndButtonNewGame3, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         SendMessage(g_hwndButtonPause, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         t_create_game(&g_tetris, 10, 20, 4);
                 
@@ -166,6 +180,16 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                 KillTimer(g_hwndMain, _TimerClock);
                                 t_delete_game(&g_tetris);
                                 t_create_game(&g_tetris, 20, 20, 5);
+                                InvalidateRect(g_hwndMain, NULL, TRUE);
+                                SetFocus(g_hwndMain);
+                                g_tetris.is_paused = 0;
+                                SetWindowText(g_hwndButtonPause, "Pause");
+                                SetTimer(g_hwndMain, _TimerClock, 600, NULL);                                
+                        }
+                        if (lParam == (LPARAM)g_hwndButtonNewGame3) {
+                                KillTimer(g_hwndMain, _TimerClock);
+                                t_delete_game(&g_tetris);
+                                t_create_game(&g_tetris, 20, 20, 6);
                                 InvalidateRect(g_hwndMain, NULL, TRUE);
                                 SetFocus(g_hwndMain);
                                 g_tetris.is_paused = 0;
