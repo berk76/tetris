@@ -235,10 +235,13 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                         return 0;
                                 }
                         t_delete_game(&g_tetris);
+                         DestroyWindow(hwnd);
                         break;
+                default:
+                        return DefWindowProc(hwnd, uMsg, wParam, lParam);
         }
         
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        return 0;
 }
 
 
