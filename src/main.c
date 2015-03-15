@@ -14,6 +14,11 @@
 
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
+#define _cptTetris TEXT("Tetris")
+#define _cptPentis TEXT("Pentis")
+#define _cptSextis TEXT("Sextis")
+#define _cptPause TEXT("Pause")
+#define _cptContinue TEXT("Continue")
 #define _TimerClock 1
 
 HINSTANCE g_hInstance;
@@ -27,8 +32,9 @@ TETRIS_T g_tetris;
 
 static BOOL InitApp();
 static LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
+static void pauseGame(BOOL b);
 static void onPaint();
-static void paintGrid(HDC hdc);
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShow) {
@@ -80,7 +86,7 @@ BOOL InitApp() {
                 
         g_hwndButtonNewGame = CreateWindowEx(0,
                 TEXT("BUTTON"),
-                TEXT("Tetris"),
+                _cptTetris,
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 10, 75, 25,
                 g_hwndMain,
@@ -92,7 +98,7 @@ BOOL InitApp() {
         
         g_hwndButtonNewGame2 = CreateWindowEx(0,
                 TEXT("BUTTON"),
-                TEXT("Pentis"),
+                _cptPentis,
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 45, 75, 25,
                 g_hwndMain,
@@ -104,7 +110,7 @@ BOOL InitApp() {
                 
         g_hwndButtonNewGame3 = CreateWindowEx(0,
                 TEXT("BUTTON"),
-                TEXT("Sextis"),
+                _cptSextis,
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 80, 75, 25,
                 g_hwndMain,
@@ -116,7 +122,7 @@ BOOL InitApp() {
                 
         g_hwndButtonPause = CreateWindowEx(0,
                 TEXT("BUTTON"),
-                TEXT("Pause"),
+                _cptPause,
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 115, 75, 25,
                 g_hwndMain,
@@ -131,8 +137,8 @@ BOOL InitApp() {
         SendMessage(g_hwndButtonNewGame2, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         SendMessage(g_hwndButtonNewGame3, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         SendMessage(g_hwndButtonPause, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
-        t_create_game(&g_tetris, 10, 20, 4);
-                
+        
+        t_create_game(&g_tetris, 10, 20, 4);                
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
         UpdateWindow(g_hwndMain);
                                   
@@ -150,16 +156,20 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         hdc = GetDC(g_hwndMain);
                         switch (wParam) {        
                                 case VK_UP:
+                                        pauseGame(FALSE);
                                         t_rotate(hdc, &g_tetris);
                                         break;
                                 case VK_DOWN:
+                                        pauseGame(FALSE);
                                         while(t_move_down(hdc, &g_tetris) != -1)
                                                 ;
                                         break;
                                 case VK_LEFT:
+                                        pauseGame(FALSE);
                                         t_move_left(hdc, &g_tetris);
                                         break;
                                 case VK_RIGHT:
+                                        pauseGame(FALSE);
                                         t_move_right(hdc, &g_tetris);
                                         break;                        
                         }
@@ -167,45 +177,16 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         break;
                 case WM_COMMAND:
                         if (lParam == (LPARAM)g_hwndButtonNewGame) {
-                                KillTimer(g_hwndMain, _TimerClock);
-                                t_delete_game(&g_tetris);
-                                t_create_game(&g_tetris, 10, 20, 4);
-                                InvalidateRect(g_hwndMain, NULL, TRUE);
-                                SetFocus(g_hwndMain);
-                                g_tetris.is_paused = 0;
-                                SetWindowText(g_hwndButtonPause, "Pause");
-                                SetTimer(g_hwndMain, _TimerClock, 600, NULL);                                
+                                startGame(&g_tetris, 10, 20, 4);                                
                         }
                         if (lParam == (LPARAM)g_hwndButtonNewGame2) {
-                                KillTimer(g_hwndMain, _TimerClock);
-                                t_delete_game(&g_tetris);
-                                t_create_game(&g_tetris, 20, 20, 5);
-                                InvalidateRect(g_hwndMain, NULL, TRUE);
-                                SetFocus(g_hwndMain);
-                                g_tetris.is_paused = 0;
-                                SetWindowText(g_hwndButtonPause, "Pause");
-                                SetTimer(g_hwndMain, _TimerClock, 600, NULL);                                
+                                startGame(&g_tetris, 20, 20, 5);                                
                         }
                         if (lParam == (LPARAM)g_hwndButtonNewGame3) {
-                                KillTimer(g_hwndMain, _TimerClock);
-                                t_delete_game(&g_tetris);
-                                t_create_game(&g_tetris, 20, 20, 6);
-                                InvalidateRect(g_hwndMain, NULL, TRUE);
-                                SetFocus(g_hwndMain);
-                                g_tetris.is_paused = 0;
-                                SetWindowText(g_hwndButtonPause, "Pause");
-                                SetTimer(g_hwndMain, _TimerClock, 600, NULL);                                
+                                startGame(&g_tetris, 20, 20, 6);                                
                         }
                         if (lParam == (LPARAM)g_hwndButtonPause) {
-                                if (g_tetris.is_paused) {
-                                        g_tetris.is_paused = 0;
-                                        SetTimer(g_hwndMain, _TimerClock, 600, NULL);
-                                        SetWindowText(g_hwndButtonPause, "Pause");
-                                } else {
-                                        g_tetris.is_paused = 1;
-                                        KillTimer(g_hwndMain, _TimerClock);
-                                        SetWindowText(g_hwndButtonPause, "Continue");
-                                }
+                                pauseGame(!g_tetris.is_paused);
                                 SetFocus(g_hwndMain);                                
                         }
                         break;
@@ -230,6 +211,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         PostQuitMessage(0);
                         break;
                 case WM_CLOSE:
+                        pauseGame(TRUE);
                         if (MessageBox(hwnd, "Do you want quit?", _AppName,
                                 MB_YESNO | MB_ICONQUESTION) != IDYES) {
                                         return 0;
@@ -245,20 +227,42 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 }
 
 
+void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size) {
+        KillTimer(g_hwndMain, _TimerClock);
+        t_delete_game(&g_tetris);
+        t_create_game(&g_tetris, x_size, y_size, brick_size);
+        InvalidateRect(g_hwndMain, NULL, TRUE);
+        SetFocus(g_hwndMain);
+        g_tetris.is_paused = 0;
+        SetWindowText(g_hwndButtonPause, _cptPause);
+        SetTimer(g_hwndMain, _TimerClock, 600, NULL);
+}
+
+void pauseGame(BOOL b) {
+        if (b == TRUE) {
+                if (g_tetris.is_paused)
+                        return;
+                g_tetris.is_paused = 1;
+                KillTimer(g_hwndMain, _TimerClock);
+                SetWindowText(g_hwndButtonPause, _cptContinue);
+        } else {
+                if (!g_tetris.is_paused)
+                        return;
+                g_tetris.is_paused = 0;
+                SetTimer(g_hwndMain, _TimerClock, 600, NULL);
+                SetWindowText(g_hwndButtonPause, _cptPause);
+        }
+}
+
 void onPaint() {
         PAINTSTRUCT ps;
         HDC hdc;
+        RECT rect;
         
         hdc = BeginPaint(g_hwndMain, &ps);
-        paintGrid(hdc); 
+        GetClientRect(g_hwndMain, &rect);
+        g_draw_mesh(hdc, &g_tetris, rect); 
         EndPaint(g_hwndMain, &ps);
 }
 
-
-void paintGrid(HDC hdc) {
-        RECT rect;
-        
-        GetClientRect(g_hwndMain, &rect);
-        g_draw_mesh(hdc, &g_tetris, rect);
-}
 
