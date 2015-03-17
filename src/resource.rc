@@ -2,3 +2,20 @@
 
 IDR_MAIN ICON "tetris.ico"
 
+IDR_MAINMENU MENU
+BEGIN
+    POPUP "&Game"
+    BEGIN
+        MENUITEM "Tetris", ID_G_TETRIS
+        MENUITEM "Pentis", ID_G_PENTIS
+        MENUITEM "Sextis", ID_G_SEXTIS
+        MENUITEM "&Pause", ID_PAUSE
+        MENUITEM "E&xit", ID_END
+    END
+
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About", ID_ABOUT
+    END
+END
+
