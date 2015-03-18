@@ -149,7 +149,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                         SendMessage(hwnd, WM_CLOSE, 0, 0);
                                         break;
                                 case ID_ABOUT:
-                                        MessageBox(hwnd, "Tetris\n\nJaroslav Beran, 2015",
+                                        MessageBox(hwnd, "Tetris\nhttps://bitbucket.org/berk76/tetris\n(c) 2015 Jaroslav Beran",
                                                 "About Tetris", MB_ICONINFORMATION);
                                         break;
                         }
