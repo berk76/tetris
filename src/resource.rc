@@ -9,13 +9,15 @@ BEGIN
         MENUITEM "Tetris", ID_G_TETRIS
         MENUITEM "Pentis", ID_G_PENTIS
         MENUITEM "Sextis", ID_G_SEXTIS
+        MENUITEM SEPARATOR
         MENUITEM "&Pause", ID_PAUSE
+        MENUITEM SEPARATOR
         MENUITEM "E&xit", ID_END
     END
 
     POPUP "&Help"
     BEGIN
-        MENUITEM "&About", ID_ABOUT
+        MENUITEM "&About ...", ID_ABOUT
     END
 END
 
