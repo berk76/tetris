@@ -26,6 +26,7 @@ static BOOL InitApp();
 static LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
 static void pauseGame(BOOL b);
+static void update_score();
 static void onPaint();
 
 
@@ -81,7 +82,7 @@ BOOL InitApp() {
                 
         g_hwndStatusBar = CreateWindowEx(0,
                 TEXT("msctls_statusbar32"),
-                TEXT("Stavový øádek"),
+                TEXT("Score:"),
                 WS_CHILD | WS_VISIBLE,
                 0, 0, 0, 0,
                 g_hwndMain,
@@ -140,7 +141,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                         startGame(&g_tetris, 20, 20, 5);
                                         break;
                                 case ID_G_SEXTIS:
-                                        startGame(&g_tetris, 20, 20, 5);
+                                        startGame(&g_tetris, 20, 20, 6);
                                         break;
                                 case ID_PAUSE:
                                         pauseGame(!g_tetris.is_paused);
@@ -158,8 +159,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         hdc = GetDC(g_hwndMain);
                         ret = t_go(hdc, &g_tetris);
                         ReleaseDC(g_hwndMain, hdc);
-                        _stprintf(chText, "Score: %d", g_tetris.score);
-                        SetWindowText(g_hwndStatusBar, chText);
+                        update_score();
                         
                         if (ret == -1) {
                                 KillTimer(g_hwndMain, _TimerClock);
@@ -209,12 +209,20 @@ void pauseGame(BOOL b) {
                         return;
                 g_tetris.is_paused = 1;
                 KillTimer(g_hwndMain, _TimerClock);
+                SetWindowText(g_hwndStatusBar, TEXT("Paused"));
         } else {
                 if (!g_tetris.is_paused)
                         return;
                 g_tetris.is_paused = 0;
                 SetTimer(g_hwndMain, _TimerClock, 600, NULL);
+                update_score();
         }
+}
+
+void update_score() {
+        TCHAR chText[100];
+        _stprintf(chText, "Score: %d", g_tetris.score);
+        SetWindowText(g_hwndStatusBar, chText);
 }
 
 void onPaint() {
