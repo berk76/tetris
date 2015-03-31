@@ -128,6 +128,12 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                 case VK_RIGHT:
                                         pauseGame(FALSE);
                                         t_move_right(hdc, &g_tetris);
+                                        break;
+                                case 'p':
+                                        pauseGame(!g_tetris.is_paused);
+                                        break;
+                                case 'P':
+                                        pauseGame(!g_tetris.is_paused);
                                         break;                        
                         }
                         ReleaseDC(g_hwndMain, hdc);
