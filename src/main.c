@@ -31,7 +31,7 @@ static void pauseGame(BOOL b);
 static void update_score();
 static void onPaint();
 #ifdef TOUCH_SUPPORT
-static void on_gesture(WPARAM wParam, LPARAM lParam);
+static BOOL on_gesture(WPARAM wParam, LPARAM lParam);
 #endif
 
 
@@ -216,7 +216,8 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         break;
                 #ifdef TOUCH_SUPPORT
                 case WM_GESTURE:
-                        on_gesture(wParam, lParam);  
+                        if (on_gesture(wParam, lParam))
+                                break;  
                 #endif        
                 default:
                         return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -270,7 +271,7 @@ void onPaint() {
 }
 
 #ifdef TOUCH_SUPPORT
-void on_gesture(WPARAM wParam, LPARAM lParam) {
+BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
         GESTUREINFO gi;
         HDC hdc;
         static POINT m_first;
@@ -278,38 +279,55 @@ void on_gesture(WPARAM wParam, LPARAM lParam) {
         ZeroMemory(&gi, sizeof(GESTUREINFO));
         gi.cbSize = sizeof(GESTUREINFO);
         BOOL bResult  = GetGestureInfo((HGESTUREINFO)lParam, &gi);
+        BOOL bHandled = FALSE;
         
         if (bResult) {
-                
-                if (gi.dwFlags & GF_BEGIN) {
-                        m_first.x = gi.ptsLocation.x;
-                        m_first.y = gi.ptsLocation.y;     
-                }
-                if (gi.dwFlags & GF_END) {
-                        m_last.x = gi.ptsLocation.x;
-                        m_last.y = gi.ptsLocation.y;
-                        hdc = GetDC(g_hwndMain);
-                        if (abs(m_last.x - m_first.x) > abs(m_last.y - m_first.y)) {
-                                if ((m_last.x - m_first.x) > 0) {
-                                        pauseGame(FALSE);
-                                        t_move_right(hdc, &g_tetris);
+                switch (gi.dwID){
+                        case GID_PAN:
+                                if (gi.dwFlags & GF_BEGIN) {
+                                        m_first.x = gi.ptsLocation.x;
+                                        m_first.y = gi.ptsLocation.y;     
                                 } else {
-                                        pauseGame(FALSE);
-                                        t_move_left(hdc, &g_tetris);
+                                        m_last.x = gi.ptsLocation.x;
+                                        m_last.y = gi.ptsLocation.y;
+                                        hdc = GetDC(g_hwndMain);
+                                        if (abs(m_last.x - m_first.x) > abs(m_last.y - m_first.y)) {
+                                                if ((gi.dwFlags & GF_END) || (abs(m_last.x - m_first.x) > g_tetris.element_size)) {
+                                                        if ((m_last.x - m_first.x) > 0) {
+                                                                m_first.x += g_tetris.element_size;
+                                                                m_first.y = m_last.y; 
+                                                                pauseGame(FALSE);
+                                                                t_move_right(hdc, &g_tetris);
+                                                        } else {
+                                                                m_first.x -= g_tetris.element_size;
+                                                                m_first.y = m_last.y;
+                                                                pauseGame(FALSE);
+                                                                t_move_left(hdc, &g_tetris);
+                                                        }
+                                                }
+                                        } else {
+                                                if (gi.dwFlags & GF_END) { 
+                                                        if ((m_last.y - m_first.y) > 0) {
+                                                                pauseGame(FALSE);
+                                                                while(t_move_down(hdc, &g_tetris) != -1)
+                                                                ;
+                                                        } else {
+                                                                pauseGame(FALSE);
+                                                                t_rotate(hdc, &g_tetris);
+                                                        }
+                                                }
+                                        }
+                                        ReleaseDC(g_hwndMain, hdc);     
                                 }
-                        } else {
-                                if ((m_last.y - m_first.y) > 0) {
-                                        pauseGame(FALSE);
-                                        while(t_move_down(hdc, &g_tetris) != -1)
-                                        ;
-                                } else {
-                                        pauseGame(FALSE);
-                                        t_rotate(hdc, &g_tetris);
-                                }
-                        }
-                        ReleaseDC(g_hwndMain, hdc);     
-                }
+                                bHandled = TRUE;
+                                break;
+                        case GID_ROTATE:
+                               // Code for rotation goes here
+                               bHandled = TRUE;
+                               break;
+                }          
         }
+        return bHandled; 
 }
 #endif
 
