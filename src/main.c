@@ -12,6 +12,8 @@
 #include "graph.h"
 #include "resource.h"
 
+#define TOUCH_SUPPORT
+
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
 #define _TimerClock 1
@@ -28,6 +30,9 @@ static void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
 static void pauseGame(BOOL b);
 static void update_score();
 static void onPaint();
+#ifdef TOUCH_SUPPORT
+static void on_gesture(WPARAM wParam, LPARAM lParam);
+#endif
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShow) {
@@ -70,7 +75,7 @@ BOOL InitApp() {
                 _AppName, // text okna
                 WS_OVERLAPPEDWINDOW | WS_VISIBLE, // styl okna
                 100, 100, // souøadnice na obraziovce
-                450, 350, // rozmìry - šíøka a výška
+                300, 600, // rozmìry - šíøka a výška
                 (HWND)NULL, // okna pøedka
                 LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_MAINMENU)), // handle hlavní nabídky
                 g_hInstance, // handle instance
@@ -98,6 +103,23 @@ BOOL InitApp() {
         t_create_game(&g_tetris, 10, 20, 4);                
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
         UpdateWindow(g_hwndMain);
+        
+        #ifdef TOUCH_SUPPORT
+        
+        // set up our want / block settings
+        DWORD dwPanWant  = GC_PAN_WITH_SINGLE_FINGER_VERTICALLY | GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+        DWORD dwPanBlock = GC_PAN_WITH_GUTTER | GC_PAN_WITH_INERTIA;
+        
+        // set the settings in the gesture configuration
+        GESTURECONFIG gc[] = {{ GID_ZOOM, GC_ZOOM, 0 },
+                              { GID_ROTATE, GC_ROTATE, 0},
+                              { GID_PAN, dwPanWant , dwPanBlock}                     
+                             };    
+                             
+        UINT uiGcs = 3;
+        SetGestureConfig(g_hwndMain, 0, uiGcs, gc, sizeof(GESTURECONFIG));  
+        
+        #endif
                                   
         return TRUE;
 }
@@ -192,6 +214,10 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         t_delete_game(&g_tetris);
                         DestroyWindow(hwnd);
                         break;
+                #ifdef TOUCH_SUPPORT
+                case WM_GESTURE:
+                        on_gesture(wParam, lParam);  
+                #endif        
                 default:
                         return DefWindowProc(hwnd, uMsg, wParam, lParam);
         }
@@ -242,5 +268,49 @@ void onPaint() {
         g_draw_mesh(hdc, &g_tetris, rect); 
         EndPaint(g_hwndMain, &ps);
 }
+
+#ifdef TOUCH_SUPPORT
+void on_gesture(WPARAM wParam, LPARAM lParam) {
+        GESTUREINFO gi;
+        HDC hdc;
+        static POINT m_first;
+        POINT m_last;
+        ZeroMemory(&gi, sizeof(GESTUREINFO));
+        gi.cbSize = sizeof(GESTUREINFO);
+        BOOL bResult  = GetGestureInfo((HGESTUREINFO)lParam, &gi);
+        
+        if (bResult) {
+                
+                if (gi.dwFlags & GF_BEGIN) {
+                        m_first.x = gi.ptsLocation.x;
+                        m_first.y = gi.ptsLocation.y;     
+                }
+                if (gi.dwFlags & GF_END) {
+                        m_last.x = gi.ptsLocation.x;
+                        m_last.y = gi.ptsLocation.y;
+                        hdc = GetDC(g_hwndMain);
+                        if (abs(m_last.x - m_first.x) > abs(m_last.y - m_first.y)) {
+                                if ((m_last.x - m_first.x) > 0) {
+                                        pauseGame(FALSE);
+                                        t_move_right(hdc, &g_tetris);
+                                } else {
+                                        pauseGame(FALSE);
+                                        t_move_left(hdc, &g_tetris);
+                                }
+                        } else {
+                                if ((m_last.y - m_first.y) > 0) {
+                                        pauseGame(FALSE);
+                                        while(t_move_down(hdc, &g_tetris) != -1)
+                                        ;
+                                } else {
+                                        pauseGame(FALSE);
+                                        t_rotate(hdc, &g_tetris);
+                                }
+                        }
+                        ReleaseDC(g_hwndMain, hdc);     
+                }
+        }
+}
+#endif
 
 
