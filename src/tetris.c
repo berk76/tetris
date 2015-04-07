@@ -241,14 +241,14 @@ t_move_right(HDC hdc, TETRIS_T *tetris)
 
 
 int
-t_rotate(HDC hdc, TETRIS_T *tetris)
+t_rotate(HDC hdc, TETRIS_T *tetris, int direction)
 {
         BRICK_T *b;
         
         b = &tetris->brick;
-	rotate_shape(b->shape, b->shape_size, 1);
+	rotate_shape(b->shape, b->shape_size, direction);
 	if (!is_free_space_for_brick(tetris)) {
-		rotate_shape(b->shape, b->shape_size, -1);
+		rotate_shape(b->shape, b->shape_size, -direction);
 		return -1;
 	}
 	draw_brick(hdc, tetris);
