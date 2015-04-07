@@ -63,7 +63,8 @@ extern int t_go(HDC hdc, TETRIS_T *tetris);
 extern int t_move_down(HDC hdc, TETRIS_T *tetris);
 extern int t_move_left(HDC hdc, TETRIS_T *tetris);
 extern int t_move_right(HDC hdc, TETRIS_T *tetris);
-extern int t_rotate(HDC hdc, TETRIS_T *tetris);
+/* direction 1=anticlockwise -1=clockwise */
+extern int t_rotate(HDC hdc, TETRIS_T *tetris, int direction);
 
 #endif
 

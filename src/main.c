@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <math.h>
 #include "tetris.h"
 #include "graph.h"
 #include "resource.h"
@@ -74,7 +75,7 @@ BOOL InitApp() {
                 _MainClassName, // jméno tøídy
                 _AppName, // text okna
                 WS_OVERLAPPEDWINDOW | WS_VISIBLE, // styl okna
-                100, 100, // souøadnice na obraziovce
+                CW_USEDEFAULT, CW_USEDEFAULT, // souøadnice na obraziovce
                 300, 600, // rozmìry - šíøka a výška
                 (HWND)NULL, // okna pøedka
                 LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_MAINMENU)), // handle hlavní nabídky
@@ -136,7 +137,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         switch (wParam) {        
                                 case VK_UP:
                                         pauseGame(FALSE);
-                                        t_rotate(hdc, &g_tetris);
+                                        t_rotate(hdc, &g_tetris, 1);
                                         break;
                                 case VK_DOWN:
                                         pauseGame(FALSE);
@@ -280,7 +281,9 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
         gi.cbSize = sizeof(GESTUREINFO);
         BOOL bResult  = GetGestureInfo((HGESTUREINFO)lParam, &gi);
         BOOL bHandled = FALSE;
+        /* TCHAR chText[100]; */
         
+        hdc = GetDC(g_hwndMain);
         if (bResult) {
                 switch (gi.dwID){
                         case GID_PAN:
@@ -290,7 +293,6 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
                                 } else {
                                         m_last.x = gi.ptsLocation.x;
                                         m_last.y = gi.ptsLocation.y;
-                                        hdc = GetDC(g_hwndMain);
                                         if (abs(m_last.x - m_first.x) > abs(m_last.y - m_first.y)) {
                                                 if ((gi.dwFlags & GF_END) || (abs(m_last.x - m_first.x) > g_tetris.element_size)) {
                                                         if ((m_last.x - m_first.x) > 0) {
@@ -313,20 +315,34 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
                                                                 ;
                                                         } else {
                                                                 pauseGame(FALSE);
-                                                                t_rotate(hdc, &g_tetris);
+                                                                t_rotate(hdc, &g_tetris, 1);
                                                         }
                                                 }
-                                        }
-                                        ReleaseDC(g_hwndMain, hdc);     
+                                        }     
                                 }
                                 bHandled = TRUE;
                                 break;
                         case GID_ROTATE:
-                               // Code for rotation goes here
-                               bHandled = TRUE;
-                               break;
-                }          
+                                if (gi.dwFlags & GF_BEGIN) {
+                                        m_first.x = (long) 180 * GID_ROTATE_ANGLE_FROM_ARGUMENT(gi.ullArguments) / M_PI; 
+                                }
+                                if (gi.dwFlags & GF_END) {
+                                        m_last.x = (long) 180 * GID_ROTATE_ANGLE_FROM_ARGUMENT(gi.ullArguments) / M_PI;
+                                        /*
+                                        _stprintf(chText, "Begin=%ld End=%ld", m_first.x, m_last.x);
+                                        MessageBox(g_hwndMain, chText, _AppName, MB_OK | MB_ICONINFORMATION);
+                                        */
+                                        int i;
+                                        for (i = 0; i < abs(m_last.x / 90); i++)
+                                                t_rotate(hdc, &g_tetris, (m_last.x > 1) ? 1 : -1);
+                                }
+                                bHandled = TRUE;
+                                break;
+                }
+                CloseGestureInfoHandle((HGESTUREINFO)lParam);          
         }
+        
+        ReleaseDC(g_hwndMain, hdc);
         return bHandled; 
 }
 #endif
