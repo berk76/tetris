@@ -18,6 +18,7 @@
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
 #define _TimerClock 1
+#define _TimerInterval 300
 
 HINSTANCE g_hInstance;
 HWND g_hwndMain;
@@ -234,7 +235,7 @@ void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size) {
         t_create_game(&g_tetris, x_size, y_size, brick_size);
         InvalidateRect(g_hwndMain, NULL, TRUE);
         g_tetris.is_paused = 0;
-        SetTimer(g_hwndMain, _TimerClock, 600, NULL);
+        SetTimer(g_hwndMain, _TimerClock, _TimerInterval, NULL);
 }
 
 void pauseGame(BOOL b) {
@@ -248,7 +249,7 @@ void pauseGame(BOOL b) {
                 if (!g_tetris.is_paused)
                         return;
                 g_tetris.is_paused = 0;
-                SetTimer(g_hwndMain, _TimerClock, 600, NULL);
+                SetTimer(g_hwndMain, _TimerClock, _TimerInterval, NULL);
                 update_score();
         }
 }
