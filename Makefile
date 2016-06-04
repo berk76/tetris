@@ -6,7 +6,7 @@ CFLAGS = -D WINVER=0x0603 -D _WIN32_WINNT=0x0603 -O2 -Wall -c -o $@
 all: Tetris
 
 Tetris: src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res
-	$(CC) -Wall -o $@ src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res -lgdi32 -mwindows
+	$(CC) -Wall -o $@ src/main.o src/tetris.o src/shape.o src/graph.o src/resource.res -lgdi32 -lcomctl32 -mwindows
 
 
 src/main.o: src/main.c src/tetris.h src/graph.h src/resource.h
