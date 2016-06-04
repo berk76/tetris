@@ -6,6 +6,7 @@
 */
 
 #include <windows.h>
+#include <CommCtrl.h>
 #include <tchar.h>
 #include <stdio.h>
 #include <math.h>
@@ -13,7 +14,7 @@
 #include "graph.h"
 #include "resource.h"
 
-#define TOUCH_SUPPORT
+//#define TOUCH_SUPPORT
 
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
@@ -40,6 +41,7 @@ static BOOL on_gesture(WPARAM wParam, LPARAM lParam);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShow) {
         g_hInstance = hInstance;
         
+        InitCommonControls();
         if (!InitApp())
                 return FALSE;
                 
@@ -88,7 +90,7 @@ BOOL InitApp() {
                 
                 
         g_hwndStatusBar = CreateWindowEx(0,
-                TEXT("msctls_statusbar32"),
+                STATUSCLASSNAME,
                 TEXT("Score:"),
                 WS_CHILD | WS_VISIBLE,
                 0, 0, 0, 0,
