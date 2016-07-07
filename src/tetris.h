@@ -34,27 +34,8 @@ typedef struct {
         int is_paused;       
 } TETRIS_T;
 
-
-enum M_COLORS {
-    M_BLACK		= 0,
-    M_BLUE		= 1,
-    M_GREEN		= 2,
-    M_CYAN		= 3,
-    M_RED		= 4,
-    M_MAGENTA		= 5,
-    M_BROWN		= 6,
-    M_LIGHTGRAY		= 7,
-    M_DARKGRAY		= 8,
-    M_LIGHTBLUE		= 0xFF0000,
-    M_LIGHTGREEN	= 0x00FF00,
-    M_LIGHTCYAN		= 0xFFFF00,
-    M_LIGHTRED		= 0x0000FF,
-    M_LIGHTMAGENTA 	= 0xFF00FF,
-    M_YELLOW		= 0x00FFFF,
-    M_WHITE		= 0xFFFFFF
-};
-                                
-#define TETRIS_BK_COLOR         0x000000
+                               
+#define TETRIS_BK_COLOR         7
 
                                 
 extern void t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size);

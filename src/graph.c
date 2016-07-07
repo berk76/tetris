@@ -12,6 +12,7 @@
 #include "tetris.h"
 #include "graph.h"
 
+static COLOR_T *g_colors;
 
 void 
 g_draw_mesh(HDC hdc, TETRIS_T *tetris, RECT client)
@@ -36,20 +37,13 @@ g_draw_mesh(HDC hdc, TETRIS_T *tetris, RECT client)
 void 
 g_put_mesh_pixel(HDC hdc, TETRIS_T *tetris, int x, int y, int color)
 {
-        HPEN hPen;
-        HBRUSH hBrush;
-        
-        hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, color);
-        hBrush = CreateSolidBrush(color);
-        SelectObject(hdc, hPen);
-        SelectObject(hdc, hBrush);
+        SelectObject(hdc, g_colors[color].hPen);
+        SelectObject(hdc, g_colors[color].hBrush);
         Rectangle(hdc, 
                 tetris->origin_x + x * tetris->element_size, 
                 tetris->origin_y + y * tetris->element_size, 
                 tetris->origin_x + x * tetris->element_size + tetris->element_size, 
                 tetris->origin_y + y * tetris->element_size + tetris->element_size);
-        DeleteObject(hBrush);
-        DeleteObject(hPen);
 }
 
 
@@ -59,3 +53,8 @@ g_empty_mesh_pixel(HDC hdc, TETRIS_T *tetris, int x, int y)
         g_put_mesh_pixel(hdc, tetris, x, y, TETRIS_BK_COLOR);
 }
 
+void 
+g_set_colors(COLOR_T *colors)
+{
+        g_colors = colors;
+}

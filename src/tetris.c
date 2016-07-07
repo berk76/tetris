@@ -14,15 +14,8 @@
 
 
 #define COLOR_VEC_SIZE		7
-static int color_vec[] = 	{M_LIGHTBLUE,
-				M_LIGHTGREEN,
-				M_LIGHTCYAN,
-				M_LIGHTRED,
-				M_LIGHTMAGENTA,
-				M_YELLOW,
-				M_WHITE};
-                                
 
+                                
 static int create_new_brick(HDC hdc, TETRIS_T *tetris);
 static int is_free_space_for_brick(TETRIS_T *tetris);
 static int is_current(BRICK_T *b, int x, int y);
@@ -100,7 +93,7 @@ create_new_brick(HDC hdc, TETRIS_T *tetris)
                
         b = &tetris->brick;
 	srand(time(NULL) % 37); 
-	b->color = color_vec[rand() % COLOR_VEC_SIZE];
+	b->color = rand() % COLOR_VEC_SIZE;
 	b->y = create_new_shape(b->shape, b->shape_size);
 	b->x = tetris->grid_size_x / 2;
 

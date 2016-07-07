@@ -27,7 +27,10 @@ HWND g_hwndStatusBar;
 MSG msg;
 TETRIS_T g_tetris;
 
+COLOR_T colors[G_COLORS_SIZE];
+
 static BOOL InitApp();
+static BOOL DeleteApp();
 static LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
 static void pauseGame(BOOL b);
@@ -50,6 +53,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
                 DispatchMessage(&msg);
         }
         
+        DeleteApp();
         return msg.wParam;
 }
 
@@ -104,9 +108,6 @@ BOOL InitApp() {
         HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
         SendMessage(g_hwndStatusBar, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         
-        t_create_game(&g_tetris, 10, 20, 4);                
-        ShowWindow(g_hwndMain, SW_SHOWNORMAL);
-        UpdateWindow(g_hwndMain);
         
         #ifdef TOUCH_SUPPORT
         
@@ -124,7 +125,51 @@ BOOL InitApp() {
         SetGestureConfig(g_hwndMain, 0, uiGcs, gc, sizeof(GESTURECONFIG));  
         
         #endif
+        
+        colors[0].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0xFF0000);
+        colors[0].hBrush = CreateSolidBrush(0xFF0000);
+        colors[1].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x00FF00);
+        colors[1].hBrush = CreateSolidBrush(0x00FF00);
+        colors[2].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0xFFFF00);
+        colors[2].hBrush = CreateSolidBrush(0xFFFF00);
+        colors[3].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x0000FF);
+        colors[3].hBrush = CreateSolidBrush(0x0000FF);
+        colors[4].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0xFF00FF);
+        colors[4].hBrush = CreateSolidBrush(0xFF00FF);
+        colors[5].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x00FFFF);
+        colors[5].hBrush = CreateSolidBrush(0x00FFFF);
+        colors[6].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0xFFFFFF);
+        colors[6].hBrush = CreateSolidBrush(0xFFFFFF);
+        colors[7].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x000000);
+        colors[7].hBrush = CreateSolidBrush(0x000000);
+        g_set_colors(colors);
+        
+        t_create_game(&g_tetris, 10, 20, 4);                
+        ShowWindow(g_hwndMain, SW_SHOWNORMAL);
+        UpdateWindow(g_hwndMain);
                                   
+        return TRUE;
+}
+
+
+BOOL DeleteApp() {
+        DeleteObject(colors[0].hPen);
+        DeleteObject(colors[0].hBrush);
+        DeleteObject(colors[1].hPen);
+        DeleteObject(colors[1].hBrush);
+        DeleteObject(colors[2].hPen);
+        DeleteObject(colors[2].hBrush);
+        DeleteObject(colors[3].hPen);
+        DeleteObject(colors[3].hBrush);
+        DeleteObject(colors[4].hPen);
+        DeleteObject(colors[4].hBrush);
+        DeleteObject(colors[5].hPen);
+        DeleteObject(colors[5].hBrush);
+        DeleteObject(colors[6].hPen);
+        DeleteObject(colors[6].hBrush);
+        DeleteObject(colors[7].hPen);
+        DeleteObject(colors[7].hBrush);
+        
         return TRUE;
 }
 
