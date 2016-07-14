@@ -10,21 +10,22 @@
 #include <windows.h>
 #include "shape.h"
 #include "tetris.h"
-#include "graph.h"
 
 
 #define COLOR_VEC_SIZE		7
 
+void (*g_put_mesh_pixel)(TETRIS_T *tetris, int x, int y, int color);
+void (*g_empty_mesh_pixel)(TETRIS_T *tetris, int x, int y);
                                 
-static int create_new_brick(HDC hdc, TETRIS_T *tetris);
+static int create_new_brick(TETRIS_T *tetris);
 static int is_free_space_for_brick(TETRIS_T *tetris);
 static int is_current(BRICK_T *b, int x, int y);
 static void clear_current(BRICK_T *b);
-static void draw_brick(HDC hdc, TETRIS_T *tetris);
-static int check_lines(HDC hdc, TETRIS_T *tetris);
+static void draw_brick(TETRIS_T *tetris);
+static int check_lines(TETRIS_T *tetris);
 static int is_line_full(TETRIS_T *tetris, int y);
-static void destroy_line(HDC hdc, TETRIS_T *tetris, int y);
-static int copy_upper_line(HDC hdc, TETRIS_T *tetris, int y);
+static void destroy_line(TETRIS_T *tetris, int y);
+static int copy_upper_line(TETRIS_T *tetris, int y);
 
 
 void 
@@ -67,18 +68,18 @@ t_delete_game(TETRIS_T *tetris)
 
 
 int 
-t_go(HDC hdc, TETRIS_T *tetris)
+t_go(TETRIS_T *tetris)
 {
         int result;
         
         if (!tetris->is_initialized) {
-                result = create_new_brick(hdc, tetris);
+                result = create_new_brick(tetris);
                 tetris->is_initialized = 1;
         } else {
-                result = t_move_down(hdc, tetris);
+                result = t_move_down(tetris);
                 if (result == -1) {
-                        tetris->score += check_lines(hdc, tetris);
-                        result = create_new_brick(hdc, tetris);
+                        tetris->score += check_lines(tetris);
+                        result = create_new_brick(tetris);
                 }
         }
                 
@@ -87,7 +88,7 @@ t_go(HDC hdc, TETRIS_T *tetris)
 
 
 int
-create_new_brick(HDC hdc, TETRIS_T *tetris)
+create_new_brick(TETRIS_T *tetris)
 {
         BRICK_T *b;
                
@@ -102,7 +103,7 @@ create_new_brick(HDC hdc, TETRIS_T *tetris)
 		return -1;
 	}
 
-	draw_brick(hdc, tetris);
+	draw_brick(tetris);
 	return 0;
 }
 
@@ -159,7 +160,7 @@ clear_current(BRICK_T *b)
 
 
 void
-draw_brick(HDC hdc, TETRIS_T *tetris)
+draw_brick(TETRIS_T *tetris)
 {
         BRICK_T *b;
 	int i;
@@ -167,12 +168,12 @@ draw_brick(HDC hdc, TETRIS_T *tetris)
         b = &tetris->brick;
 	for (i = 0; i < b->shape_size; i++) {
                 tetris->grid_map[b->current[i].x][b->current[i].y] = TETRIS_BK_COLOR; 
-                g_empty_mesh_pixel(hdc, tetris, b->current[i].x, b->current[i].y);
+                g_empty_mesh_pixel(tetris, b->current[i].x, b->current[i].y);
         }
 		
 	for (i = 0; i < b->shape_size; i++) {
                 tetris->grid_map[b->x + b->shape[i].x][b->y + b->shape[i].y] = b->color;
-                g_put_mesh_pixel(hdc, tetris, b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
+                g_put_mesh_pixel(tetris, b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
         }
 
 	for (i = 0; i < b->shape_size; i++) {
@@ -183,7 +184,7 @@ draw_brick(HDC hdc, TETRIS_T *tetris)
 
 
 int
-t_move_down(HDC hdc, TETRIS_T *tetris)
+t_move_down(TETRIS_T *tetris)
 {
         BRICK_T *b;
         
@@ -193,14 +194,14 @@ t_move_down(HDC hdc, TETRIS_T *tetris)
 		b->y--;
 		return -1;
 	}
-	draw_brick(hdc, tetris);
+	draw_brick(tetris);
 
 	return 0;
 }
 
 
 int
-t_move_left(HDC hdc, TETRIS_T *tetris)
+t_move_left(TETRIS_T *tetris)
 {
         BRICK_T *b;
         
@@ -210,14 +211,14 @@ t_move_left(HDC hdc, TETRIS_T *tetris)
 		b->x++;
 		return -1;
 	}
-	draw_brick(hdc, tetris);
+	draw_brick(tetris);
 
 	return 0;
 }
 
 
 int
-t_move_right(HDC hdc, TETRIS_T *tetris)
+t_move_right(TETRIS_T *tetris)
 {
         BRICK_T *b;
         
@@ -227,14 +228,14 @@ t_move_right(HDC hdc, TETRIS_T *tetris)
 		b->x--;
 		return -1;
 	}
-	draw_brick(hdc, tetris);
+	draw_brick(tetris);
 
 	return 0;
 }
 
 
 int
-t_rotate(HDC hdc, TETRIS_T *tetris, int direction)
+t_rotate(TETRIS_T *tetris, int direction)
 {
         BRICK_T *b;
         
@@ -244,21 +245,21 @@ t_rotate(HDC hdc, TETRIS_T *tetris, int direction)
 		rotate_shape(b->shape, b->shape_size, -direction);
 		return -1;
 	}
-	draw_brick(hdc, tetris);
+	draw_brick(tetris);
 
 	return 0;
 }
 
 
 int
-check_lines(HDC hdc, TETRIS_T *tetris)
+check_lines(TETRIS_T *tetris)
 {
 	int i, lines;
 
 	lines = 0;
 	for (i = tetris->grid_size_y - 1; i >= 0; i--) {
 		while (is_line_full(tetris, i)) {
-			destroy_line(hdc, tetris, i);
+			destroy_line(tetris, i);
 			lines++;
 		}
 	}
@@ -285,19 +286,19 @@ is_line_full(TETRIS_T *tetris, int y)
 
 
 void
-destroy_line(HDC hdc, TETRIS_T *tetris, int y)
+destroy_line(TETRIS_T *tetris, int y)
 {
 	int empty;
 
-	empty = copy_upper_line(hdc, tetris, y);
+	empty = copy_upper_line(tetris, y);
 	if (!empty) {
-		destroy_line(hdc, tetris, y - 1);
+		destroy_line(tetris, y - 1);
 	}
 }
 
 
 int
-copy_upper_line(HDC hdc, TETRIS_T *tetris, int y)
+copy_upper_line(TETRIS_T *tetris, int y)
 {
 	int x, color, empty;
 
@@ -310,7 +311,7 @@ copy_upper_line(HDC hdc, TETRIS_T *tetris, int y)
 		}
 
                 tetris->grid_map[x][y] = color;
-                g_put_mesh_pixel(hdc, tetris, x, y, color);
+                g_put_mesh_pixel(tetris, x, y, color);
                 
 		if (color != TETRIS_BK_COLOR) {
 			empty = 0;
@@ -318,4 +319,14 @@ copy_upper_line(HDC hdc, TETRIS_T *tetris, int y)
 	}
 
 	return empty;
+}
+
+
+void t_set_f_put_mesh_pixel(void (*put_mesh_pixel)(TETRIS_T *tetris, int x, int y, int color)) {
+        g_put_mesh_pixel = put_mesh_pixel;
+}
+
+
+void t_set_f_empty_mesh_pixel(void (*empty_mesh_pixel)(TETRIS_T *tetris, int x, int y)) {
+        g_empty_mesh_pixel = empty_mesh_pixel;
 }
