@@ -11,10 +11,10 @@
 #include <stdio.h>
 #include <math.h>
 #include "tetris.h"
-#include "graph.h"
 #include "resource.h"
 
 //#define TOUCH_SUPPORT
+
 
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
@@ -26,8 +26,14 @@ HWND g_hwndMain;
 HWND g_hwndStatusBar;
 MSG msg;
 TETRIS_T g_tetris;
+HDC g_hdc;        /* Only for g_put_mesh_pixel */
 
-COLOR_T colors[G_COLORS_SIZE];
+typedef struct {
+        HPEN hPen;
+        HBRUSH hBrush;
+} COLOR_T;
+
+COLOR_T colors[T_COLORS_SIZE];
 
 static BOOL InitApp();
 static BOOL DeleteApp();
@@ -39,6 +45,10 @@ static void onPaint();
 #ifdef TOUCH_SUPPORT
 static BOOL on_gesture(WPARAM wParam, LPARAM lParam);
 #endif
+
+static void g_draw_mesh(TETRIS_T *tetris, RECT client);
+static void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color);
+static void g_empty_mesh_pixel(TETRIS_T *tetris, int x, int y);
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShow) {
@@ -142,9 +152,11 @@ BOOL InitApp() {
         colors[6].hBrush = CreateSolidBrush(0xFFFFFF);
         colors[7].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x000000);
         colors[7].hBrush = CreateSolidBrush(0x000000);
-        g_set_colors(colors);
         
-        t_create_game(&g_tetris, 10, 20, 4);                
+        t_set_f_put_mesh_pixel(&g_put_mesh_pixel);
+        t_set_f_empty_mesh_pixel(&g_empty_mesh_pixel);
+        t_create_game(&g_tetris, 10, 20, 4);
+                        
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
         UpdateWindow(g_hwndMain);
                                   
@@ -175,30 +187,29 @@ BOOL DeleteApp() {
 
 
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-        HDC hdc;
         TCHAR chText[100];
         int ret;
         
         switch (uMsg) {
                 case WM_KEYDOWN:
-                        hdc = GetDC(g_hwndMain);
+                        g_hdc = GetDC(g_hwndMain);
                         switch (wParam) {        
                                 case VK_UP:
                                         pauseGame(FALSE);
-                                        t_rotate(hdc, &g_tetris, 1);
+                                        t_rotate(&g_tetris, 1);
                                         break;
                                 case VK_DOWN:
                                         pauseGame(FALSE);
-                                        while(t_move_down(hdc, &g_tetris) != -1)
+                                        while(t_move_down(&g_tetris) != -1)
                                                 ;
                                         break;
                                 case VK_LEFT:
                                         pauseGame(FALSE);
-                                        t_move_left(hdc, &g_tetris);
+                                        t_move_left(&g_tetris);
                                         break;
                                 case VK_RIGHT:
                                         pauseGame(FALSE);
-                                        t_move_right(hdc, &g_tetris);
+                                        t_move_right(&g_tetris);
                                         break;
                                 case 'p':
                                         pauseGame(!g_tetris.is_paused);
@@ -207,7 +218,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                         pauseGame(!g_tetris.is_paused);
                                         break;                        
                         }
-                        ReleaseDC(g_hwndMain, hdc);
+                        ReleaseDC(g_hwndMain, g_hdc);
                         break;
                 case WM_COMMAND:
                         switch (LOWORD(wParam)) {
@@ -233,9 +244,9 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         }
                         break;
                 case WM_TIMER:
-                        hdc = GetDC(g_hwndMain);
-                        ret = t_go(hdc, &g_tetris);
-                        ReleaseDC(g_hwndMain, hdc);
+                        g_hdc = GetDC(g_hwndMain);
+                        ret = t_go(&g_tetris);
+                        ReleaseDC(g_hwndMain, g_hdc);
                         update_score();
                         
                         if (ret == -1) {
@@ -309,13 +320,12 @@ void update_score() {
 
 void onPaint() {
         PAINTSTRUCT ps;
-        HDC hdc;
         RECT rect;
         
-        hdc = BeginPaint(g_hwndMain, &ps);
+        g_hdc = BeginPaint(g_hwndMain, &ps);
         GetClientRect(g_hwndMain, &rect);
         rect.bottom = rect.bottom - 20;
-        g_draw_mesh(hdc, &g_tetris, rect); 
+        g_draw_mesh(&g_tetris, rect); 
         EndPaint(g_hwndMain, &ps);
 }
 
@@ -331,7 +341,7 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
         BOOL bHandled = FALSE;
         /* TCHAR chText[100]; */
         
-        hdc = GetDC(g_hwndMain);
+        g_hdc = GetDC(g_hwndMain);
         if (bResult) {
                 switch (gi.dwID){
                         case GID_PAN:
@@ -347,23 +357,23 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
                                                                 m_first.x += g_tetris.element_size;
                                                                 m_first.y = m_last.y; 
                                                                 pauseGame(FALSE);
-                                                                t_move_right(hdc, &g_tetris);
+                                                                t_move_right(&g_tetris);
                                                         } else {
                                                                 m_first.x -= g_tetris.element_size;
                                                                 m_first.y = m_last.y;
                                                                 pauseGame(FALSE);
-                                                                t_move_left(hdc, &g_tetris);
+                                                                t_move_left(&g_tetris);
                                                         }
                                                 }
                                         } else {
                                                 if (gi.dwFlags & GF_END) { 
                                                         if ((m_last.y - m_first.y) > 0) {
                                                                 pauseGame(FALSE);
-                                                                while(t_move_down(hdc, &g_tetris) != -1)
+                                                                while(t_move_down(&g_tetris) != -1)
                                                                 ;
                                                         } else {
                                                                 pauseGame(FALSE);
-                                                                t_rotate(hdc, &g_tetris, 1);
+                                                                t_rotate(&g_tetris, 1);
                                                         }
                                                 }
                                         }     
@@ -382,7 +392,7 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
                                         */
                                         int i;
                                         for (i = 0; i < abs(m_last.x / 90); i++)
-                                                t_rotate(hdc, &g_tetris, (m_last.x > 1) ? 1 : -1);
+                                                t_rotate(&g_tetris, (m_last.x > 1) ? 1 : -1);
                                 }
                                 bHandled = TRUE;
                                 break;
@@ -390,9 +400,41 @@ BOOL on_gesture(WPARAM wParam, LPARAM lParam) {
                 CloseGestureInfoHandle((HGESTUREINFO)lParam);          
         }
         
-        ReleaseDC(g_hwndMain, hdc);
+        ReleaseDC(g_hwndMain, g_hdc);
         return bHandled; 
 }
 #endif
 
 
+void g_draw_mesh(TETRIS_T *tetris, RECT client) {
+        int i1, i2;
+        int margin;
+        
+        margin = 15;
+        i1 = (client.right - client.left - margin) / tetris->grid_size_x;
+        i2 = (client.bottom - client.top - margin) / tetris->grid_size_y;
+        tetris->element_size = (i1 < i2) ? i1 : i2;
+        tetris->origin_x = ((client.right - client.left) - (tetris->grid_size_x * tetris->element_size)) / 2;
+        tetris->origin_y = ((client.bottom - client.top) - (tetris->grid_size_y * tetris->element_size)) / 2;
+        
+        for (i1 = 0; i1 < tetris->grid_size_x; i1++) {
+                for (i2 = 0; i2 < tetris->grid_size_y; i2++)
+                        g_put_mesh_pixel(tetris, i1, i2, tetris->grid_map[i1][i2]);
+        }
+}
+
+
+void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+        SelectObject(g_hdc, colors[color].hPen);
+        SelectObject(g_hdc, colors[color].hBrush);
+        Rectangle(g_hdc, 
+                tetris->origin_x + x * tetris->element_size, 
+                tetris->origin_y + y * tetris->element_size, 
+                tetris->origin_x + x * tetris->element_size + tetris->element_size, 
+                tetris->origin_y + y * tetris->element_size + tetris->element_size);
+}
+
+
+void g_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
+        g_put_mesh_pixel(tetris, x, y, TETRIS_BK_COLOR);
+}

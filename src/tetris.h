@@ -34,19 +34,21 @@ typedef struct {
         int is_paused;       
 } TETRIS_T;
 
-                               
+
+#define T_COLORS_SIZE           8                               
 #define TETRIS_BK_COLOR         7
 
                                 
 extern void t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
 extern void t_delete_game(TETRIS_T *tetris);
-extern int t_go(HDC hdc, TETRIS_T *tetris);
-extern int t_move_down(HDC hdc, TETRIS_T *tetris);
-extern int t_move_left(HDC hdc, TETRIS_T *tetris);
-extern int t_move_right(HDC hdc, TETRIS_T *tetris);
+extern int t_go(TETRIS_T *tetris);
+extern int t_move_down(TETRIS_T *tetris);
+extern int t_move_left(TETRIS_T *tetris);
+extern int t_move_right(TETRIS_T *tetris);
 /* direction 1=anticlockwise -1=clockwise */
-extern int t_rotate(HDC hdc, TETRIS_T *tetris, int direction);
+extern int t_rotate(TETRIS_T *tetris, int direction);
+
+extern void t_set_f_put_mesh_pixel(void (*put_mesh_pixel)(TETRIS_T *tetris, int x, int y, int color));
+extern void t_set_f_empty_mesh_pixel(void (*empty_mesh_pixel)(TETRIS_T *tetris, int x, int y));
 
 #endif
-
-
