@@ -1,0 +1,38 @@
+/*
+*       resource.rc
+*       
+*       This file is part of Tetris game.
+*       https://bitbucket.org/berk76/tetris
+*       
+*       Tetris is free software; you can redistribute it and/or modify
+*       it under the terms of the GNU General Public License as published by
+*       the Free Software Foundation; either version 3 of the License, or
+*       (at your option) any later version. <http://www.gnu.org/licenses/>
+*       
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.3.2015        
+*/
+
+
+#include "resource.h"
+
+IDR_MAIN ICON "tetris.ico"
+
+IDR_MAINMENU MENU
+BEGIN
+    POPUP "&Game"
+    BEGIN
+        MENUITEM "Tetris", ID_G_TETRIS
+        MENUITEM "Pentis", ID_G_PENTIS
+        MENUITEM "Sextis", ID_G_SEXTIS
+        MENUITEM SEPARATOR
+        MENUITEM "&Pause", ID_PAUSE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit", ID_END
+    END
+
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...", ID_ABOUT
+    END
+END
+
