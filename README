@@ -1,49 +1,28 @@
-berk's Tetris
+Tetris README
 
-Home location:	https://bitbucket.org/berk76/tetris
-Author:		Jaroslav Beran
-Contact:	jaroslav.beran@gmail.com
-License:	GNU/GPL3
-====================================================
+This file is part of Tetris game.
+https://bitbucket.org/berk76/tetris
 
-1 Introduction
---------------
-berk's Tetris is simple tetris game written in Turbo C 2.01. Aim of this project
-is to build a skeleton of Tetris game for old computers in c language.
+Tetris is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version. <http://www.gnu.org/licenses/>
 
-Thanks to great project Z88DK (http://www.z88dk.org/forum/index.php) game was
-ported also to ZX Spectrum.
+Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 28.6.2014 
+=====================================================================
+      
+Compilation:
 
-Feel free to contact author, contribute or even to make your own fork.
+* Windows (WIN32):
+  a) download and install MinGw
+  b) run 
+     make -f Makefile
 
-2 How to build
---------------
-This paragraph describes how to build tetris from sources:
-
-2.1 Turbo C
------------
-	a) download and install Turbo C:
-	   http://edn.embarcadero.com/article/20841
-	b) download and extract Tetris sources into some directory
-	c) copy *.BGI drivers from Turbo C directory to tetris sources directory
-	d) run Turbo C
-	e) go to Project->Project name and choose TETRIS.PRJ
-	f) go to Compile->Make EXE file
-	g) also you can run it directly from IDE by Run->Run
-
-2.2 Z88DK
----------
-	a) download and install latest version of Z88DK for your platform
-	   http://nightly.z88dk.org/
-	b) download and extract Tetris sources into some directory
-	c) change into extracted directory and run make
-	d) find file tetris.tap and run it in you ZX Spectrum box
-
-3 To do
--------
-	a) double buffering in order to disable blinking effects
-	b) to improve graphics
-	c) sound playing on background
-
-
-
+* Turbo C 2.01
+  a) download and install Turbo C:
+     http://edn.embarcadero.com/article/20841
+  b) download and extract Tetris sources into tetris directory
+  c) copy *.BGI drivers from Turbo C directory to tetris sources directory
+  d) run Turbo C
+  e) go to Project->Project name and choose TETRIS.PRJ
+  f) go to Compile->Make EXE file
