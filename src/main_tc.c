@@ -20,6 +20,7 @@
 #include <time.h>
 #include "gui_tc.h"
 #include "tetris.h"
+#include "main.h"
 
 
 static int graph_driver;
@@ -48,9 +49,6 @@ static int g_printf(int *xloc, int *yloc, char *fmt, ...);
 static void process_user_input();
 static unsigned get_second_delay();
 
-static void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color);
-static void g_empty_mesh_pixel(TETRIS_T *tetris, int x, int y);
-
 
 int main() {
 	int c, seg, wide, ret;
@@ -78,9 +76,6 @@ int main() {
                 
 		g_draw_mesh(15);
 		gui_message("Press any key to start ...");
-                
-                t_set_f_put_mesh_pixel(&g_put_mesh_pixel);
-                t_set_f_empty_mesh_pixel(&g_empty_mesh_pixel);
                 
                 do {
                         int i;
@@ -245,7 +240,7 @@ unsigned get_second_delay() {
 }
 
 
-void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 	setcolor(color_vec[MESH_COLOR]);
 	gui_fill_rect(
                 tetris->origin_x + x * tetris->element_size, 
@@ -256,7 +251,7 @@ void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 }
 
 
-void g_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
+void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         setcolor(color_vec[MESH_BK_COLOR]);
 	gui_fill_rect(
                 tetris->origin_x + x * tetris->element_size, 

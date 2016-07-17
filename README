@@ -15,10 +15,11 @@ Compilation:
 
 * Windows (WIN32):
   a) download and install MinGw
+     http://www.mingw.org/
   b) run 
-     make -f Makefile
+     make -f Makefile.gcc
 
-* Turbo C 2.01
+* Turbo C 2.01 (DOS)
   a) download and install Turbo C:
      http://edn.embarcadero.com/article/20841
   b) download and extract Tetris sources into tetris directory
@@ -26,3 +27,9 @@ Compilation:
   d) run Turbo C
   e) go to Project->Project name and choose TETRIS.PRJ
   f) go to Compile->Make EXE file
+
+* ZX Spectrum:
+  a) download and install Z88DK
+     http://www.z88dk.org
+  b) run 
+     make -f Makefile.zx

@@ -1,0 +1,28 @@
+#       Makefile.zx
+#       
+#       This file is part of Tetris game.
+#       https://bitbucket.org/berk76/tetris
+#       
+#       Tetris is free software; you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation; either version 3 of the License, or
+#       (at your option) any later version. <http://www.gnu.org/licenses/>
+#       
+#       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 28.6.2014
+
+
+CFLAGS = +zx -c -o $@
+CC = zcc
+objects = src/main_zx.o src/tetris.o src/shape.o
+
+tetris: $(objects)
+	$(CC) +zx -lndos -lmalloc -lx11 -o$@ -create-app $(objects)
+
+src/main_zx.o: src/main_zx.c src/main.h src/tetris.h
+
+src/tetris.o: src/tetris.c src/tetris.h src/main.h src/shape.h
+
+src/shape.o: src/shape.c src/shape.h
+
+clean:
+	rm -f $(objects) *.bak tetris tetris.reloc *.exe *.tap zcc_opt.def
