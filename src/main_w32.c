@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "tetris.h"
+#include "main.h"
 #include "resource.h"
 
 //#define TOUCH_SUPPORT
@@ -34,7 +35,7 @@ HWND g_hwndMain;
 HWND g_hwndStatusBar;
 MSG msg;
 TETRIS_T g_tetris;
-HDC g_hdc;        /* Only for g_put_mesh_pixel */
+HDC g_hdc;        /* Only for m_put_mesh_pixel */
 
 typedef struct {
         HPEN hPen;
@@ -53,10 +54,8 @@ static void onPaint();
 #ifdef TOUCH_SUPPORT
 static BOOL on_gesture(WPARAM wParam, LPARAM lParam);
 #endif
-
 static void g_draw_mesh(TETRIS_T *tetris, RECT client);
-static void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color);
-static void g_empty_mesh_pixel(TETRIS_T *tetris, int x, int y);
+
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShow) {
@@ -96,16 +95,16 @@ BOOL InitApp() {
                 return FALSE;
         }
         
-        g_hwndMain = CreateWindowEx(0, // rozšíøený styl okna    
-                _MainClassName, // jméno tøídy
-                _AppName, // text okna
-                WS_OVERLAPPEDWINDOW | WS_VISIBLE, // styl okna
-                CW_USEDEFAULT, CW_USEDEFAULT, // souøadnice na obraziovce
-                300, 600, // rozmìry - šíøka a výška
-                (HWND)NULL, // okna pøedka
-                LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_MAINMENU)), // handle hlavní nabídky
-                g_hInstance, // handle instance
-                NULL); // další "uživatelská" data
+        g_hwndMain = CreateWindowEx(0,     
+                _MainClassName, 
+                _AppName, 
+                WS_OVERLAPPEDWINDOW | WS_VISIBLE, 
+                CW_USEDEFAULT, CW_USEDEFAULT, 
+                300, 600, 
+                (HWND)NULL, 
+                LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_MAINMENU)), 
+                g_hInstance, 
+                NULL); 
                 
         if (g_hwndMain == NULL)
                 return FALSE;
@@ -161,8 +160,6 @@ BOOL InitApp() {
         colors[7].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x000000);
         colors[7].hBrush = CreateSolidBrush(0x000000);
         
-        t_set_f_put_mesh_pixel(&g_put_mesh_pixel);
-        t_set_f_empty_mesh_pixel(&g_empty_mesh_pixel);
         t_create_game(&g_tetris, 10, 20, 4);
                         
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
@@ -428,12 +425,12 @@ void g_draw_mesh(TETRIS_T *tetris, RECT client) {
         
         for (i1 = 0; i1 < tetris->grid_size_x; i1++) {
                 for (i2 = 0; i2 < tetris->grid_size_y; i2++)
-                        g_put_mesh_pixel(tetris, i1, i2, tetris->grid_map[i1][i2]);
+                        m_put_mesh_pixel(tetris, i1, i2, tetris->grid_map[i1][i2]);
         }
 }
 
 
-void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         SelectObject(g_hdc, colors[color].hPen);
         SelectObject(g_hdc, colors[color].hBrush);
         Rectangle(g_hdc, 
@@ -444,6 +441,6 @@ void g_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 }
 
 
-void g_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
-        g_put_mesh_pixel(tetris, x, y, TETRIS_BK_COLOR);
+void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
+        m_put_mesh_pixel(tetris, x, y, TETRIS_BK_COLOR);
 }

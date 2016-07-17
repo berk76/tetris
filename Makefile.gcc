@@ -1,4 +1,4 @@
-#       Makefile
+#       Makefile.gcc
 #       
 #       This file is part of Tetris game.
 #       https://bitbucket.org/berk76/tetris
@@ -21,9 +21,9 @@ Tetris: src/main_w32.o src/tetris.o src/shape.o src/resource.res
 	$(CC) -Wall -o $@ src/main_w32.o src/tetris.o src/shape.o src/resource.res -lgdi32 -lcomctl32 -mwindows
 
 
-src/main_w32.o: src/main_w32.c src/tetris.h src/resource.h
+src/main_w32.o: src/main_w32.c src/main.h src/tetris.h src/resource.h
 
-src/tetris.o: src/tetris.h src/shape.h
+src/tetris.o: src/tetris.h src/main.h src/shape.h
 
 src/shape.o: src/shape.h
 

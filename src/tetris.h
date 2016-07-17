@@ -18,8 +18,6 @@
 
 #include "shape.h"
 
-#define TETRIS_VERSION "0.2.0"
-
 typedef struct {
 	int x;
 	int y;
@@ -56,8 +54,5 @@ extern int t_move_left(TETRIS_T *tetris);
 extern int t_move_right(TETRIS_T *tetris);
 /* direction 1=anticlockwise -1=clockwise */
 extern int t_rotate(TETRIS_T *tetris, int direction);
-
-extern void t_set_f_put_mesh_pixel(void (*put_mesh_pixel)(TETRIS_T *tetris, int x, int y, int color));
-extern void t_set_f_empty_mesh_pixel(void (*empty_mesh_pixel)(TETRIS_T *tetris, int x, int y));
 
 #endif

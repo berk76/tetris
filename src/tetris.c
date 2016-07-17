@@ -17,12 +17,11 @@
 #include <time.h>
 #include "shape.h"
 #include "tetris.h"
+#include "main.h"
 
 
 #define COLOR_VEC_SIZE		7
 
-void (*g_put_mesh_pixel)(TETRIS_T *tetris, int x, int y, int color);
-void (*g_empty_mesh_pixel)(TETRIS_T *tetris, int x, int y);
                                 
 static int create_new_brick(TETRIS_T *tetris);
 static int is_free_space_for_brick(TETRIS_T *tetris);
@@ -159,12 +158,12 @@ void draw_brick(TETRIS_T *tetris) {
         b = &tetris->brick;
 	for (i = 0; i < b->shape_size; i++) {
                 tetris->grid_map[b->current[i].x][b->current[i].y] = TETRIS_BK_COLOR; 
-                g_empty_mesh_pixel(tetris, b->current[i].x, b->current[i].y);
+                m_empty_mesh_pixel(tetris, b->current[i].x, b->current[i].y);
         }
 		
 	for (i = 0; i < b->shape_size; i++) {
                 tetris->grid_map[b->x + b->shape[i].x][b->y + b->shape[i].y] = b->color;
-                g_put_mesh_pixel(tetris, b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
+                m_put_mesh_pixel(tetris, b->x + b->shape[i].x, b->y + b->shape[i].y, b->color);
         }
 
 	for (i = 0; i < b->shape_size; i++) {
@@ -289,21 +288,11 @@ int copy_upper_line(TETRIS_T *tetris, int y) {
                 
 		if (color != TETRIS_BK_COLOR) {
 			empty = 0;
-                        g_put_mesh_pixel(tetris, x, y, color);
+                        m_put_mesh_pixel(tetris, x, y, color);
 		} else {
-                        g_empty_mesh_pixel(tetris, x, y);
+                        m_empty_mesh_pixel(tetris, x, y);
                 }
 	}
 
 	return empty;
-}
-
-
-void  t_set_f_put_mesh_pixel(void (*put_mesh_pixel)(TETRIS_T *tetris, int x, int y, int color)) {
-        g_put_mesh_pixel = put_mesh_pixel;
-}
-
-
-void t_set_f_empty_mesh_pixel(void (*empty_mesh_pixel)(TETRIS_T *tetris, int x, int y)) {
-        g_empty_mesh_pixel = empty_mesh_pixel;
 }
