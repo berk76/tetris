@@ -14,7 +14,6 @@
 
 
 #include <stdlib.h>
-#include <time.h>
 #include "shape.h"
 #include "tetris.h"
 #include "main.h"
@@ -90,8 +89,7 @@ int t_go(TETRIS_T *tetris) {
 int create_new_brick(TETRIS_T *tetris) {
         BRICK_T *b;
                
-        b = &tetris->brick;
-	srand(time(NULL) % 37); 
+        b = &tetris->brick; 
 	b->color = rand() % COLOR_VEC_SIZE;
 	b->y = create_new_shape(b->shape, b->shape_size);
 	b->x = tetris->grid_size_x / 2;
