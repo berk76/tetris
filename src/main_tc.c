@@ -55,6 +55,7 @@ int main() {
 
         _delay = get_second_delay() / 12;
         init_graph();
+        srand(time(NULL) % 37);
 
 	do {
 		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");

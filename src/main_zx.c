@@ -41,6 +41,9 @@ static int color_vec[] = {LIGHTBLUE,
                           WHITE,
                           BLACK,
                           BLUE};
+                          
+char brick[] = {8,8,0x7e,0x81,0x81,0x81,0x81,0x81,0x81,0x7e};
+char blank[] = {8,8,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
 
 static void g_draw_mesh(int grid_size);
 static void g_print_controls();
@@ -61,6 +64,7 @@ int main() {
         sbrk(30000,2000);        /* add 2000 bytes from addresses 30000-31999 inclusive to the heap */
         sbrk(65000,536);         /* add 536 bytes from addresses 65000-65535 inclusive to the heap  */
         initgraph(0,0,0);
+        srand(time(NULL));
                 
         _delay = 75;
 
@@ -203,53 +207,6 @@ void process_user_input() {
 	}
 }
 
-/*
-void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
-	int i, j;
-
-	setcolor(color_vec[color]);
-
-	x = tetris->origin_x + x * tetris->element_size;
-	y = tetris->origin_y + y * tetris->element_size;
-
-	for (i = x + 1; i < x + tetris->element_size - 1; i++) 
-		plot(i, y);
-	
-	for (j = y + 1; j < y + tetris->element_size - 1; j++) {
-		plot(x, j);
-		plot(x + tetris->element_size - 1, j);
-	}
-
-	for (i = x + 1; i < x + tetris->element_size - 1; i++) 
-		plot(i, y + tetris->element_size - 1);
-
-}
-
-
-void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
-	int i, j;
-
-	setcolor(color_vec[MESH_BK_COLOR]);
-
-	x = tetris->origin_x + x * tetris->element_size;
-	y = tetris->origin_y + y * tetris->element_size;
-
-	for (i = x + 1; i < x + tetris->element_size - 1; i++)
-		unplot(i, y);
-
-	for (j = y + 1; j < y + tetris->element_size - 1; j++) {
-		unplot(x, j);
-		unplot(x + tetris->element_size - 1, j);
-	}
-
-	for (i = x + 1; i < x + tetris->element_size - 1; i++)
-		unplot(i, y + tetris->element_size - 1);
-}
-*/
-
-// Black Ghost
-char brick[] = {8,8,0x7e,0x81,0x81,0x81,0x81,0x81,0x81,0x7e};
-char blank[] = {8,8,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
 
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size;

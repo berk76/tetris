@@ -18,7 +18,7 @@
 
 #include "tetris.h"
 
-#define TETRIS_VERSION "0.2.1"
+#define TETRIS_VERSION "0.2.2"
 
 
 extern void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color);

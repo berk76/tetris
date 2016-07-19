@@ -18,6 +18,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include "tetris.h"
 #include "main.h"
 #include "resource.h"
@@ -160,6 +161,7 @@ BOOL InitApp() {
         colors[7].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x000000);
         colors[7].hBrush = CreateSolidBrush(0x000000);
         
+        srand(time(NULL));
         t_create_game(&g_tetris, 10, 20, 4);
                         
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
