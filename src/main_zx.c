@@ -42,8 +42,6 @@ static int color_vec[] = {LIGHTBLUE,
                           BLACK,
                           BLUE};
 
-static int init_graph(void);
-static void close_graph(void);
 static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
@@ -62,9 +60,9 @@ int main() {
         mallinit();              /* heap cleared to empty */
         sbrk(30000,2000);        /* add 2000 bytes from addresses 30000-31999 inclusive to the heap */
         sbrk(65000,536);         /* add 536 bytes from addresses 65000-65535 inclusive to the heap  */
-        
+        initgraph(0,0,0);
+                
         _delay = 75;
-        init_graph();
 
 	do {
 		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
@@ -101,51 +99,37 @@ int main() {
 		gui_message("GAME OVER");
 		c = gui_option("(N)ew Game or (Q)uit", "nNqQ");
 	} while ((c == 'n') || (c == 'N'));
+        
+        closegraph();
 
-	close_graph();
 	return 0;
-}
-
-
-int init_graph(void) {
-        initgraph(0,0,0);
-	return 0;
-}
-
-
-void close_graph(void) {
-	closegraph();
 }
 
 
 void g_draw_mesh(int grid_size) {
-        cleardevice();
+        clg();
 
 	tetris.element_size = grid_size;
         tetris.origin_x = getmaxx()/2 - tetris.grid_size_x/2 * grid_size + 40;
         tetris.origin_y = getmaxy()/2 - tetris.grid_size_y/2 * grid_size;
 
-	setcolor(WHITE);
         setusercharsize(2,1,1,1);
 	outtextxy(0, tetris.origin_y, "Tetris");
 	setusercharsize(1,1,1,1);
         outtextxy(37, tetris.origin_y + 4, TETRIS_VERSION);
-
-	setcolor(color_vec[MESH_COLOR]);
-	setbkcolor(color_vec[MESH_BK_COLOR]);
-
+        
 	rectangle(tetris.origin_x - 1,
 		tetris.origin_y - 1,
 		tetris.origin_x + tetris.element_size * tetris.grid_size_x + 1,
 		tetris.origin_y + tetris.element_size * tetris.grid_size_y + 1);
-
+        
 	g_print_controls();
-	g_update_score(0);
+	g_update_score();
 }
 
 
 void g_print_controls() {
-	int x, y;
+        int x, y;
 
 	x = 1;
 	y = tetris.origin_y + 5 * 8;
@@ -171,8 +155,14 @@ void g_print_controls() {
 
 
 void g_update_score() {
+        static int last_score = -1;
 	int x, y;
 	char str[100];
+        
+        if (last_score == tetris.score)
+                return;
+                
+        last_score = tetris.score;
 
 	x = 1;
 	y = tetris.origin_y + 3 * 8;
@@ -213,7 +203,7 @@ void process_user_input() {
 	}
 }
 
-
+/*
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 	int i, j;
 
@@ -255,76 +245,69 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 	for (i = x + 1; i < x + tetris->element_size - 1; i++)
 		unplot(i, y + tetris->element_size - 1);
 }
+*/
 
+// Black Ghost
+char brick[] = {8,8,0x7e,0x81,0x81,0x81,0x81,0x81,0x81,0x7e};
+char blank[] = {8,8,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+
+void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+        x = tetris->origin_x + x * tetris->element_size;
+	y = tetris->origin_y + y * tetris->element_size;
+        putsprite(spr_or, x, y, brick);
+}
+
+
+void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
+        x = tetris->origin_x + x * tetris->element_size;
+	y = tetris->origin_y + y * tetris->element_size;
+        putsprite(spr_and, x, y, blank);
+}
 
 /*** GUI ***/
 
-typedef struct {
-	int x;
-	int y;
-	int width;
-	int height;
-	void *buff;
-} GUI_CNTL;
-
-
-static GUI_CNTL *gui_draw_message(char *msg);
-static void gui_delete_message(GUI_CNTL *cntl);
+static void gui_draw_message(char *msg);
+static void gui_delete_message();
 static int gui_wait_for_key(char *s);
 static int gui_wait_for_any_key();
 
 
 void gui_message(char *msg) {
-	GUI_CNTL *cntl;
-
-	cntl = gui_draw_message(msg);
+	gui_draw_message(msg);
 	gui_wait_for_any_key();
-	gui_delete_message(cntl);
+	gui_delete_message();
 }
 
 
 int gui_confirm(char *msg) {
-	GUI_CNTL *cntl;
 	int c;
 
-	cntl = gui_draw_message(msg);
+	gui_draw_message(msg);
 	c = gui_wait_for_key("yYnN");
-	gui_delete_message(cntl);
+	gui_delete_message();
 
 	return ((c == 'y') || (c == 'Y')) ? G_TRUE : G_FALSE;
 }
 
 
 int gui_option(char *msg, char *options) {
-	GUI_CNTL *cntl;
 	int c;
 
-	cntl = gui_draw_message(msg);
+	gui_draw_message(msg);
 	c = gui_wait_for_key(options);
-	gui_delete_message(cntl);
+	gui_delete_message();
 
 	return c;
 }
 
 
-GUI_CNTL *gui_draw_message(char *msg) {
-	GUI_CNTL *result;
-	result = (GUI_CNTL *) malloc(sizeof(GUI_CNTL));
-
-	result->x = 1;
-	result->y = 180;
-	result->width = 200;
-	result->height = 10;
-	
-	outtextxy(result->x, result->y, msg);
-
-	return result;
+void gui_draw_message(char *msg) {	
+        outtextxy(1, 180, msg);
 }
 
 
-void gui_delete_message(GUI_CNTL *cntl) {
-	gui_unfill_rect(cntl->x, cntl->y, cntl->width, cntl->height);
-	free((void *) cntl);
+void gui_delete_message() {
+	gui_unfill_rect(1, 180, 200, 10);
 }
 
 
@@ -358,6 +341,7 @@ void gui_fill_rect(int x, int y, int width, int height) {
 		for (j = y; j < y + height; j++)
 			plot(i, j);
 }
+
 
 void gui_unfill_rect(int x, int y, int width, int height) {
 	int i, j;
