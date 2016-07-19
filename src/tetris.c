@@ -286,6 +286,7 @@ int copy_upper_line(TETRIS_T *tetris, int y) {
                 
 		if (color != TETRIS_BK_COLOR) {
 			empty = 0;
+                        m_empty_mesh_pixel(tetris, x, y);
                         m_put_mesh_pixel(tetris, x, y, color);
 		} else {
                         m_empty_mesh_pixel(tetris, x, y);
