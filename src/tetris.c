@@ -13,6 +13,7 @@
 */
 
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "shape.h"
 #include "tetris.h"
@@ -21,6 +22,7 @@
 
 #define COLOR_VEC_SIZE		7
 
+static char mem_err[] = "No memory space left";
                                 
 static int create_new_brick(TETRIS_T *tetris);
 static int is_free_space_for_brick(TETRIS_T *tetris);
@@ -41,8 +43,16 @@ void t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size) {
         tetris->origin_x = 0;
         tetris->origin_y = 0;
         tetris->grid_map = (int **) malloc(sizeof(int *) * x_size);
+        if (tetris->grid_map == NULL) {
+                puts(mem_err);
+                exit(-1);
+        }
         for (i = 0; i < x_size; i++) {
                 tetris->grid_map[i] = (int *) malloc(sizeof(int) * y_size);
+                if (tetris->grid_map[i] == NULL) {
+                        puts(mem_err);
+                        exit(-1);
+                }
                 for (ii = 0; ii < y_size; ii++) {
                         tetris->grid_map[i][ii] = TETRIS_BK_COLOR;
                 }
@@ -51,7 +61,15 @@ void t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size) {
         tetris->score = 0;
         tetris->brick.shape_size = brick_size;
 	tetris->brick.shape = (POSITION_T *) malloc(tetris->brick.shape_size * sizeof(POSITION_T));
+        if (tetris->brick.shape == NULL) {
+                puts(mem_err);
+                exit(-1);
+        }
 	tetris->brick.current = (POSITION_T *) malloc(tetris->brick.shape_size * sizeof(POSITION_T));
+        if (tetris->brick.current == NULL) {
+                puts(mem_err);
+                exit(-1);
+        }
         tetris->is_initialized = 0;
 }
 
