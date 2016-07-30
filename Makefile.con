@@ -11,7 +11,7 @@
 #       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 25.7.2016
 
 
-CC = gcc
+CC = cc
 CFLAGS = -O2 -Wall -c -o $@
 
 
