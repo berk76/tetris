@@ -19,7 +19,7 @@ Compilation:
   b) run 
      make -f Makefile.gcc
      
-* Linux (Console)
+* UNIX / Linux (Console)
   a) run
      make -f Makefile.con  
 
