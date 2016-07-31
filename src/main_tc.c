@@ -1,15 +1,15 @@
 /*
 *       main_tc.c
-*       
+*
 *       This file is part of Tetris game.
 *       https://bitbucket.org/berk76/tetris
-*       
+*
 *       Tetris is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
 *       the Free Software Foundation; either version 3 of the License, or
 *       (at your option) any later version. <http://www.gnu.org/licenses/>
-*       
-*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 15.7.2016        
+*
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 15.7.2016
 */
 
 
@@ -29,7 +29,7 @@ static int error_code;
 static int MESH_COLOR = 8;
 static int MESH_BK_COLOR = 7;
 static TETRIS_T tetris;
-static int _delay;
+static unsigned _delay;
 static int color_vec[] = {LIGHTBLUE,
                           LIGHTGREEN,
                           LIGHTCYAN,
@@ -48,12 +48,13 @@ static void g_update_score();
 static int g_printf(int *xloc, int *yloc, char *fmt, ...);
 static void process_user_input();
 static unsigned get_second_delay();
+static void delay100(unsigned u);
 
 
 int main() {
 	int c, seg, wide, ret;
 
-        _delay = get_second_delay() / 12;
+	_delay = get_second_delay() / 16;
         init_graph();
         srand(time(NULL) % 37);
 
@@ -72,22 +73,22 @@ int main() {
 				wide = 20;
 			}
 		}
-                
+
                 t_create_game(&tetris, wide, 20, seg);
-                
+
 		g_draw_mesh(15);
 		gui_message("Press any key to start ...");
-                
+
                 do {
                         int i;
                         for (i = 0; i < 5; i++) {
 		              process_user_input();
-		              delay(_delay);
+			      delay100(_delay);
                         }
                         ret = t_go(&tetris);
                         g_update_score();
                 } while (ret != -1);
-                
+
                 t_delete_game(&tetris);
 		gui_message("GAME OVER");
 		c = gui_option("(N)ew Game or (Q)uit", "nNqQ");
@@ -116,9 +117,9 @@ void close_graph(void) {
 
 void g_draw_mesh(int grid_size) {
         int x, y;
-        
+
 	cleardevice();
-        
+
         tetris.element_size = grid_size;
         tetris.origin_x = getmaxx()/2 - tetris.grid_size_x/2 * grid_size;
         tetris.origin_y = getmaxy()/2 - tetris.grid_size_y/2 * grid_size;
@@ -222,32 +223,40 @@ void process_user_input() {
 unsigned get_second_delay() {
         unsigned i;
         time_t t;
-        
+
         printf("Measuring cpu speed...\n");
-        
+
         t = time(NULL);
         while (t == time(NULL)) {
                 delay(50);
         }
-        
+
         t = time(NULL);
         i = 0;
         while (t == time(NULL)) {
-                delay(100);
+		delay(100);
                 i++;
         }
 
-        return i * 100;
+	return i;
+}
+
+
+void delay100(unsigned u) {
+	int i;
+
+	for (i = 0; i < 100; i++)
+		delay(u);
 }
 
 
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 	setcolor(color_vec[MESH_COLOR]);
 	gui_fill_rect(
-                tetris->origin_x + x * tetris->element_size, 
+                tetris->origin_x + x * tetris->element_size,
                 tetris->origin_y + y * tetris->element_size,
-		tetris->element_size, 
-                tetris->element_size, 
+		tetris->element_size,
+                tetris->element_size,
                 color_vec[color], SOLID_FILL);
 }
 
@@ -255,9 +264,9 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         setcolor(color_vec[MESH_BK_COLOR]);
 	gui_fill_rect(
-                tetris->origin_x + x * tetris->element_size, 
+                tetris->origin_x + x * tetris->element_size,
                 tetris->origin_y + y * tetris->element_size,
-		tetris->element_size, 
-                tetris->element_size + 1, 
+		tetris->element_size,
+                tetris->element_size + 1,
                 color_vec[MESH_BK_COLOR], SOLID_FILL);
 }
