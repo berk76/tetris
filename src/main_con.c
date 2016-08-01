@@ -343,7 +343,7 @@ void gui_nonblock(int state) {
 
 
 void gui_gotoxy(int x, int y) {
-	printf("%c[H%c[%uB%c[%uC",27,27,y,27,x);
+	printf("%c[%u;%uH",27,y,x);
 }
 
 
@@ -354,11 +354,12 @@ void gui_flush() {
 
 
 void gui_cls() {
-	printf("%c[2J",27); // reset
-	printf("%c[H", 27); // home
+        printf("%c[m",27); //set default text attributes
+	printf("%c[2J",27); // erases the screen with the background colour and moves the cursor to home.
 }
 
 
 void gui_cleanup() {
+        printf("%c[m",27); //set default text attributes
         gui_nonblock(NB_DISABLE);
 }
