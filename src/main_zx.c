@@ -27,7 +27,8 @@
 #define G_TRUE  1
 
 
-extern long heap(60000);
+long heap;
+static unsigned char heap_space[1000];
 static int MESH_COLOR = 8;
 static int MESH_BK_COLOR = 7;
 static TETRIS_T tetris;
@@ -63,9 +64,8 @@ static void gui_unfill_rect(int x, int y, int width, int height);
 int main() {
 	int c, seg, wide, ret;
 
-        mallinit();              /* heap cleared to empty */
-        sbrk(30000,2000);        /* add 2000 bytes from addresses 30000-31999 inclusive to the heap */
-        sbrk(65000,536);         /* add 536 bytes from addresses 65000-65535 inclusive to the heap  */
+        mallinit();
+        sbrk(heap_space, sizeof(heap_space));
         initgraph(0,0,0);
         srand(time(NULL));
                 
