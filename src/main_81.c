@@ -66,14 +66,14 @@ int main() {
         _delay = 75;
 
 	do {
-		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
+		c = gui_option("(S)tandard or (M)odification?", "sSmM");
 		if (c == 's' || c == 'S') {
 			seg = 4;
 			wide = 10;
 		} else {
 			c = gui_option("Brick size? (1..9)", "123456789");
 			seg = c - '0';
-			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+			c = gui_option("(S)tandard or (D)ouble wide?", "sSdD");
 			if (c == 's' || c == 'S') {
 				wide = 10;
 			} else {
@@ -112,11 +112,15 @@ void g_draw_mesh(int grid_size) {
 
 	gui_cls();
 	tetris.element_size = grid_size;
-        tetris.origin_x = 19;
+        if (tetris.grid_size_x > 10) {
+                tetris.origin_x = 12;
+        } else {
+                tetris.origin_x = 19;
+        }
         tetris.origin_y = 1;
 
 	gui_gotoxy(1,1);
-	printf("Tetris %s", TETRIS_VERSION);
+	printf("Tetris\n%s", TETRIS_VERSION);
         
 	printf("%c[%um", 27, 33);
 	for (i = 0; i < tetris.element_size * tetris.grid_size_y; i++) {
@@ -140,22 +144,22 @@ void g_draw_mesh(int grid_size) {
 
 void g_print_controls() {
 
-	gui_gotoxy(1,5);
+	gui_gotoxy(1,6);
 	printf("Controls:");
 
-	gui_gotoxy(1,7);
-	printf("Left   ... 7");
 	gui_gotoxy(1,8);
-	printf("Right  ... 9");
+	printf("Left    7");
 	gui_gotoxy(1,9);
-	printf("Rotate ... 8");
+	printf("Right   9");
 	gui_gotoxy(1,10);
-	printf("Drop   ... 4");
+	printf("Rotate  8");
+	gui_gotoxy(1,11);
+	printf("Drop    4");
 
-	gui_gotoxy(1,12);
-	printf("Pause  ... P");
 	gui_gotoxy(1,13);
-	printf("Quit   ... Q");
+	printf("Pause   P");
+	gui_gotoxy(1,14);
+	printf("Quit    Q");
 }
 
 
@@ -166,8 +170,8 @@ void g_update_score() {
                 return;
                 
         last_score = tetris.score;
-	gui_gotoxy(1,3);
-	printf("Score: %4d", tetris.score);
+	gui_gotoxy(1,4);
+	printf("Score:%3d", tetris.score);
 }
 
 
