@@ -11,12 +11,12 @@
 #       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 22.7.2016
 
 
-CFLAGS = +zx81 -c -o $@
+CFLAGS = +zx81 -DUSE_SPRITES -c -o $@
 CC = zcc
 objects = src/main_81.o src/tetris.o src/shape.o
 
 tetris: $(objects)
-	$(CC) +zx81 -clib=wrxansi -subtype=wrx64 -pragma-define:ansicolumns=64 -lndos -lmalloc -o$@ -create-app $(objects)
+	$(CC) +zx81 -clib=wrxansi -subtype=_wrx -pragma-define:hrgpage=36096 -pragma-define:ansicolumns=32 -lndos -lmalloc -o$@ -create-app $(objects)
 
 src/main_81.o: src/main_81.c src/main.h  src/tetris.h
 

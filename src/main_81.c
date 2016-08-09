@@ -12,8 +12,6 @@
 *       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 31.7.2016        
 */
 
-//#pragma output STACKPTR=49151
-//#pragma output hrgpage = 36096
 
 #include <stdio.h>
 #include <string.h>
@@ -34,6 +32,14 @@ static int MESH_BK_COLOR = 7;
 static TETRIS_T tetris;
 static int _delay;
 static int color_vec[] = {44,42,46,41,45,43,47,40,47};
+
+#ifdef USE_SPRITES
+#define SPRITE_OFFSET 10
+char brick[] = {8,8,0x7e,0x81,0x81,0x89,0x99,0x81,0x81,0x7e,
+                8,8,0x7e,0xab,0xd5,0xab,0xd5,0xab,0xd5,0x7e,
+                8,8,0x7e,0xff,0xff,0xf7,0xe7,0xff,0xff,0x7e};
+char blank[] = {8,8,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+#endif
 
 
 static void g_draw_mesh(int grid_size);
@@ -194,6 +200,22 @@ void process_user_input() {
 	}
 }
 
+#ifdef USE_SPRITES
+void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+        x = tetris->origin_x * 8 + x * tetris->element_size * 8 - 8;
+	y = tetris->origin_y * 8 + y * tetris->element_size * 8 - 8;
+        color %=  3; 
+        putsprite(spr_or, x, y, brick + SPRITE_OFFSET * color);
+}
+
+
+void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
+        x = tetris->origin_x * 8 + x * tetris->element_size * 8 - 8;
+	y = tetris->origin_y * 8 + y * tetris->element_size * 8 - 8;
+        putsprite(spr_and, x, y, blank);
+}
+
+#else
 
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size;
@@ -211,6 +233,7 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 	gui_gotoxy(x,y);
         printf(" ");
 }
+#endif
 
 
 /*** GUI ***/
