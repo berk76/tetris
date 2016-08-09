@@ -37,3 +37,10 @@ Compilation:
      http://www.z88dk.org
   b) run 
      make -f Makefile.zx
+
+ * ZX81 (Z88DK)
+   Requirements: HiRes = WRX, RamPack = 32kB 
+  a) download and install Z88DK
+     http://www.z88dk.org
+  b) run 
+     make -f Makefile.81
