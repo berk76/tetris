@@ -55,6 +55,7 @@ static void gui_cleanup();
 
 int main() {
 	int c, seg, wide, ret;
+        GAME_T game;
 
 	gui_nonblock(NB_ENABLE);
         atexit(gui_cleanup);
@@ -64,6 +65,7 @@ int main() {
         _delay = 60000;
 
 	do {
+                game = TETRIS;
 		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
 		if (c == 's' || c == 'S') {
 			seg = 4;
@@ -79,7 +81,7 @@ int main() {
 			}
 		}
                 
-                t_create_game(&tetris, wide, 20, seg);
+                t_create_game(&tetris, game, wide, 20, seg);
                 
 		g_draw_mesh(1);
 		gui_message("Press any key to start ...");

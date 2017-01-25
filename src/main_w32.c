@@ -36,6 +36,7 @@ HWND g_hwndMain;
 HWND g_hwndStatusBar;
 MSG msg;
 TETRIS_T g_tetris;
+GAME_T game;
 HDC g_hdc;        /* Only for m_put_mesh_pixel */
 
 typedef struct {
@@ -162,7 +163,8 @@ BOOL InitApp() {
         colors[7].hBrush = CreateSolidBrush(0x000000);
         
         srand(time(NULL));
-        t_create_game(&g_tetris, 10, 20, 4);
+        game = TETRIS;
+        t_create_game(&g_tetris, game, 10, 20, 4);
                         
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
         UpdateWindow(g_hwndMain);
@@ -298,7 +300,8 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size) {
         KillTimer(g_hwndMain, _TimerClock);
         t_delete_game(&g_tetris);
-        t_create_game(&g_tetris, x_size, y_size, brick_size);
+        game = TETRIS;
+        t_create_game(&g_tetris, game, x_size, y_size, brick_size);
         InvalidateRect(g_hwndMain, NULL, TRUE);
         g_tetris.is_paused = 0;
         SetTimer(g_hwndMain, _TimerClock, _TimerInterval, NULL);

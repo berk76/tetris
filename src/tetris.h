@@ -18,10 +18,12 @@
 
 #include "shape.h"
 
+typedef enum {TETRIS, ADDTRIS} GAME_T;
+
 typedef struct {
 	int x;
 	int y;
-	int color;
+        int value;
 	POSITION_T *shape;
 	POSITION_T *current;
 	int shape_size;
@@ -29,11 +31,13 @@ typedef struct {
 
 
 typedef struct {
+        GAME_T game;
         int grid_size_x;
         int grid_size_y;
         int origin_x;
         int origin_y;
         int **grid_map;
+        int bk_color;
         int element_size;
         BRICK_T brick;
         int score;
@@ -46,7 +50,7 @@ typedef struct {
 #define TETRIS_BK_COLOR         7
 
                                 
-extern void t_create_game(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
+extern void t_create_game(TETRIS_T *tetris, GAME_T game, int x_size, int y_size, int brick_size);
 extern void t_delete_game(TETRIS_T *tetris);
 extern int t_go(TETRIS_T *tetris);
 extern int t_move_down(TETRIS_T *tetris);

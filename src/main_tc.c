@@ -53,12 +53,14 @@ static void delay100(unsigned u);
 
 int main() {
 	int c, seg, wide, ret;
+        GAME_T game;
 
 	_delay = get_second_delay() / 16;
         init_graph();
         srand(time(NULL) % 37);
 
 	do {
+                game = TETRIS;
 		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
 		if (c == 's' || c == 'S') {
 			seg = 4;
@@ -74,7 +76,7 @@ int main() {
 			}
 		}
 
-                t_create_game(&tetris, wide, 20, seg);
+                t_create_game(&tetris, game, wide, 20, seg);
 
 		g_draw_mesh(15);
 		gui_message("Press any key to start ...");
