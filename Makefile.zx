@@ -25,4 +25,4 @@ src/tetris.o: src/tetris.c src/tetris.h src/main.h src/shape.h
 src/shape.o: src/shape.c src/shape.h
 
 clean:
-	rm -f $(objects) *.bak tetris tetris.reloc *.exe *.tap zcc_opt.def
+	rm -f $(objects) *.bak tetris tetris.reloc *.exe *.tap zcc_opt.def zcc_proj.lst

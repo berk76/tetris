@@ -58,6 +58,7 @@ static void gui_cls();
 
 int main() {
 	int c, seg, wide, ret;
+        GAME_T game;
 
         mallinit();
         sbrk(heap_space, sizeof(heap_space));
@@ -66,22 +67,30 @@ int main() {
         _delay = 75;
 
 	do {
-		c = gui_option("(S)tandard or (M)odification?", "sSmM");
-		if (c == 's' || c == 'S') {
-			seg = 4;
-			wide = 10;
-		} else {
-			c = gui_option("Brick size? (1..9)", "123456789");
-			seg = c - '0';
-			c = gui_option("(S)tandard or (D)ouble wide?", "sSdD");
-			if (c == 's' || c == 'S') {
-				wide = 10;
-			} else {
-				wide = 20;
-			}
-		}
+                c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
+                if (c == 'a' || c == 'A') {
+                        game = ADDTRIS;
+                        seg = 1;
+                        wide = 10;
+                } else {
+                        game = TETRIS;
+                        c = gui_option("(S)tandard or (M)odification?", "sSmM");
+                        if (c == 's' || c == 'S') {
+                                seg = 4;
+                                wide = 10;
+                        } else {
+                                c = gui_option("Brick size? (1..9)", "123456789");
+                                seg = c - '0';
+                                c = gui_option("(S)tandard or (D)ouble wide?", "sSdD");
+                                if (c == 's' || c == 'S') {
+                                        wide = 10;
+                                } else {
+                                        wide = 20;
+                                }
+                        }
+                }
                 
-                t_create_game(&tetris, wide, 20, seg);
+                t_create_game(&tetris, game, wide, 20, seg);
                 
 		g_draw_mesh(1);
 		gui_message("Press any key to start ...");
@@ -225,9 +234,13 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size;
 	y = tetris->origin_y + y * tetris->element_size; 
 	gui_gotoxy(x, y);
-	printf("%c[%um", 27, color_vec[color]);
-        printf("O");
-	printf("%c[%um", 27, color_vec[MESH_BK_COLOR]);
+        if (tetris->game == TETRIS) {
+                printf("%c[%um", 27, color_vec[color]);
+                printf("O");
+                printf("%c[%um", 27, color_vec[MESH_BK_COLOR]);
+        } else {
+                printf("%d", tetris->brick.value);
+        }
 }
 
 
