@@ -36,7 +36,6 @@ HWND g_hwndMain;
 HWND g_hwndStatusBar;
 MSG msg;
 TETRIS_T g_tetris;
-GAME_T game;
 HDC g_hdc;        /* Only for m_put_mesh_pixel */
 
 typedef struct {
@@ -49,7 +48,7 @@ COLOR_T colors[T_COLORS_SIZE];
 static BOOL InitApp();
 static BOOL DeleteApp();
 static LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size);
+static void startGame(TETRIS_T *tetris, GAME_T game, int x_size, int y_size, int brick_size);
 static void pauseGame(BOOL b);
 static void update_score();
 static void onPaint();
@@ -163,8 +162,7 @@ BOOL InitApp() {
         colors[7].hBrush = CreateSolidBrush(0x000000);
         
         srand(time(NULL));
-        game = TETRIS;
-        t_create_game(&g_tetris, game, 10, 20, 4);
+        t_create_game(&g_tetris, TETRIS, 10, 20, 4);
                         
         ShowWindow(g_hwndMain, SW_SHOWNORMAL);
         UpdateWindow(g_hwndMain);
@@ -232,13 +230,16 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                 case WM_COMMAND:
                         switch (LOWORD(wParam)) {
                                 case ID_G_TETRIS:
-                                        startGame(&g_tetris, 10, 20, 4);
+                                        startGame(&g_tetris, TETRIS, 10, 20, 4);
                                         break;
                                 case ID_G_PENTIS:
-                                        startGame(&g_tetris, 20, 20, 5);
+                                        startGame(&g_tetris, TETRIS, 20, 20, 5);
                                         break;
                                 case ID_G_SEXTIS:
-                                        startGame(&g_tetris, 20, 20, 6);
+                                        startGame(&g_tetris, TETRIS, 20, 20, 6);
+                                        break;
+                                case ID_G_ADDTRIS:
+                                        startGame(&g_tetris, ADDTRIS, 10, 20, 1);
                                         break;
                                 case ID_PAUSE:
                                         pauseGame(!g_tetris.is_paused);
@@ -297,10 +298,9 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 }
 
 
-void startGame(TETRIS_T *tetris, int x_size, int y_size, int brick_size) {
+void startGame(TETRIS_T *tetris, GAME_T game, int x_size, int y_size, int brick_size) {
         KillTimer(g_hwndMain, _TimerClock);
         t_delete_game(&g_tetris);
-        game = TETRIS;
         t_create_game(&g_tetris, game, x_size, y_size, brick_size);
         InvalidateRect(g_hwndMain, NULL, TRUE);
         g_tetris.is_paused = 0;
@@ -436,16 +436,44 @@ void g_draw_mesh(TETRIS_T *tetris, RECT client) {
 
 
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
-        SelectObject(g_hdc, colors[color].hPen);
-        SelectObject(g_hdc, colors[color].hBrush);
-        Rectangle(g_hdc, 
-                tetris->origin_x + x * tetris->element_size, 
-                tetris->origin_y + y * tetris->element_size, 
-                tetris->origin_x + x * tetris->element_size + tetris->element_size, 
-                tetris->origin_y + y * tetris->element_size + tetris->element_size);
+        if (tetris->game == TETRIS) {
+                SelectObject(g_hdc, colors[color].hPen);
+                SelectObject(g_hdc, colors[color].hBrush);
+                Rectangle(g_hdc, 
+                        tetris->origin_x + x * tetris->element_size, 
+                        tetris->origin_y + y * tetris->element_size, 
+                        tetris->origin_x + x * tetris->element_size + tetris->element_size, 
+                        tetris->origin_y + y * tetris->element_size + tetris->element_size);
+        } else {
+                RECT rc;
+                TCHAR chText[5];
+                
+                /* draw background */
+                SelectObject(g_hdc, colors[TETRIS_BK_COLOR].hPen);
+                SelectObject(g_hdc, colors[TETRIS_BK_COLOR].hBrush);
+                Rectangle(g_hdc, 
+                        tetris->origin_x + x * tetris->element_size, 
+                        tetris->origin_y + y * tetris->element_size, 
+                        tetris->origin_x + x * tetris->element_size + tetris->element_size, 
+                        tetris->origin_y + y * tetris->element_size + tetris->element_size);
+                
+                /* draw number */
+                if (color != tetris->bk_color) {
+                        rc.left = tetris->origin_x + x * tetris->element_size;
+                        rc.top = tetris->origin_y + y * tetris->element_size;
+                        rc.right = tetris->origin_x + x * tetris->element_size + tetris->element_size;
+                        rc.bottom = tetris->origin_y + y * tetris->element_size + tetris->element_size;
+                        
+                        SelectObject(g_hdc, GetStockObject(DEFAULT_GUI_FONT));
+                        SetBkMode(g_hdc, TRANSPARENT);
+                        SetTextColor(g_hdc, RGB(255, 255, 255));
+                        _stprintf(chText, "%d", color);
+                        DrawText(g_hdc, chText, -1, &rc, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+                }
+        }
 }
 
 
 void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
-        m_put_mesh_pixel(tetris, x, y, TETRIS_BK_COLOR);
+        m_put_mesh_pixel(tetris, x, y, tetris->bk_color);
 }

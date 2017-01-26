@@ -65,19 +65,26 @@ int main() {
         _delay = 60000;
 
 	do {
-                game = TETRIS;
-		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
-		if (c == 's' || c == 'S') {
-			seg = 4;
+		c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
+		if (c == 'a' || c == 'A') {
+			game = ADDTRIS;
+			seg = 1;
 			wide = 10;
 		} else {
-			c = gui_option("Brick size? (1..9)", "123456789");
-			seg = c - '0';
-			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+                	game = TETRIS;
+			c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
 			if (c == 's' || c == 'S') {
+				seg = 4;
 				wide = 10;
 			} else {
-				wide = 20;
+				c = gui_option("Brick size? (1..9)", "123456789");
+				seg = c - '0';
+				c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+				if (c == 's' || c == 'S') {
+					wide = 10;
+				} else {
+					wide = 20;
+				}
 			}
 		}
                 
@@ -206,9 +213,13 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size * 2;
 	y = tetris->origin_y + y * tetris->element_size; 
 	gui_gotoxy(x, y);
-	printf("%c[%um", 27, color_vec[color]);
-        printf("OO");
-	printf("%c[%um", 27, color_vec[MESH_BK_COLOR]);
+	if (tetris->game == TETRIS) {
+		printf("%c[%um", 27, color_vec[color]);
+        	printf("OO");
+		printf("%c[%um", 27, color_vec[MESH_BK_COLOR]);
+	} else {
+		printf("%d ", tetris->brick.value);
+	}
 }
 
 
