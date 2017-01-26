@@ -43,11 +43,39 @@ static int color_vec[] = {LIGHTBLUE,
                           BLACK,
                           BLUE};
                           
-#define SPRITE_OFFSET 10
+#define BRICK_OFFSET 10
 char brick[] = {8,8,0x7e,0x81,0x81,0x89,0x99,0x81,0x81,0x7e,
                 8,8,0x7e,0xab,0xd5,0xab,0xd5,0xab,0xd5,0x7e,
                 8,8,0x7e,0xff,0xff,0xf7,0xe7,0xff,0xff,0x7e};
 char blank[] = {8,8,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+/*
+#define NUMBERS_OFFSET 7
+char numbers[] = { 
+        4,5,0x70,0x90,0x00,0x90,0xE0,
+        4,5,0x20,0x20,0x00,0x40,0x40,
+        4,5,0x70,0x10,0x60,0x80,0xE0,
+        4,5,0x70,0x10,0x60,0x10,0xE0,
+        4,5,0x90,0x90,0x60,0x10,0x10,
+        4,5,0x70,0x80,0x60,0x10,0xE0,
+        4,5,0x70,0x80,0x60,0x90,0xE0,
+        4,5,0x70,0x90,0x00,0x20,0x20,
+        4,5,0x70,0x90,0x60,0x90,0xE0,
+        4,5,0x70,0x90,0x60,0x10,0xE0
+};
+*/
+
+#define NUMBERS_OFFSET 7
+char numbers[] = {
+        3, 5, 0xE0 , 0xA0 , 0xA0 , 0xA0 , 0xE0,
+        3, 5, 0x40 , 0x40 , 0x40 , 0x40 , 0x40,
+        3, 5, 0xE0 , 0x20 , 0xE0 , 0x80 , 0xE0,
+        3, 5, 0xE0 , 0x20 , 0xE0 , 0x20 , 0xE0,
+        3, 5, 0xA0 , 0xA0 , 0xE0 , 0x20 , 0x20,
+        3, 5, 0xE0 , 0x80 , 0xE0 , 0x20 , 0xE0,
+        3, 5, 0xE0 , 0x80 , 0xE0 , 0xA0 , 0xE0,
+        3, 5, 0xE0 , 0x20 , 0x20 , 0x20 , 0x20,
+        3, 5, 0xE0 , 0xA0 , 0xE0 , 0xA0 , 0xE0,
+        3, 5, 0xE0 , 0xA0 , 0xE0 , 0x20 , 0xE0 };
 
 static void g_draw_mesh(int grid_size);
 static void g_print_controls();
@@ -73,21 +101,28 @@ int main() {
         _delay = 75;
 
 	do {
-                game = TETRIS;
-		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
-		if (c == 's' || c == 'S') {
-			seg = 4;
-			wide = 10;
-		} else {
-			c = gui_option("Brick size? (1..9)", "123456789");
-			seg = c - '0';
-			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
-			if (c == 's' || c == 'S') {
-				wide = 10;
-			} else {
-				wide = 20;
-			}
-		}
+                c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
+                if (c == 'a' || c == 'A') {
+                        game = ADDTRIS;
+                        seg = 1;
+                        wide = 10;
+                } else {        
+                        game = TETRIS;
+        		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
+        		if (c == 's' || c == 'S') {
+        			seg = 4;
+        			wide = 10;
+        		} else {
+        			c = gui_option("Brick size? (1..9)", "123456789");
+        			seg = c - '0';
+        			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+        			if (c == 's' || c == 'S') {
+        				wide = 10;
+        			} else {
+        				wide = 20;
+        			}
+        		}
+                }
                 
                 t_create_game(&tetris, game, wide, 20, seg);
                 
@@ -216,8 +251,12 @@ void process_user_input() {
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size;
 	y = tetris->origin_y + y * tetris->element_size;
-        color %=  3; 
-        putsprite(spr_or, x, y, brick + SPRITE_OFFSET * color);
+        if (tetris->game == TETRIS) {
+                color %=  3; 
+                putsprite(spr_or, x, y, brick + BRICK_OFFSET * color);
+        } else {
+                putsprite(spr_or, x, y, numbers + NUMBERS_OFFSET * tetris->brick.value);
+        }
 }
 
 
