@@ -29,7 +29,8 @@
 #define _MainClassName TEXT("WinAPIMainClass")
 #define _AppName TEXT("Tetris")
 #define _TimerClock 1
-#define _TimerInterval 300
+#define _TimerIntervalTetris 300
+#define _TimerIntervalAddtris 600
 
 HINSTANCE g_hInstance;
 HWND g_hwndMain;
@@ -299,15 +300,20 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 
 void startGame(TETRIS_T *tetris, GAME_T game, int x_size, int y_size, int brick_size) {
+        int delay;
+         
         KillTimer(g_hwndMain, _TimerClock);
         t_delete_game(&g_tetris);
         t_create_game(&g_tetris, game, x_size, y_size, brick_size);
         InvalidateRect(g_hwndMain, NULL, TRUE);
         g_tetris.is_paused = 0;
-        SetTimer(g_hwndMain, _TimerClock, _TimerInterval, NULL);
+        delay = (game == TETRIS) ? _TimerIntervalTetris : _TimerIntervalAddtris; 
+        SetTimer(g_hwndMain, _TimerClock, delay, NULL);
 }
 
 void pauseGame(BOOL b) {
+        int delay;
+        
         if (b == TRUE) {
                 if (g_tetris.is_paused)
                         return;
@@ -318,7 +324,8 @@ void pauseGame(BOOL b) {
                 if (!g_tetris.is_paused)
                         return;
                 g_tetris.is_paused = 0;
-                SetTimer(g_hwndMain, _TimerClock, _TimerInterval, NULL);
+                delay = (g_tetris.game == TETRIS) ? _TimerIntervalTetris : _TimerIntervalAddtris;
+                SetTimer(g_hwndMain, _TimerClock, delay, NULL);
                 update_score();
         }
 }
