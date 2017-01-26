@@ -341,8 +341,9 @@ int check_lines_addtris(TETRIS_T *tetris) {
 	if ((tetris->grid_size_y - 1) >= (tetris->brick.y + 2)) {
 		a = tetris->grid_map[tetris->brick.x][tetris->brick.y + 1];
                 b = tetris->grid_map[tetris->brick.x][tetris->brick.y + 2];
+                a = (a + b) % 10;
                 if ((a != tetris->bk_color) && (b != tetris->bk_color) 
-                        && (tetris->brick.value == (a + b))) {
+                        && (tetris->brick.value == a)) {
                         
                         lines++;
                         tetris->grid_map[tetris->brick.x][tetris->brick.y + 0] = tetris->bk_color;
