@@ -45,6 +45,7 @@ typedef struct {
 } COLOR_T;
 
 COLOR_T colors[T_COLORS_SIZE];
+HFONT hFont, hFontAddTris;
 
 static BOOL InitApp();
 static BOOL DeleteApp();
@@ -124,7 +125,9 @@ BOOL InitApp() {
         if ( g_hwndStatusBar == NULL )
                 return FALSE;
 
-        HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+        hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+        hFontAddTris = CreateFont(32,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Impact")); 
         SendMessage(g_hwndStatusBar, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         
         
@@ -160,7 +163,7 @@ BOOL InitApp() {
         colors[6].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0xFFFFFF);
         colors[6].hBrush = CreateSolidBrush(0xFFFFFF);
         colors[7].hPen = CreatePen(PS_SOLID | PS_INSIDEFRAME, 2, 0x000000);
-        colors[7].hBrush = CreateSolidBrush(0x000000);
+        colors[7].hBrush = CreateSolidBrush(0x000000); 
         
         srand(time(NULL));
         t_create_game(&g_tetris, TETRIS, 10, 20, 4);
@@ -471,11 +474,12 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
                         rc.right = tetris->origin_x + x * tetris->element_size + tetris->element_size;
                         rc.bottom = tetris->origin_y + y * tetris->element_size + tetris->element_size;
                         
-                        SelectObject(g_hdc, GetStockObject(DEFAULT_GUI_FONT));
+                        SelectObject(g_hdc, hFontAddTris);
                         SetBkMode(g_hdc, TRANSPARENT);
                         SetTextColor(g_hdc, RGB(255, 255, 255));
                         _stprintf(chText, "%d", color);
                         DrawText(g_hdc, chText, -1, &rc, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+                        SelectObject(g_hdc, hFont);
                 }
         }
 }

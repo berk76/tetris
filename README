@@ -17,7 +17,7 @@ Compilation:
   a) download and install MinGw
      http://www.mingw.org/
   b) run 
-     make -f Makefile.gcc
+     make -f Makefile.w32
      
 * UNIX / Linux (Console)
   a) run

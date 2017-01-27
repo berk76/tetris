@@ -61,21 +61,27 @@ int main() {
 
 	do {
                 game = TETRIS;
-		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
-		if (c == 's' || c == 'S') {
-			seg = 4;
-			wide = 10;
-		} else {
-			c = gui_option("Brick size? (1..9)", "123456789");
-			seg = c - '0';
-			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
-			if (c == 's' || c == 'S') {
-				wide = 10;
-			} else {
-				wide = 20;
-			}
-		}
-
+                c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
+                if (c == 'a' || c == 'A') {
+                        game = ADDTRIS;
+                        seg = 1;
+                        wide = 10;
+                } else {
+        		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
+        		if (c == 's' || c == 'S') {
+        			seg = 4;
+        			wide = 10;
+        		} else {
+        			c = gui_option("Brick size? (1..9)", "123456789");
+        			seg = c - '0';
+        			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+        			if (c == 's' || c == 'S') {
+        				wide = 10;
+        			} else {
+        				wide = 20;
+        			}
+        		}
+                }
                 t_create_game(&tetris, game, wide, 20, seg);
 
 		g_draw_mesh(15);
@@ -253,13 +259,22 @@ void delay100(unsigned u) {
 
 
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+        int x, y;
+        
 	setcolor(color_vec[MESH_COLOR]);
-	gui_fill_rect(
-                tetris->origin_x + x * tetris->element_size,
-                tetris->origin_y + y * tetris->element_size,
-		tetris->element_size,
-                tetris->element_size,
-                color_vec[color], SOLID_FILL);
+        if (tetris->game == TETRIS) {
+        	gui_fill_rect(
+                        tetris->origin_x + x * tetris->element_size,
+                        tetris->origin_y + y * tetris->element_size,
+        		tetris->element_size,
+                        tetris->element_size,
+                        color_vec[color], SOLID_FILL);
+        } else {
+                x = tetris->origin_x + x * tetris->element_size;
+                y = tetris->origin_y + y * tetris->element_size;
+                m_empty_mesh_pixel(tetris, x, y);
+                g_printf(&x, &y, "%d", tetris->brick.value);
+        }
 }
 
 
