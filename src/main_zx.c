@@ -48,35 +48,8 @@ char brick[] = {8,8,0x7e,0x81,0x81,0x89,0x99,0x81,0x81,0x7e,
                 8,8,0x7e,0xab,0xd5,0xab,0xd5,0xab,0xd5,0x7e,
                 8,8,0x7e,0xff,0xff,0xf7,0xe7,0xff,0xff,0x7e};
 char blank[] = {8,8,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
-/*
-#define NUMBERS_OFFSET 7
-char numbers[] = { 
-        4,5,0x70,0x90,0x00,0x90,0xE0,
-        4,5,0x20,0x20,0x00,0x40,0x40,
-        4,5,0x70,0x10,0x60,0x80,0xE0,
-        4,5,0x70,0x10,0x60,0x10,0xE0,
-        4,5,0x90,0x90,0x60,0x10,0x10,
-        4,5,0x70,0x80,0x60,0x10,0xE0,
-        4,5,0x70,0x80,0x60,0x90,0xE0,
-        4,5,0x70,0x90,0x00,0x20,0x20,
-        4,5,0x70,0x90,0x60,0x90,0xE0,
-        4,5,0x70,0x90,0x60,0x10,0xE0
-};
-*/
 
-#define NUMBERS_OFFSET 7
-char numbers[] = {
-        3, 5, 0xE0 , 0xA0 , 0xA0 , 0xA0 , 0xE0,
-        3, 5, 0x40 , 0x40 , 0x40 , 0x40 , 0x40,
-        3, 5, 0xE0 , 0x20 , 0xE0 , 0x80 , 0xE0,
-        3, 5, 0xE0 , 0x20 , 0xE0 , 0x20 , 0xE0,
-        3, 5, 0xA0 , 0xA0 , 0xE0 , 0x20 , 0x20,
-        3, 5, 0xE0 , 0x80 , 0xE0 , 0x20 , 0xE0,
-        3, 5, 0xE0 , 0x80 , 0xE0 , 0xA0 , 0xE0,
-        3, 5, 0xE0 , 0x20 , 0x20 , 0x20 , 0x20,
-        3, 5, 0xE0 , 0xA0 , 0xE0 , 0xA0 , 0xE0,
-        3, 5, 0xE0 , 0xA0 , 0xE0 , 0x20 , 0xE0 };
-
+static void g_draw_menu();
 static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
@@ -97,37 +70,42 @@ int main() {
         sbrk(heap_space, sizeof(heap_space));
         initgraph(0,0,0);
         srand(time(NULL));
-                
-        _delay = 75;
 
 	do {
-                c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
-                if (c == 'a' || c == 'A') {
-                        game = ADDTRIS;
-                        seg = 1;
-                        wide = 10;
-                } else {        
-                        game = TETRIS;
-        		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
-        		if (c == 's' || c == 'S') {
-        			seg = 4;
+                g_draw_menu();
+                c = gui_option("CHOOSE YOUR OPTION...", "123");
+                
+                switch (c) {
+                        case '1' :
+                                game = ADDTRIS;
+                                seg = 1;
+                                wide = 10;
+                                _delay = 140;
+                                break;
+                        case '2' :
+                                game = TETRIS;
+                                seg = 4;
         			wide = 10;
-        		} else {
-        			c = gui_option("Brick size? (1..9)", "123456789");
+                                _delay = 75;
+                                break
+                        case '3' :
+                                clg();
+                                game = TETRIS;
+        			c = gui_option("BRICK SIZE? (1..9)", "123456789");
         			seg = c - '0';
-        			c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+        			c = gui_option("(S)TANDARD GRID OR (D)OUBLE WIDE?", "sSdD");
         			if (c == 's' || c == 'S') {
         				wide = 10;
         			} else {
         				wide = 20;
         			}
-        		}
+                                _delay = 75;
                 }
                 
                 t_create_game(&tetris, game, wide, 20, seg);
                 
 		g_draw_mesh(8);
-		gui_message("Press any key to start ...");
+		gui_message("PRESS ANY KEY TO START ...");
                 
                 do {
                         int i;
@@ -141,12 +119,24 @@ int main() {
                 
                 t_delete_game(&tetris);
 		gui_message("GAME OVER");
-		c = gui_option("(N)ew Game or (Q)uit", "nNqQ");
+		c = gui_option("(N)EW GAME OR (Q)UIT", "nNqQ");
 	} while ((c == 'n') || (c == 'N'));
         
         closegraph();
 
 	return 0;
+}
+
+
+void g_draw_menu() {
+        clg();
+        
+        setusercharsize(2,1,1,1);
+	outtextxy(80, 30, "Tetris");
+        setusercharsize(1,1,1,1);
+        outtextxy(80, 70, "1) ADDTRIS");
+        outtextxy(80, 80, "2) TETRIS");
+        outtextxy(80, 90, "3) CRAZY MODIFICATION");
 }
 
 
@@ -178,23 +168,23 @@ void g_print_controls() {
 	x = 1;
 	y = tetris.origin_y + 5 * 8;
 	setcolor(LIGHTGRAY);
-	outtextxy(x, y, "Controls:");
+	outtextxy(x, y, "CONTROLS:");
 	y += 10;
 	outtextxy(x, y, " ");
 	y += 10;
-	outtextxy(x, y, "Left   ... 7");
+	outtextxy(x, y, "LEFT   ... 7");
 	y += 10;
-	outtextxy(x, y, "Right  ... 9");
+	outtextxy(x, y, "RIGHT  ... 9");
 	y += 10;
-	outtextxy(x, y, "Rotate ... 8");
+	outtextxy(x, y, "ROTATE ... 8");
 	y += 10;
-	outtextxy(x, y, "Drop   ... 4");
+	outtextxy(x, y, "DROP   ... 4");
 	y += 10;
 	outtextxy(x, y, " ");
 	y += 10;
-	outtextxy(x, y, "Pause  ... P");
+	outtextxy(x, y, "PAUSE  ... P");
 	y += 10;
-	outtextxy(x, y, "Quit   ... Q");
+	outtextxy(x, y, "QUIT   ... Q");
 }
 
 
@@ -213,7 +203,7 @@ void g_update_score() {
 
 	gui_unfill_rect(x + 60, y, 20, 10);
 	itoa(tetris.score, str, 10);
-	outtextxy(x, y, "Score: ");
+	outtextxy(x, y, "SCORE: ");
 	outtextxy(x + 60, y, str);
 }
 
@@ -238,10 +228,10 @@ void process_user_input() {
 					;
 				break;
 			case 'p':
-				gui_message("Paused");
+				gui_message("PAUSED");
 				break;
 			case 'q':
-				if (gui_confirm("Do you want to quit game? (Y/N)") == G_TRUE)
+				if (gui_confirm("DO YOU WANT QUIT GAME? (Y/N)") == G_TRUE)
 					exit(0);
 		}
 	}
@@ -249,13 +239,17 @@ void process_user_input() {
 
 
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
+        char str[5];
+        
         x = tetris->origin_x + x * tetris->element_size;
 	y = tetris->origin_y + y * tetris->element_size;
         if (tetris->game == TETRIS) {
                 color %=  3; 
                 putsprite(spr_or, x, y, brick + BRICK_OFFSET * color);
         } else {
-                putsprite(spr_or, x, y, numbers + NUMBERS_OFFSET * tetris->brick.value);
+                putsprite(spr_and, x, y, blank);
+                itoa(tetris->brick.value, str, 10);
+                outtextxy(x + 2, y + 1, str);
         }
 }
 
@@ -304,7 +298,7 @@ int gui_option(char *msg, char *options) {
 
 
 void gui_draw_message(char *msg) {	
-        outtextxy(1, 180, msg);
+        outtextxy(1, 182, msg);
 }
 
 
