@@ -126,7 +126,7 @@ BOOL InitApp() {
                 return FALSE;
 
         hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-        hFontAddTris = CreateFont(32,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+        hFontAddTris = CreateFont(30,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
                 CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Impact")); 
         SendMessage(g_hwndStatusBar, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
         

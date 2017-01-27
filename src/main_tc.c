@@ -47,25 +47,23 @@ static void g_print_controls();
 static void g_update_score();
 static int g_printf(int *xloc, int *yloc, char *fmt, ...);
 static void process_user_input();
-static unsigned get_second_delay();
-static void delay100(unsigned u);
 
 
 int main() {
 	int c, seg, wide, ret;
         GAME_T game;
 
-	_delay = get_second_delay() / 16;
         init_graph();
         srand(time(NULL) % 37);
 
 	do {
                 game = TETRIS;
-                c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
+		c = gui_option("(A)ddtrix or (T)etris?", "tTaA");
                 if (c == 'a' || c == 'A') {
                         game = ADDTRIS;
                         seg = 1;
-                        wide = 10;
+			wide = 10;
+			_delay = 100;
                 } else {
         		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
         		if (c == 's' || c == 'S') {
@@ -80,7 +78,8 @@ int main() {
         			} else {
         				wide = 20;
         			}
-        		}
+			}
+			_delay = 70;
                 }
                 t_create_game(&tetris, game, wide, 20, seg);
 
@@ -91,7 +90,7 @@ int main() {
                         int i;
                         for (i = 0; i < 5; i++) {
 		              process_user_input();
-			      delay100(_delay);
+			      delay(_delay);
                         }
                         ret = t_go(&tetris);
                         g_update_score();
@@ -172,13 +171,17 @@ void g_print_controls() {
 
 void g_update_score() {
 	int x, y;
+	static int last = -1;
 
-	x = tetris.origin_x - 150;
-	y = tetris.origin_y + 8;
-	setcolor(BLACK);
-	gui_fill_rect(x, y, 100, 8, BLACK, SOLID_FILL);
-	setcolor(WHITE);
-	g_printf(&x, &y, "Score: %d", tetris.score);
+	if (last != tetris.score) {
+		x = tetris.origin_x - 150;
+		y = tetris.origin_y + 8;
+		setcolor(BLACK);
+		gui_fill_rect(x, y, 100, 8, BLACK, SOLID_FILL);
+		setcolor(WHITE);
+		g_printf(&x, &y, "Score: %d", tetris.score);
+		last = tetris.score;
+	}
 }
 
 
@@ -228,52 +231,23 @@ void process_user_input() {
 }
 
 
-unsigned get_second_delay() {
-        unsigned i;
-        time_t t;
-
-        printf("Measuring cpu speed...\n");
-
-        t = time(NULL);
-        while (t == time(NULL)) {
-                delay(50);
-        }
-
-        t = time(NULL);
-        i = 0;
-        while (t == time(NULL)) {
-		delay(100);
-                i++;
-        }
-
-	return i;
-}
-
-
-void delay100(unsigned u) {
-	int i;
-
-	for (i = 0; i < 100; i++)
-		delay(u);
-}
-
-
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
-        int x, y;
-        
-	setcolor(color_vec[MESH_COLOR]);
-        if (tetris->game == TETRIS) {
+	int tx, ty;
+
+	if (tetris->game == TETRIS) {
+		setcolor(color_vec[MESH_COLOR]);
         	gui_fill_rect(
                         tetris->origin_x + x * tetris->element_size,
                         tetris->origin_y + y * tetris->element_size,
         		tetris->element_size,
                         tetris->element_size,
                         color_vec[color], SOLID_FILL);
-        } else {
-                x = tetris->origin_x + x * tetris->element_size;
-                y = tetris->origin_y + y * tetris->element_size;
-                m_empty_mesh_pixel(tetris, x, y);
-                g_printf(&x, &y, "%d", tetris->brick.value);
+	} else {
+		m_empty_mesh_pixel(tetris, x, y);
+		setcolor(WHITE);
+		tx = tetris->origin_x + x * tetris->element_size + 4;
+		ty = tetris->origin_y + y * tetris->element_size + 4;
+		g_printf(&tx, &ty, "%d", tetris->brick.value);
         }
 }
 
@@ -287,3 +261,4 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
                 tetris->element_size + 1,
                 color_vec[MESH_BK_COLOR], SOLID_FILL);
 }
+
