@@ -61,15 +61,14 @@ int main() {
         atexit(gui_cleanup);
 	gui_cls();
         srand(time(NULL));
-                
-        _delay = 60000;
 
 	do {
-		c = gui_option("(T)etris or (A)ddtrix?", "tTaA");
+		c = gui_option("(A)ddtrix or (T)etris?", "tTaA");
 		if (c == 'a' || c == 'A') {
 			game = ADDTRIS;
 			seg = 1;
 			wide = 10;
+                        _delay = 100000;
 		} else {
                 	game = TETRIS;
 			c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
@@ -86,6 +85,7 @@ int main() {
 					wide = 20;
 				}
 			}
+                        _delay = 60000;
 		}
                 
                 t_create_game(&tetris, game, wide, 20, seg);
