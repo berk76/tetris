@@ -47,6 +47,7 @@ static void g_print_controls();
 static void g_update_score();
 static int g_printf(int *xloc, int *yloc, char *fmt, ...);
 static void process_user_input();
+static void wait(int ms);
 
 
 int main() {
@@ -63,7 +64,7 @@ int main() {
                         game = ADDTRIS;
                         seg = 1;
 			wide = 10;
-			_delay = 100;
+			_delay = 170;
                 } else {
         		c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
         		if (c == 's' || c == 'S') {
@@ -79,7 +80,7 @@ int main() {
         				wide = 20;
         			}
 			}
-			_delay = 70;
+			_delay = 90;
                 }
                 t_create_game(&tetris, game, wide, 20, seg);
 
@@ -90,7 +91,7 @@ int main() {
                         int i;
                         for (i = 0; i < 5; i++) {
 		              process_user_input();
-			      delay(_delay);
+			      wait(_delay);
                         }
                         ret = t_go(&tetris);
                         g_update_score();
@@ -261,4 +262,14 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
                 tetris->element_size + 1,
                 color_vec[MESH_BK_COLOR], SOLID_FILL);
 }
+
+
+void wait(int ms) {
+	clock_t endwait;
+
+	endwait = clock() + ms * CLK_TCK / 1000;
+	while (clock() < endwait)
+		;
+}
+
 
