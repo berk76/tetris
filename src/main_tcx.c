@@ -143,22 +143,15 @@ void g_draw_mesh(int grid_size) {
 
 void g_print_controls() {
 
-        gotoxy(2,6);
-        printf("Controls:");
-
-        gotoxy(2,8);
-        printf("Left   ... 7");
-        gotoxy(2,9);
-        printf("Right  ... 9");
-        gotoxy(2,10);
-        printf("Rotate ... 8");
-        gotoxy(2,11);
-        printf("Drop   ... 4");
-
-        gotoxy(2,13);
-        printf("Pause  ... P");
-        gotoxy(2,14);
-        printf("Quit   ... Q");
+        tui_draw_box(2, 6, TUI_COL, TUI_BKCOL, \
+                "Controls:\n\n" \
+                "Left   ... 7\n" \
+                "Right  ... 9\n" \
+                "Rotate ... 8\n" \
+                "Drop   ... 4\n\n" \
+                "Pause  ... P\n" \
+                "Quit   ... Q\n" \
+                );
 }
 
 

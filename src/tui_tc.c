@@ -22,6 +22,8 @@
 
 
 static WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor);
+static void calc_box_size(int *size_x, int *size_y, char *content);
+static void draw_box(int x, int y, int size_x, int size_y, char * content);
 static int tui_wait_for_key(char *s);
 static void tui_wait_for_any_key();
 
@@ -89,6 +91,19 @@ void tui_flush() {
 }
 
 
+void tui_draw_box(int x, int y, int color, int bkcolor, char *msg) {
+        int size_x, size_y;
+
+        assert(msg != NULL);
+        calc_box_size(&size_x, &size_y, msg);
+        
+        size_x += 4;
+        size_y += 2;
+        
+        draw_box(x, y, size_x, size_y, msg);
+}
+
+
 void tui_message(char *msg, int color, int bkcolor) {
         WINDOW_T *w;
 
@@ -132,28 +147,10 @@ void tui_set_attr(int blink, int color, int bkcolor) {
 WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         WINDOW_T *w;
         int x, y, size_x, size_y;
-        int i, len;
-        char *p;
 
         assert(msg != NULL);
 
-        size_x = 0;
-        size_y = 1;
-        i = 0;
-        p = msg;
-        while (*p != '\0') {
-                if (*p == '\n') {
-                        size_y++;
-                        i = 0;
-                } else {
-                        i++;
-                        if (i > size_x) {
-                                size_x = i;
-                        }
-                }
-                p++;
-        }
-
+        calc_box_size(&size_x, &size_y, msg);
 
         size_x += 4;
         size_y += 2;
@@ -161,6 +158,40 @@ WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         x = (TUI_SCR_X_SIZE - size_x) / 2;
         y = (TUI_SCR_Y_SIZE - size_y) / 2;
         w = tui_create_win(x, y, size_x, size_y, color, bkcolor, ' ');
+
+        draw_box(x, y, size_x, size_y, msg);
+        return w;
+}
+
+
+void calc_box_size(int *size_x, int *size_y, char *content) {
+        char *p;
+        int i;
+        
+        assert(content != NULL);
+        
+        *size_x = 0;
+        *size_y = 1;
+        i = 0;
+        p = content;
+        while (*p != '\0') {
+                if (*p == '\n') {
+                        (*size_y)++;
+                        i = 0;
+                } else {
+                        i++;
+                        if (i > *size_x) {
+                                *size_x = i;
+                        }
+                }
+                p++;
+        }
+}
+
+
+void draw_box(int x, int y, int size_x, int size_y, char * content) {
+        int i, len;
+        char *p;
 
         /* 1st line */
         gotoxy(x, y);
@@ -171,7 +202,7 @@ WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         putch(0xbb);
 
         /* n-th line */
-        p = msg;
+        p = content;
         for (i = 0; i < (size_y - 2); i++) {
                 gotoxy(x, y + i + 1);
                 cprintf("%c ", 0xba);
@@ -198,7 +229,6 @@ WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         putch(0xbc);
 
         tui_flush();
-        return w;
 }
 
 
