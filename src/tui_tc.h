@@ -41,9 +41,12 @@ extern void tui_delete_win(WINDOW_T *w);
 extern void tui_cls_win(WINDOW_T *w);
 extern void tui_flush();
 
+extern void tui_draw_box(int x, int y, int color, int bkcolor, char *msg);
+
 extern void tui_message(char *msg, int color, int bkcolor);
 extern int tui_confirm(char *msg, int color, int bkcolor);
 extern int tui_option(char *msg, char *options, int color, int bkcolor);
+
 extern void tui_set_attr(int blink, int color, int bkcolor);
 
 #endif
