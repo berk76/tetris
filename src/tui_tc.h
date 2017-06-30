@@ -17,12 +17,15 @@
 #define _TUI_TC_
 
 
-#define G_FALSE 0
-#define G_TRUE  1
-
-
 #define TUI_SCR_X_SIZE 80
 #define TUI_SCR_Y_SIZE 25
+
+
+typedef enum {
+        FALSE,
+        TRUE
+} G_BOOL_T;
+
 
 typedef struct {
         int x;
@@ -41,10 +44,10 @@ extern void tui_delete_win(WINDOW_T *w);
 extern void tui_cls_win(WINDOW_T *w);
 extern void tui_flush();
 
-extern void tui_draw_box(int x, int y, int color, int bkcolor, char *msg);
+extern void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border);
 
 extern void tui_message(char *msg, int color, int bkcolor);
-extern int tui_confirm(char *msg, int color, int bkcolor);
+extern G_BOOL_T tui_confirm(char *msg, int color, int bkcolor);
 extern int tui_option(char *msg, char *options, int color, int bkcolor);
 
 extern void tui_set_attr(int blink, int color, int bkcolor);

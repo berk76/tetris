@@ -20,6 +20,7 @@
 #include <conio.h>
 #include "tetris.h"
 #include "tui_tc.h"
+#include "tui_gfx.h"
 #include "main.h"
 
 
@@ -28,7 +29,6 @@
 
 static int MESH_BK_COLOR = 7;
 static TETRIS_T tetris;
-static unsigned _delay;
 static int color_vec[] = {LIGHTBLUE,
                           LIGHTGREEN,
                           LIGHTCYAN,
@@ -50,14 +50,16 @@ static void wait(int ms);
 
 int main() {
         int c, seg, wide, ret;
+        unsigned _delay;
         GAME_T game;
 
-	mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, 0xb0);
+	mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
+        tui_draw_box(24, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
         srand(time(NULL) % 37);
 
         do {
                 game = TETRIS;
-		c = tui_option("(A)ddtrix or (T)etris?\nTest, test\n", "tTaA", TUI_COL, TUI_BKCOL);
+		c = tui_option("(A)ddtrix or (T)etris?", "tTaA", TUI_COL, TUI_BKCOL);
                 if (c == 'a' || c == 'A') {
                         game = ADDTRIS;
                         seg = 1;
@@ -79,7 +81,7 @@ int main() {
                                         wide = 20;
                                 }
                         }
-                        _delay = 90;
+                        _delay = 100;
                 }
 
                 t_create_game(&tetris, game, wide, 20, seg);
@@ -91,10 +93,12 @@ int main() {
                         int i;
                         for (i = 0; i < 5; i++) {
                               process_user_input();
-                              wait(_delay);
+                              wait(((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);
                         }
                         ret = t_go(&tetris);
                         g_update_score();
+                        gotoxy(1,25);
+                        printf("%5d", ((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);  
                 } while (ret != -1);
 
                 t_delete_game(&tetris);
@@ -112,29 +116,44 @@ void g_draw_mesh(int grid_size) {
 
         tui_cls_win(mainw);
 	tetris.element_size = grid_size;
-        tetris.origin_x = 30;
+        tetris.origin_x = 39;
         tetris.origin_y = 3;
 
-	gotoxy(2,2);
-	tui_set_attr(BLINK, YELLOW, BLUE);
-        cprintf("Tetris %s", TETRIS_VERSION);
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
 
         for (y = 0; y < tetris.element_size * tetris.grid_size_y; y++) {
                 gotoxy(tetris.origin_x - 1, tetris.origin_y + y);
-                putch(0xb3);
+                putch('|');
                 for (x = 0; x < tetris.element_size * 2 * tetris.grid_size_x; x++) {
                         putch(' ');
                 }
-                putch(0xb3);
+                putch('|');
         }
 
         gotoxy(tetris.origin_x - 1, tetris.origin_y + tetris.element_size * tetris.grid_size_y);
-        putch(0xc0);
+        putch('+');
         for (x = 0; x < tetris.element_size * 2 * tetris.grid_size_x; x++) {
-                putch(0xc4);
+                putch('-');
         }
-        putch(0xd9);
+        putch('+');
+        
+        if (tetris.grid_size_x <= 10) {
+                /*
+                tui_draw_box(tetris.origin_x + tetris.grid_size_x * 2, \
+                        tetris.origin_y + 4, TUI_COL, TUI_BKCOL, gfx_bird_02, FALSE);
+                */        
+                tui_draw_box(tetris.origin_x + 23, \
+                        1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                        
+                tui_draw_box(tetris.origin_x + 23, \
+                        7, TUI_COL, TUI_BKCOL, \
+                        "Jaroslav Beran\n  GNU/GPL v3\n   (c) 2017\n" \
+                        " Creatures by:\n www.chris.com", \
+                        TRUE);
+                        
+                tui_draw_box(tetris.origin_x + 23, \
+                        15, TUI_COL, TUI_BKCOL, gfx_bird_04, FALSE);
+        }
 
         g_print_controls();
         g_update_score();
@@ -143,27 +162,32 @@ void g_draw_mesh(int grid_size) {
 
 void g_print_controls() {
 
-        tui_draw_box(2, 6, TUI_COL, TUI_BKCOL, \
+        tui_draw_box(2, 14, TUI_COL, TUI_BKCOL, \
                 "Controls:\n\n" \
-                "Left   ... 7\n" \
-                "Right  ... 9\n" \
-                "Rotate ... 8\n" \
-                "Drop   ... 4\n\n" \
-                "Pause  ... P\n" \
-                "Quit   ... Q\n" \
-                );
+                "Left   ---------- arrow\n" \
+                "Right  ---------- arrow\n" \
+                "Rotate ---------- arrow\n" \
+                "Drop   ---------- arrow\n\n\n" \
+                "Pause  ---------- P\n" \
+                "Quit   ---------- Q\n", \
+                FALSE);
+                
+        tui_draw_box(10, 12, TUI_COL, TUI_BKCOL, gfx_bird_01, FALSE);
+        
 }
 
 
 void g_update_score() {
         static int last_score = -1;
+        char s[20];
 
         if (last_score == tetris.score)
                 return;
 
         last_score = tetris.score;
-        gotoxy(2, 4);
-        printf("Score: %4d", tetris.score);
+        
+        sprintf(s, "Score: %4d", tetris.score);
+        tui_draw_box(2, 9, TUI_COL, TUI_BKCOL, s, TRUE);
 }
 
 
@@ -198,7 +222,7 @@ void process_user_input() {
                                 tui_message("Paused", TUI_COL, TUI_BKCOL);
                                 break;
                         case 'q':
-                                if (tui_confirm("Do you want to quit game? (Y/N)", TUI_COL, TUI_BKCOL) == G_TRUE) {
+                                if (tui_confirm("Do you want to quit game? (Y/N)", TUI_COL, TUI_BKCOL) == TRUE) {
                                         tui_delete_win(mainw);
                                         exit(0);
                                 }
