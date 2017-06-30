@@ -23,7 +23,7 @@
 
 static WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor);
 static void calc_box_size(int *size_x, int *size_y, char *content);
-static void draw_box(int x, int y, int size_x, int size_y, char * content);
+static void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border);
 static int tui_wait_for_key(char *s);
 static void tui_wait_for_any_key();
 
@@ -91,16 +91,19 @@ void tui_flush() {
 }
 
 
-void tui_draw_box(int x, int y, int color, int bkcolor, char *msg) {
+void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border) {
         int size_x, size_y;
 
         assert(msg != NULL);
+        tui_set_attr(0, color, bkcolor);
         calc_box_size(&size_x, &size_y, msg);
         
-        size_x += 4;
-        size_y += 2;
+        if (add_border == TRUE) {
+                size_x += 4;
+                size_y += 2;
+        }
         
-        draw_box(x, y, size_x, size_y, msg);
+        draw_box(x, y, size_x, size_y, msg, add_border);
 }
 
 
@@ -113,7 +116,7 @@ void tui_message(char *msg, int color, int bkcolor) {
 }
 
 
-int tui_confirm(char *msg, int color, int bkcolor) {
+G_BOOL_T tui_confirm(char *msg, int color, int bkcolor) {
         WINDOW_T *w;
         int c;
 
@@ -121,7 +124,7 @@ int tui_confirm(char *msg, int color, int bkcolor) {
         c = tui_wait_for_key("yYnN");
         tui_delete_win(w);
 
-        return ((c == 'y') || (c == 'Y')) ? G_TRUE : G_FALSE;
+        return ((c == 'y') || (c == 'Y')) ? TRUE : FALSE;
 }
 
 
@@ -159,7 +162,7 @@ WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         y = (TUI_SCR_Y_SIZE - size_y) / 2;
         w = tui_create_win(x, y, size_x, size_y, color, bkcolor, ' ');
 
-        draw_box(x, y, size_x, size_y, msg);
+        draw_box(x, y, size_x, size_y, msg, TRUE);
         return w;
 }
 
@@ -189,24 +192,34 @@ void calc_box_size(int *size_x, int *size_y, char *content) {
 }
 
 
-void draw_box(int x, int y, int size_x, int size_y, char * content) {
-        int i, len;
+void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border) {
+        int i, len, offx, offy;
         char *p;
 
         /* 1st line */
-        gotoxy(x, y);
-        putch(0xc9);
-        for (i = 0; i < (size_x - 2); i++) {
-                putch(0xcd);
+        if (add_border == TRUE) {
+                gotoxy(x, y);
+                putch('+');
+                for (i = 0; i < (size_x - 2); i++) {
+                        putch('-');
+                }
+                putch('+');
+                offx = 2;
+                offy = 1;
+        } else {
+                offx = 0;
+                offy = 0;
         }
-        putch(0xbb);
 
         /* n-th line */
         p = content;
-        for (i = 0; i < (size_y - 2); i++) {
-                gotoxy(x, y + i + 1);
-                cprintf("%c ", 0xba);
-                len = size_x - 4; 
+        for (i = 0; i < (size_y - 2*offy); i++) {
+                gotoxy(x, y + i + offy);
+                if (add_border == TRUE) { 
+                        cprintf("%c ", '|');
+                }
+                len = size_x - 2*offx;
+                 
 		while ((*p != '\n') && (*p != '\0')) {
                         putch(*p);
                         p++;
@@ -216,17 +229,21 @@ void draw_box(int x, int y, int size_x, int size_y, char * content) {
                         putch(' ');
                         len--;
                 }
-                cprintf(" %c", 0xba);
+                if (add_border == TRUE) {
+                        cprintf(" %c", '|');
+                }
                 p++;
         }
-
+        
         /* last line */
-	gotoxy(x, y + size_y - 1);
-        putch(0xc8);
-        for (i = 0; i < (size_x - 2); i++) {
-                putch(0xcd);
+        if (add_border == TRUE) {
+                gotoxy(x, y + size_y - 1);
+                putch('+');
+                for (i = 0; i < (size_x - 2); i++) {
+                        putch('-');
+                }
+                putch('+');
         }
-        putch(0xbc);
 
         tui_flush();
 }
