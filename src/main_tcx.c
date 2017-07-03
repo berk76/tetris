@@ -116,10 +116,15 @@ void g_draw_mesh(int grid_size) {
 
         tui_cls_win(mainw);
 	tetris.element_size = grid_size;
-        tetris.origin_x = 39;
         tetris.origin_y = 3;
 
-        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
+        if (tetris.game == TETRIS) {
+                tetris.origin_x = 39;
+                tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
+        } else {
+                tetris.origin_x = 47;
+                tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_addtris, FALSE);
+        }
 
         for (y = 0; y < tetris.element_size * tetris.grid_size_y; y++) {
                 gotoxy(tetris.origin_x - 1, tetris.origin_y + y);
@@ -137,7 +142,7 @@ void g_draw_mesh(int grid_size) {
         }
         putch('+');
         
-        if (tetris.grid_size_x <= 10) {
+        if ((tetris.game == TETRIS) && (tetris.grid_size_x <= 10)) {
                 /*
                 tui_draw_box(tetris.origin_x + tetris.grid_size_x * 2, \
                         tetris.origin_y + 4, TUI_COL, TUI_BKCOL, gfx_bird_02, FALSE);
@@ -153,6 +158,10 @@ void g_draw_mesh(int grid_size) {
                         
                 tui_draw_box(tetris.origin_x + 23, \
                         15, TUI_COL, TUI_BKCOL, gfx_bird_04, FALSE);
+        }
+        
+        if (tetris.game == ADDTRIS) {
+                tui_draw_box(69, 19, TUI_COL, TUI_BKCOL, gfx_mush_01, FALSE);
         }
 
         g_print_controls();
