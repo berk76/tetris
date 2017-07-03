@@ -16,12 +16,21 @@
 #ifndef _TUI_GFX_
 #define _TUI_GFX_
 
+#include "tui_tc.h"
 
 /*
 *       Gtaphics mostly comes from:
 *       
 *       http://www.chris.com/ascii/
 *       http://patorjk.com/software/taag
+*/
+
+/*
+*       Colors:
+*       -------
+*       red     \x01\x04
+*       gray    \x01\x07
+*       green   \x01\x02
 */
 
 char *gfx_tetris =  " _______       __        __ \n" \
@@ -82,11 +91,11 @@ char *gfx_owl_02 =  "  >\\_/<\n" \
                     "====\"====\n" \
                     "   /^\\";
 
-char *gfx_mush_01 = "  .-\"\"\"-.\n" \
-                    " /* * * *\\\n" \
+char *gfx_mush_01 = "\x01\x04  .-\"\"\"-.\n" \
+                    " /\x01\x07* * * *\x01\x04\\\n" \
                     ":_.-:`:-._;\n" \
-                    "    (_)\n" \
-                    " \\|/(_)\\|/";
+                    "    \x01\x07(_)\n" \
+                    " \x01\x02\\|/\x01\x07(_)\x01\x02\\|/";
 
 #endif
 
