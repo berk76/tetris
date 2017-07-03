@@ -141,7 +141,7 @@ int tui_option(char *msg, char *options, int color, int bkcolor) {
 
 
 void tui_set_attr(int blink, int color, int bkcolor) {
-        textattr(color + (bkcolor << 4) + blink);
+        textattr(calcattr(blink, color, bkcolor));
 }
 
 
@@ -178,6 +178,11 @@ void calc_box_size(int *size_x, int *size_y, char *content) {
         i = 0;
         p = content;
         while (*p != '\0') {
+                if (*p == TUI_ATTR_LEADING) {
+                        p += 2;
+                        continue;
+                }
+                
                 if (*p == '\n') {
                         (*size_y)++;
                         i = 0;
@@ -221,6 +226,12 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
                 len = size_x - 2*offx;
                  
 		while ((*p != '\n') && (*p != '\0')) {
+                        if (*p == TUI_ATTR_LEADING) {
+                                p++;
+                                textattr(*p);
+                                p++;
+                                continue;
+                        }
                         putch(*p);
                         p++;
                         len--;

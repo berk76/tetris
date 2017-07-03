@@ -19,6 +19,9 @@
 
 #define TUI_SCR_X_SIZE 80
 #define TUI_SCR_Y_SIZE 25
+#define TUI_ATTR_LEADING 0x01
+
+#define calcattr(blink, color, bkcolor) ((color) + ((bkcolor) << 4) + (blink))
 
 
 typedef enum {
