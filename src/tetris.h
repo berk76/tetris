@@ -18,7 +18,7 @@
 
 #include "shape.h"
 
-typedef enum {TETRIS, ADDTRIS} GAME_T;
+typedef enum {TETRIS, XTRIS, ADDTRIS} GAME_T;
 
 typedef struct {
 	int x;

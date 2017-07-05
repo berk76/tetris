@@ -40,7 +40,7 @@ void t_create_game(TETRIS_T *tetris, GAME_T game, int x_size, int y_size, int br
         int i, ii;
         
         tetris->game = game;
-        if (tetris->game == TETRIS) {
+        if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
                 tetris->bk_color = TETRIS_BK_COLOR; 
         } else {
                 tetris->bk_color = -1;
@@ -102,7 +102,7 @@ int t_go(TETRIS_T *tetris) {
         } else {
                 result = t_move_down(tetris);
                 if (result == -1) {
-                        if (tetris->game == TETRIS) {
+                        if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
                                 tetris->score += check_lines(tetris);
                         } else {
                                 tetris->score += check_lines_addtris(tetris);
@@ -119,7 +119,7 @@ int create_new_brick(TETRIS_T *tetris) {
         BRICK_T *b;
                                          
         b = &tetris->brick;
-        if (tetris->game == TETRIS) { 
+        if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) { 
                 b->value = rand() % COLOR_VEC_SIZE;
         } else {
                 b->value = rand() % 10;
@@ -253,7 +253,7 @@ int t_rotate(TETRIS_T *tetris, int direction) {
         BRICK_T *b;
         
         b = &tetris->brick;
-        if (tetris->game == TETRIS) {
+        if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
                 rotate_shape(b->shape, b->shape_size, direction);
                 if (!is_free_space_for_brick(tetris)) {
                         rotate_shape(b->shape, b->shape_size, -direction);
