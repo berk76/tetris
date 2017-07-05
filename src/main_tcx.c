@@ -44,7 +44,7 @@ static WINDOW_T *mainw = NULL;
 static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
-static void process_user_input();
+static int process_user_input();
 static void wait(int ms);
 
 
@@ -61,21 +61,24 @@ int main() {
                 
                 tui_cls_win(mainw);
                 tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
-                tui_draw_box(5, 8, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
+                tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
                 
-		c = tui_option("\n(A)ddtrix or (T)etris?\n", "tTaA", TUI_COL, TUI_BKCOL);
-                if (c == 'a' || c == 'A') {
-                        game = ADDTRIS;
-                        seg = 1;
-                        wide = 10;
-                        _delay = 170;
-                } else {
-                        game = TETRIS;
-                        c = tui_option("\n(S)tandard tetris or (M)odification?\n", "sSmM", TUI_COL, TUI_BKCOL);
-                        if (c == 's' || c == 'S') {
+		c = tui_option("\n1) Addtrix\n\n2) Tetris\n\n3) X-Tris\n\n4) Quit\n", "1234", TUI_COL, TUI_BKCOL);
+                switch (c) {
+                        case '1':
+                                game = ADDTRIS;
+                                seg = 1;
+                                wide = 10;
+                                _delay = 170;
+                                break;
+                        case '2':
+                                game = TETRIS;
                                 seg = 4;
                                 wide = 10;
-                        } else {
+                                _delay = 100;
+                                break;
+                        case '3':
+                                game = XTRIS;
                                 c = tui_option("\nBrick size? (1..9)\n", "123456789", TUI_COL, TUI_BKCOL);
                                 seg = c - '0';
                                 c = tui_option("\n(S)tandard grid or (D)ouble wide?\n", "sSdD", TUI_COL, TUI_BKCOL);
@@ -84,8 +87,11 @@ int main() {
                                 } else {
                                         wide = 20;
                                 }
-                        }
-                        _delay = 100;
+                                _delay = 100;
+                                break;
+                        case '4':
+                                tui_delete_win(mainw);
+                                return 0;
                 }
 
                 t_create_game(&tetris, game, wide, 20, seg);
@@ -96,22 +102,22 @@ int main() {
                 do {
                         int i;
                         for (i = 0; i < 5; i++) {
-                              process_user_input();
-                              wait(((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);
+                                c = process_user_input();
+                                if (c == -1)
+                                        break;
+                                wait(((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);
                         }
                         ret = t_go(&tetris);
                         g_update_score();
                         gotoxy(1,25);
                         printf("%5d", ((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);  
-                } while (ret != -1);
+                } while ((ret != -1) && (c != -1));
 
                 t_delete_game(&tetris);
-                tui_message("\nGAME OVER\n", TUI_COL, TUI_BKCOL);
-                c = tui_option("\n(N)ew Game or (Q)uit\n", "nNqQ", TUI_COL, TUI_BKCOL);
-        } while ((c == 'n') || (c == 'N'));
-
-        tui_delete_win(mainw);
-        return 0;
+                if (c != -1)
+                        tui_message("\nGAME OVER\n", TUI_COL, TUI_BKCOL);
+                
+        } while (1);
 }
 
 
@@ -122,13 +128,22 @@ void g_draw_mesh(int grid_size) {
 	tetris.element_size = grid_size;
         tetris.origin_y = 3;
 
-        if (tetris.game == TETRIS) {
-                tetris.origin_x = 39;
-                tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
-        } else {
-                tetris.origin_x = 47;
-                tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_addtris, FALSE);
+        switch (tetris.game) {
+                case TETRIS:
+                        tetris.origin_x = 39;
+                        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
+                        break;
+                case XTRIS:
+                        tetris.origin_x = 40;
+                        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_xtris, FALSE);
+                        break;
+                case ADDTRIS:
+                        tetris.origin_x = 47;
+                        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_addtris, FALSE);
+                        break; 
         }
+        
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
 
         for (y = 0; y < tetris.element_size * tetris.grid_size_y; y++) {
                 gotoxy(tetris.origin_x - 1, tetris.origin_y + y);
@@ -204,9 +219,10 @@ void g_update_score() {
 }
 
 
-void process_user_input() {
-        int c;
+int process_user_input() {
+        int c, result;
 
+        result = 0;
         while (kbhit()) {
 
                 int c;
@@ -236,11 +252,12 @@ void process_user_input() {
                                 break;
                         case 'q':
                                 if (tui_confirm("\nDo you want to quit game? (Y/N)\n", TUI_COL, TUI_BKCOL) == TRUE) {
-                                        tui_delete_win(mainw);
-                                        exit(0);
+                                        result = -1;
                                 }
                 }
         }
+        
+        return result;
 }
 
 
@@ -248,7 +265,7 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size * 2;
         y = tetris->origin_y + y * tetris->element_size;
         gotoxy(x, y);
-        if (tetris->game == TETRIS) {
+        if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
                 textcolor(color_vec[color]);
                 cprintf("%c%c", 0xdb, 0xdb);
                 textcolor(color_vec[MESH_BK_COLOR]);
