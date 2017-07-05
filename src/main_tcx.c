@@ -54,12 +54,16 @@ int main() {
         GAME_T game;
 
 	mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
-        tui_draw_box(24, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
         srand(time(NULL) % 37);
 
         do {
                 game = TETRIS;
-		c = tui_option("(A)ddtrix or (T)etris?", "tTaA", TUI_COL, TUI_BKCOL);
+                
+                tui_cls_win(mainw);
+                tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
+                tui_draw_box(5, 8, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
+                
+		c = tui_option("\n(A)ddtrix or (T)etris?\n", "tTaA", TUI_COL, TUI_BKCOL);
                 if (c == 'a' || c == 'A') {
                         game = ADDTRIS;
                         seg = 1;
@@ -67,14 +71,14 @@ int main() {
                         _delay = 170;
                 } else {
                         game = TETRIS;
-                        c = tui_option("(S)tandard tetris or (M)odification?", "sSmM", TUI_COL, TUI_BKCOL);
+                        c = tui_option("\n(S)tandard tetris or (M)odification?\n", "sSmM", TUI_COL, TUI_BKCOL);
                         if (c == 's' || c == 'S') {
                                 seg = 4;
                                 wide = 10;
                         } else {
-                                c = tui_option("Brick size? (1..9)", "123456789", TUI_COL, TUI_BKCOL);
+                                c = tui_option("\nBrick size? (1..9)\n", "123456789", TUI_COL, TUI_BKCOL);
                                 seg = c - '0';
-                                c = tui_option("(S)tandard grid or (D)ouble wide?", "sSdD", TUI_COL, TUI_BKCOL);
+                                c = tui_option("\n(S)tandard grid or (D)ouble wide?\n", "sSdD", TUI_COL, TUI_BKCOL);
                                 if (c == 's' || c == 'S') {
                                         wide = 10;
                                 } else {
@@ -87,7 +91,7 @@ int main() {
                 t_create_game(&tetris, game, wide, 20, seg);
 
                 g_draw_mesh(1);
-                tui_message("Press any key to start ...", TUI_COL, TUI_BKCOL);
+                tui_message("\nPress any key to start ...\n", TUI_COL, TUI_BKCOL);
 
                 do {
                         int i;
@@ -102,8 +106,8 @@ int main() {
                 } while (ret != -1);
 
                 t_delete_game(&tetris);
-                tui_message("GAME OVER", TUI_COL, TUI_BKCOL);
-                c = tui_option("(N)ew Game or (Q)uit", "nNqQ", TUI_COL, TUI_BKCOL);
+                tui_message("\nGAME OVER\n", TUI_COL, TUI_BKCOL);
+                c = tui_option("\n(N)ew Game or (Q)uit\n", "nNqQ", TUI_COL, TUI_BKCOL);
         } while ((c == 'n') || (c == 'N'));
 
         tui_delete_win(mainw);
@@ -228,10 +232,10 @@ void process_user_input() {
                                 }
                                 break;
                         case 'p':
-                                tui_message("Paused", TUI_COL, TUI_BKCOL);
+                                tui_message("\nPaused\n", TUI_COL, TUI_BKCOL);
                                 break;
                         case 'q':
-                                if (tui_confirm("Do you want to quit game? (Y/N)", TUI_COL, TUI_BKCOL) == TRUE) {
+                                if (tui_confirm("\nDo you want to quit game? (Y/N)\n", TUI_COL, TUI_BKCOL) == TRUE) {
                                         tui_delete_win(mainw);
                                         exit(0);
                                 }
