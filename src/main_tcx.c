@@ -16,11 +16,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <conio.h>
 #include "tetris.h"
 #include "tui_tc.h"
 #include "tui_gfx.h"
+#include "wait_tc.h"
 #include "main.h"
 
 
@@ -45,16 +45,18 @@ static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
 static int process_user_input();
-static void wait(int ms);
+static void draw_star();
 
 
 int main() {
         int c, seg, wide, ret;
         unsigned _delay;
         GAME_T game;
+        JOB_T *j1;
 
 	mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
+        j1 = w_register_job(300, &draw_star);
 
         do {
                 game = TETRIS;
@@ -90,6 +92,7 @@ int main() {
                                 _delay = 100;
                                 break;
                         case '4':
+                                w_unregister_job(j1);
                                 tui_delete_win(mainw);
                                 return 0;
                 }
@@ -105,12 +108,10 @@ int main() {
                                 c = process_user_input();
                                 if (c == -1)
                                         break;
-                                wait(((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);
+                                w_wait(_delay);
                         }
                         ret = t_go(&tetris);
-                        g_update_score();
-                        gotoxy(1,25);
-                        printf("%5d", ((_delay - tetris.score) > 60) ? (_delay - tetris.score) : 60);  
+                        g_update_score();  
                 } while ((ret != -1) && (c != -1));
 
                 t_delete_game(&tetris);
@@ -284,13 +285,27 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         tui_flush();
 }
 
-
-void wait(int ms) {
-        clock_t endwait;
-
-        endwait = clock() + ms * CLK_TCK / 1000;
-        while (clock() < endwait)
-                ;
+void draw_star() {
+        static char c;
+        
+        switch (c) {
+                case ' ': 
+                        c = '.';
+                        break;
+                case '.': 
+                        c = '+';
+                        break;
+                case '+': 
+                        c = '*';
+                        break;
+                default: 
+                        c = ' ';
+        }
+        
+        gotoxy(79,25);
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        putch(c);
+        tui_flush();
 }
 
 

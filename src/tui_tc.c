@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include "wait_tc.h"
 #include "tui_tc.h"
 
 
@@ -269,7 +270,7 @@ int tui_wait_for_key(char *s) {
                         if (strchr(s, c) != NULL)
                                 return c;
                 }
-                /* delay(100); */
+                w_wait(100);
         }
 }
 
@@ -280,7 +281,7 @@ void tui_wait_for_any_key() {
         }
 
         while (!kbhit()) {
-                delay(100);
+                w_wait(100);
         }
         getch();
 }
