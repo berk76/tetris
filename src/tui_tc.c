@@ -50,7 +50,7 @@ WINDOW_T *tui_create_win(int x, int y, int size_x, int size_y, int color, int bk
         i = gettext(w->x, w->y, w->x + w->size_x - 1, w->y + w->size_y - 1, w->old_content);
         assert(i != 0);
 
-        tui_cls_win(w);
+        tui_cls_win(w, TRUE);
 
         return w;
 }
@@ -73,11 +73,17 @@ void tui_delete_win(WINDOW_T *w) {
 }
 
 
-void tui_cls_win(WINDOW_T *w) {
-        int a, b;
+void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line) {
+        int a, b, c;
+        
+        if (incl_status_line == FALSE) {
+                c = 1;
+        } else {
+                c = 0;
+        }
 
         tui_set_attr(0, w->color, w->bkcolor);
-        for (a = 0; a < w->size_y; a++) {
+        for (a = 0; a < (w->size_y - c); a++) {
                 gotoxy(w->x, w->y + a);
                 for (b = 0; b < w->size_x; b++) {
                         putch(w->bkchar);

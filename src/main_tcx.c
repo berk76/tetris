@@ -39,6 +39,18 @@ static int color_vec[] = {LIGHTBLUE,
                           BLACK,
                           BLUE};
 static WINDOW_T *mainw = NULL;
+static char floating_text[] = "Ptakovina game was created in year 2017 " \
+        "as part of developers competition published at www.high-voltage.cz. " \
+        "I would like thank to Sledge for making such challenges and for " \
+        "pushing us to create crazy games. Also I would like thank to web " \
+        "www.chris.com and all ascii art creators such as jgs, mrf, as, lc " \
+        "and many others for their wonderful ascii creatures. " \
+        "This software consists of three games: 1) ADDTRIS is game invented " \
+        "in 2016 by Vasek Petourka. Game was published at www.8bity.cz. "\
+        "2) TETRIS is well known game invented in 1984 by Russian game " \
+        "designer Alexey Pajitnov. 3) X-Tris is my crazy modification of " \
+        "Tetris game where you can cook by yourself some parameters and " \
+        "create some crazy challenge to manage. - berk -   * * *   ";
 
 
 static void g_draw_mesh(int grid_size);
@@ -46,26 +58,28 @@ static void g_print_controls();
 static void g_update_score();
 static int process_user_input();
 static void draw_star();
+static void draw_floating_text();
 
 
 int main() {
         int c, seg, wide, ret;
         unsigned _delay;
         GAME_T game;
-        JOB_T *j1;
+        JOB_T *j1, *j2;
 
 	mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
         j1 = w_register_job(300, &draw_star);
+        j2 = w_register_job(250, &draw_floating_text); 
 
         do {
                 game = TETRIS;
                 
-                tui_cls_win(mainw);
+                tui_cls_win(mainw, FALSE);
                 tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
                 tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
                 
-		c = tui_option("\n1) Addtrix\n\n2) Tetris\n\n3) X-Tris\n\n4) Quit\n", "1234", TUI_COL, TUI_BKCOL);
+		c = tui_option("\n1) Addtris\n\n2) Tetris\n\n3) X-Tris\n\n4) Quit\n", "1234", TUI_COL, TUI_BKCOL);
                 switch (c) {
                         case '1':
                                 game = ADDTRIS;
@@ -93,6 +107,7 @@ int main() {
                                 break;
                         case '4':
                                 w_unregister_job(j1);
+                                w_unregister_job(j2);
                                 tui_delete_win(mainw);
                                 return 0;
                 }
@@ -125,7 +140,7 @@ int main() {
 void g_draw_mesh(int grid_size) {
         int x, y;
 
-        tui_cls_win(mainw);
+        tui_cls_win(mainw, FALSE);
 	tetris.element_size = grid_size;
         tetris.origin_y = 3;
 
@@ -286,25 +301,41 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 }
 
 void draw_star() {
-        static char c;
+        static char s[] = " .+***+. ";
+        static char *pc;
         
-        switch (c) {
-                case ' ': 
-                        c = '.';
-                        break;
-                case '.': 
-                        c = '+';
-                        break;
-                case '+': 
-                        c = '*';
-                        break;
-                default: 
-                        c = ' ';
-        }
+        if ((*pc == '\0') || (*pc == NULL))
+                pc = s;
         
         gotoxy(79,25);
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
-        putch(c);
+        putch(*pc);
+        tui_flush();
+        pc++;
+        
+}
+
+void draw_floating_text() {
+        #define FT_X 5
+        #define FT_Y 25
+        #define FT_LEN 70
+        
+        static char b[(FT_LEN - 1) * 2];
+        static char *p = NULL;
+        
+        gotoxy(FT_X,FT_Y);
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        
+        if ((p == NULL) || (*p == '\0')) {
+                p = floating_text;
+        }
+        
+        gettext(FT_X + 1 , FT_Y, FT_X + 1 + (FT_LEN - 2), FT_Y, b);
+        puttext(FT_X, FT_Y, FT_X + (FT_LEN - 2), FT_Y, b);
+        
+        gotoxy(FT_X + FT_LEN - 1, FT_Y);
+        putch(*p);
+        p++;
         tui_flush();
 }
 
