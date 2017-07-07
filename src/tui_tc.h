@@ -44,7 +44,7 @@ typedef struct {
 
 extern WINDOW_T *tui_create_win(int x, int y, int size_x, int size_y, int color, int bkcolor, char bkchar);
 extern void tui_delete_win(WINDOW_T *w);
-extern void tui_cls_win(WINDOW_T *w);
+extern void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line);
 extern void tui_flush();
 
 extern void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border);
