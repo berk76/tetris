@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include "sound_tc.h"
 #include "tetris.h"
 #include "tui_tc.h"
 #include "tui_gfx.h"
@@ -42,15 +43,15 @@ static WINDOW_T *mainw = NULL;
 static char floating_text[] = "Ptakovina game was created in year 2017 " \
         "as part of developers competition published at www.high-voltage.cz. " \
         "I would like thank to Sledge for making such challenges and for " \
-        "pushing us to create crazy games. Also I would like thank to web " \
+        "pushing us to create crazy DOS games. Also I would like thank to web " \
         "www.chris.com and all ascii art creators such as jgs, mrf, as, lc " \
         "and many others for their wonderful ascii creatures. " \
         "This software consists of three games: 1) ADDTRIS is game invented " \
         "in 2016 by Vasek Petourka. Game was published at www.8bity.cz. "\
         "2) TETRIS is well known game invented in 1984 by Russian game " \
-        "designer Alexey Pajitnov. 3) X-Tris is my crazy modification of " \
+        "designer Alexey Pajitnov. 3) X-Tris is my own crazy modification of " \
         "Tetris game where you can cook by yourself some parameters and " \
-        "create some crazy challenge to manage. - berk -   * * *   ";
+        "create some crazy challenge to manage. - berk -";
 
 
 static void g_draw_mesh(int grid_size);
@@ -67,10 +68,29 @@ int main() {
         GAME_T game;
         JOB_T *j1, *j2;
 
-	mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
+        mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
         j1 = w_register_job(300, &draw_star);
-        j2 = w_register_job(250, &draw_floating_text); 
+        j2 = w_register_job(250, &draw_floating_text);
+        
+        for (c = 0; c < 8; c++) {
+                snd_playnote(c, C);
+                w_wait(500);
+                snd_playnote(c, D);
+                w_wait(500);
+                snd_playnote(c, E);
+                w_wait(500);
+                snd_playnote(c, F);
+                w_wait(500);
+                snd_playnote(c, G);
+                w_wait(500);
+                snd_playnote(c, A);
+                w_wait(500);
+                snd_playnote(c, B);
+                w_wait(500);
+                snd_speaker(0);
+                w_wait(2000);
+        }
 
         do {
                 game = TETRIS;
@@ -78,8 +98,13 @@ int main() {
                 tui_cls_win(mainw, FALSE);
                 tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
                 tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
+                tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
                 
-		c = tui_option("\n1) Addtris\n\n2) Tetris\n\n3) X-Tris\n\n4) Quit\n", "1234", TUI_COL, TUI_BKCOL);
+                c = tui_option("\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
+                               "\x01\x0f 2) Tetris\x01\x0b \n\n" \
+                               "\x01\x0f 3) X-Tris\x01\x0b \n\n" \
+                               "\x01\x0f 4) Quit\x01\x0b \n", \
+                               "1234", LIGHTCYAN, TUI_BKCOL);
                 switch (c) {
                         case '1':
                                 game = ADDTRIS;
@@ -95,15 +120,19 @@ int main() {
                                 break;
                         case '3':
                                 game = XTRIS;
-                                c = tui_option("\nBrick size? (1..9)\n", "123456789", TUI_COL, TUI_BKCOL);
+                                c = tui_option("\n\x01\x0f Brick size? (1..9)\x01\x0b \n", "123456789", LIGHTCYAN, TUI_BKCOL);
                                 seg = c - '0';
-                                c = tui_option("\n(S)tandard grid or (D)ouble wide?\n", "sSdD", TUI_COL, TUI_BKCOL);
+                                c = tui_option("\n\x01\x0f (S)tandard grid or (D)ouble wide?\x01\x0b \n", "sSdD", LIGHTCYAN, TUI_BKCOL);
                                 if (c == 's' || c == 'S') {
                                         wide = 10;
                                 } else {
                                         wide = 20;
                                 }
-                                _delay = 100;
+                                if (seg > 4) {
+                                        _delay = 170;
+                                } else {
+                                        _delay = 100;
+                                }
                                 break;
                         case '4':
                                 w_unregister_job(j1);
@@ -322,11 +351,12 @@ void draw_floating_text() {
         
         static char b[(FT_LEN - 1) * 2];
         static char *p = NULL;
+        static i = 0;
         
         gotoxy(FT_X,FT_Y);
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        tui_set_attr(0, DARKGRAY, TUI_BKCOL);
         
-        if ((p == NULL) || (*p == '\0')) {
+        if (p == NULL) {
                 p = floating_text;
         }
         
@@ -334,8 +364,19 @@ void draw_floating_text() {
         puttext(FT_X, FT_Y, FT_X + (FT_LEN - 2), FT_Y, b);
         
         gotoxy(FT_X + FT_LEN - 1, FT_Y);
-        putch(*p);
-        p++;
+        
+        if (*p == '\0') {
+                putch(' ');
+                i++;
+                if (i == FT_LEN) {
+                        p = NULL;
+                        i = 0;
+                } 
+        } else {
+                putch(*p);
+                p++;
+        }
+        
         tui_flush();
 }
 
