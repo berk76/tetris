@@ -24,6 +24,7 @@ static JOB_T *job_q = NULL;
 
 
 void w_wait(long ms) {
+        int ret;
         clock_t endwait;
         JOB_T *j, *pq;
 
@@ -38,8 +39,12 @@ void w_wait(long ms) {
                         pq = pq->next;
                 }
                 if ((j != NULL) && (clock() >= j->endwait) && (endwait > j->endwait)) {
-                        j->run();
-                        j->endwait = calc_endwait(j->period);
+                        ret = j->run();
+                        if (ret != 0) {
+                                j->endwait = calc_endwait(ret);
+                        } else {
+                                j->endwait = calc_endwait(j->period);
+                        }
                 } else 
                 if (clock() >= endwait) {
                         return;
@@ -48,7 +53,7 @@ void w_wait(long ms) {
 }
 
 
-JOB_T * w_register_job(unsigned ms, void (*run)(void)) {
+JOB_T * w_register_job(unsigned ms, int (*run)(void)) {
         JOB_T *j;
         
         j = (JOB_T *) malloc(sizeof(JOB_T));

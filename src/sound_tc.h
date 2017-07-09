@@ -39,8 +39,24 @@ enum SND_NOTE {
         GS = 8,
         A  = 9,
         AS = 10,
-        B  = 11
-};      
+        B  = 11,
+        REST = 99
+};
+
+enum SND_DURATION {
+        N1  = 1, 
+        N2  = 2,
+        N4  = 4,
+        N8  = 8,
+        N16 = 16
+};
+
+typedef struct {
+        enum SND_NOTE note;
+        enum SND_OCTAVE octave;
+        enum SND_DURATION duration;
+} SND_PLAY_NOTE;
+      
         
 /*      
 * Set frequency of oscillator feeding speaker.
@@ -58,7 +74,7 @@ extern void snd_speaker(int on);
 * Play note
 */      
         
-extern void snd_playnote(enum SND_OCTAVE o, enum SND_NOTE n);
+extern void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o);
 
 #endif
 

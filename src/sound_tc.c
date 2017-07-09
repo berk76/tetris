@@ -195,7 +195,7 @@
 #include <dos.h>
 #include "sound_tc.h"
 
-
+/* Please note frequencies 16 and 17 are out of possibility of PC speaker */
 int not_freq[] = {  16,  17,  18,  19,  21,  22,  23,  24,  26,  27,  29,  31, \
                     33,  35,  37,  39,  41,  44,  46,  49,  52,  55,  58,  62, \
                     65,  69,  73,  78,  82,  87,  92,  98, 104, 110, 116, 123, \
@@ -241,9 +241,13 @@ void snd_speaker(int on) {
 * Play note
 */      
         
-void snd_playnote(enum SND_OCTAVE o, enum SND_NOTE n) {
-        snd_setfreq(not_freq[n + o*12]);
-        snd_speaker(1);
+void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o) {
+        if (n == REST) {
+                snd_speaker(0);
+        } else {
+                snd_setfreq(not_freq[n + o*12]);
+                snd_speaker(1);
+        }
 }
 
 

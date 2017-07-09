@@ -58,39 +58,22 @@ static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
 static int process_user_input();
-static void draw_star();
-static void draw_floating_text();
+static int draw_star();
+static int draw_floating_text();
+static int play_sound();
 
 
 int main() {
         int c, seg, wide, ret;
         unsigned _delay;
         GAME_T game;
-        JOB_T *j1, *j2;
+        JOB_T *j1, *j2, *j3;
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
-        j1 = w_register_job(300, &draw_star);
+        /* j1 = w_register_job(300, &draw_star); */
         j2 = w_register_job(250, &draw_floating_text);
-        
-        for (c = 0; c < 8; c++) {
-                snd_playnote(c, C);
-                w_wait(500);
-                snd_playnote(c, D);
-                w_wait(500);
-                snd_playnote(c, E);
-                w_wait(500);
-                snd_playnote(c, F);
-                w_wait(500);
-                snd_playnote(c, G);
-                w_wait(500);
-                snd_playnote(c, A);
-                w_wait(500);
-                snd_playnote(c, B);
-                w_wait(500);
-                snd_speaker(0);
-                w_wait(2000);
-        }
+        j3 = w_register_job(300, &play_sound);
 
         do {
                 game = TETRIS;
@@ -103,8 +86,8 @@ int main() {
                 c = tui_option("\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
                                "\x01\x0f 2) Tetris\x01\x0b \n\n" \
                                "\x01\x0f 3) X-Tris\x01\x0b \n\n" \
-                               "\x01\x0f 4) Quit\x01\x0b \n", \
-                               "1234", LIGHTCYAN, TUI_BKCOL);
+                               "\x01\x0f Q) Quit\x01\x0b \n", \
+                               "123Qq", LIGHTCYAN, TUI_BKCOL);
                 switch (c) {
                         case '1':
                                 game = ADDTRIS;
@@ -134,9 +117,12 @@ int main() {
                                         _delay = 100;
                                 }
                                 break;
-                        case '4':
-                                w_unregister_job(j1);
+                        case 'Q':
+                        case 'q':
+                                /* w_unregister_job(j1); */
                                 w_unregister_job(j2);
+                                w_unregister_job(j3);
+                                snd_speaker(0);
                                 tui_delete_win(mainw);
                                 return 0;
                 }
@@ -329,7 +315,7 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         tui_flush();
 }
 
-void draw_star() {
+int draw_star() {
         static char s[] = " .+***+. ";
         static char *pc;
         
@@ -341,10 +327,10 @@ void draw_star() {
         putch(*pc);
         tui_flush();
         pc++;
-        
+        return 0;     
 }
 
-void draw_floating_text() {
+int draw_floating_text() {
         #define FT_X 5
         #define FT_Y 25
         #define FT_LEN 70
@@ -378,6 +364,54 @@ void draw_floating_text() {
         }
         
         tui_flush();
+        return 0;
+}
+
+int play_sound() {
+        int d = 750;
+        int r = 250;
+        int i;
+        static int pause = 0;
+        static SND_PLAY_NOTE *p = NULL; 
+        static SND_PLAY_NOTE pes[] = {{G,O3,N4},{G,O3,N4}, \
+                               {E,O3,N4},{REST,O3,N4}, \
+                               {G,O3,N4},{G,O3,N4}, \
+                               {E,O3,N4},{REST,O3,N4}, \
+                               {G,O3,N4},{G,O3,N4}, \
+                               {A,O3,N4},{G,O3,N4}, \
+                               {G,O3,N2},
+                               {F,O3,N2},
+                               {F,O3,N4},{F,O3,N4}, \
+                               {D,O3,N4},{REST,O3,N4}, \
+                               {F,O3,N4},{F,O3,N4}, \
+                               {D,O3,N4},{REST,O3,N4}, \
+                               {F,O3,N4},{F,O3,N4}, \
+                               {G,O3,N4},{F,O3,N4}, \
+                               {F,O3,N2},
+                               {E,O3,N2},
+                               {REST,O3,N2},
+                               {REST,O0,N2}
+                        };
+                        
+        if (p == NULL) {
+                p = pes;
+        }
+        if (pause == 0) {
+                snd_playnote(p->note, p->octave);
+                i = p->duration;
+                if ((p->note == REST) && (p->octave == O0)) {
+                        p = pes;
+                } else {
+                        p++;
+                }
+                pause = 1;
+        } else {
+                snd_playnote(REST, p->octave);
+                i = p->duration;
+                pause = 0;
+        }
+        
+        return (pause == 1) ? d/i : r/i;
 }
 
 

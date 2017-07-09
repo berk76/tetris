@@ -21,7 +21,7 @@
 
 typedef struct JOB JOB_T;
 struct JOB {
-        void       (*run)();
+        int       (*run)();
         long       period;
         clock_t    endwait;
         JOB_T      *prev;
@@ -30,7 +30,7 @@ struct JOB {
 
 
 extern void w_wait(long ms);
-extern JOB_T * w_register_job(unsigned ms, void (*run)(void));
+extern JOB_T * w_register_job(unsigned ms, int (*run)(void));
 extern void w_unregister_job(JOB_T *j);
 
 #endif
