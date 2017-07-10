@@ -392,12 +392,15 @@ int draw_floating_text(enum W_ACTION a) {
 }
 
 int play_sound(enum W_ACTION a) {
-        int d = 1000;
-        int r = 250;
         int i;
         static int pause = 0;
-        static SND_PLAY_NOTE *p = NULL; 
-        static SND_PLAY_NOTE pes[] = {{G,O3,N4},{G,O3,N4}, \
+        static SND_PLAY_NOTE *p = NULL;
+        
+        /* Skakal pes */
+        /*
+        int d = 1200;
+        int r = 250; 
+        static SND_PLAY_NOTE song[] = {{G,O3,N4},{G,O3,N4}, \
                                {E,O3,N4},{REST,O3,N4}, \
                                {G,O3,N4},{G,O3,N4}, \
                                {E,O3,N4},{REST,O3,N4}, \
@@ -411,26 +414,68 @@ int play_sound(enum W_ACTION a) {
                                {D,O3,N4},{REST,O3,N4}, \
                                {F,O3,N4},{F,O3,N4}, \
                                {G,O3,N4},{F,O3,N4}, \
-                               {F,O3,N2},
-                               {E,O3,N2},
-                               {REST,O3,N2},
-                               {END,O3,N2}
+                               {F,O3,N2}, \
+                               {E,O3,N2}, \
+                               {REST,O3,N2}, \
+                               {END,O3,N2} \
                         };
-            
+        */
+        
+        /* Holka modrooka */
+        /*
+        int d = 2000;
+        int r = 54;
+        static SND_PLAY_NOTE song[] = {{F,O4,N4},{B,O4,N4}, \
+                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
+                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
+                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
+                                {F,O4,N4},{B,O4,N4}, \
+                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
+                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
+                                {F,O4,N4},{REST,O4,N4}, \
+                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
+                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
+                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
+                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
+                                {F,O4,N4},{B,O4,N4}, \
+                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
+                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
+                                {F,O4,N4},{REST,O4,N4}, \
+                                {REST,O4,N2}, \
+                                {END,O4,N2} \
+                        };
+        */
+        
+        int d = 2000;
+        int r = 54;
+        static SND_PLAY_NOTE song[] = {{G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
+                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{F,O5,N8}, \
+                               {G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
+                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{E,O5,N4},{REST,O5,N4}, \
+                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
+                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{F,O5,N8}, \
+                               {G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
+                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{E,O5,N4},{REST,O5,N4}, \
+                               {REST,O5,N2}, \
+                               {END,O5,N2} \
+                        };
+                                       
+                                        
+                                        
         if (a == RESET) {
-                p = pes;
+                p = song;
                 return 0;        
         }            
         
         if (a == RUN) {
                 if (p == NULL) {
-                        p = pes;
+                        p = song;
                 }
                 if (pause == 0) {
                         snd_playnote(p->note, p->octave);
                         i = p->duration;
                         if (p->note == END) {
-                                p = pes;
+                                p = song;
                         } else {
                                 p++;
                         }
@@ -441,7 +486,7 @@ int play_sound(enum W_ACTION a) {
                         pause = 0;
                 }
                 
-                return (pause == 1) ? d/i : r/i;
+                return (pause == 1) ? d/i : r;
         }
         
         return 0;
