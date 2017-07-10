@@ -76,7 +76,7 @@ int main() {
         j3 = w_register_job(300, &play_sound);
 
         do {
-                game = TETRIS;
+                game = -1;
                 
                 tui_cls_win(mainw, FALSE);
                 tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
@@ -86,8 +86,9 @@ int main() {
                 c = tui_option("\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
                                "\x01\x0f 2) Tetris\x01\x0b \n\n" \
                                "\x01\x0f 3) X-Tris\x01\x0b \n\n" \
+                               "\x01\x0f S) Sound\x01\x0b \n\n" \
                                "\x01\x0f Q) Quit\x01\x0b \n", \
-                               "123Qq", LIGHTCYAN, TUI_BKCOL);
+                               "123SsQq", LIGHTCYAN, TUI_BKCOL);
                 switch (c) {
                         case '1':
                                 game = ADDTRIS;
@@ -117,36 +118,49 @@ int main() {
                                         _delay = 100;
                                 }
                                 break;
+                        case 'S':
+                        case 's':
+                                if (j3 != NULL) {
+                                        w_unregister_job(j3);
+                                        j3 = NULL;
+                                        snd_speaker(0);
+                                } else {
+                                        j3 = w_register_job(300, &play_sound);
+                                }
+                                break;
                         case 'Q':
                         case 'q':
                                 /* w_unregister_job(j1); */
                                 w_unregister_job(j2);
-                                w_unregister_job(j3);
+                                if (j3 != NULL)
+                                        w_unregister_job(j3);
                                 snd_speaker(0);
                                 tui_delete_win(mainw);
                                 return 0;
                 }
 
-                t_create_game(&tetris, game, wide, 20, seg);
-
-                g_draw_mesh(1);
-                tui_message("\nPress any key to start ...\n", TUI_COL, TUI_BKCOL);
-
-                do {
-                        int i;
-                        for (i = 0; i < 5; i++) {
-                                c = process_user_input();
-                                if (c == -1)
-                                        break;
-                                w_wait(_delay);
-                        }
-                        ret = t_go(&tetris);
-                        g_update_score();  
-                } while ((ret != -1) && (c != -1));
-
-                t_delete_game(&tetris);
-                if (c != -1)
-                        tui_message("\nGAME OVER\n", TUI_COL, TUI_BKCOL);
+                if (game != -1) {
+                        t_create_game(&tetris, game, wide, 20, seg);
+        
+                        g_draw_mesh(1);
+                        tui_message("\nPress any key to start ...\n", TUI_COL, TUI_BKCOL);
+        
+                        do {
+                                int i;
+                                for (i = 0; i < 5; i++) {
+                                        c = process_user_input();
+                                        if (c == -1)
+                                                break;
+                                        w_wait(_delay);
+                                }
+                                ret = t_go(&tetris);
+                                g_update_score();  
+                        } while ((ret != -1) && (c != -1));
+        
+                        t_delete_game(&tetris);
+                        if (c != -1)
+                                tui_message("\nGAME OVER\n", TUI_COL, TUI_BKCOL);
+                }
                 
         } while (1);
 }
@@ -368,7 +382,7 @@ int draw_floating_text() {
 }
 
 int play_sound() {
-        int d = 750;
+        int d = 1000;
         int r = 250;
         int i;
         static int pause = 0;
@@ -390,7 +404,7 @@ int play_sound() {
                                {F,O3,N2},
                                {E,O3,N2},
                                {REST,O3,N2},
-                               {REST,O0,N2}
+                               {END,O3,N2}
                         };
                         
         if (p == NULL) {
@@ -399,7 +413,7 @@ int play_sound() {
         if (pause == 0) {
                 snd_playnote(p->note, p->octave);
                 i = p->duration;
-                if ((p->note == REST) && (p->octave == O0)) {
+                if (p->note == END) {
                         p = pes;
                 } else {
                         p++;

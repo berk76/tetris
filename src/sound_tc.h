@@ -40,7 +40,8 @@ enum SND_NOTE {
         A  = 9,
         AS = 10,
         B  = 11,
-        REST = 99
+        REST = 99,
+        END = 100
 };
 
 enum SND_DURATION {
