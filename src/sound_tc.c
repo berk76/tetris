@@ -242,7 +242,7 @@ void snd_speaker(int on) {
 */      
         
 void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o) {
-        if (n == REST) {
+        if ((n == REST) || (n == END)) {
                 snd_speaker(0);
         } else {
                 snd_setfreq(not_freq[n + o*12]);
