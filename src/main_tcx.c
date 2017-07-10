@@ -58,9 +58,9 @@ static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
 static int process_user_input();
-static int draw_star();
-static int draw_floating_text();
-static int play_sound();
+static int draw_star(enum W_ACTION a);
+static int draw_floating_text(enum W_ACTION a);
+static int play_sound(enum W_ACTION a);
 
 
 int main() {
@@ -68,27 +68,32 @@ int main() {
         unsigned _delay;
         GAME_T game;
         JOB_T *j1, *j2, *j3;
+        char buff[512];
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
         /* j1 = w_register_job(300, &draw_star); */
         j2 = w_register_job(250, &draw_floating_text);
         j3 = w_register_job(300, &play_sound);
+        game = TETRIS;
 
         do {
-                game = -1;
+                if (game != -1) {
+                        tui_cls_win(mainw, FALSE);
+                        tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
+                        tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
+                        tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
+                }
                 
-                tui_cls_win(mainw, FALSE);
-                tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
-                tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
-                tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
-                
-                c = tui_option("\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
+                sprintf(buff, "\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
                                "\x01\x0f 2) Tetris\x01\x0b \n\n" \
                                "\x01\x0f 3) X-Tris\x01\x0b \n\n" \
-                               "\x01\x0f S) Sound\x01\x0b \n\n" \
+                               "\x01\x0f S) Sound: %s\x01\x0b \n\n" \
                                "\x01\x0f Q) Quit\x01\x0b \n", \
-                               "123SsQq", LIGHTCYAN, TUI_BKCOL);
+                               (j3 == NULL) ? "off" : "on");
+                c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
+                game = -1;
+                
                 switch (c) {
                         case '1':
                                 game = ADDTRIS;
@@ -125,6 +130,7 @@ int main() {
                                         j3 = NULL;
                                         snd_speaker(0);
                                 } else {
+                                        play_sound(RESET);
                                         j3 = w_register_job(300, &play_sound);
                                 }
                                 break;
@@ -329,22 +335,24 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         tui_flush();
 }
 
-int draw_star() {
+int draw_star(enum W_ACTION a) {
         static char s[] = " .+***+. ";
         static char *pc;
         
-        if ((*pc == '\0') || (*pc == NULL))
-                pc = s;
-        
-        gotoxy(79,25);
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
-        putch(*pc);
-        tui_flush();
-        pc++;
+        if (a == RUN) {
+                if ((*pc == '\0') || (*pc == NULL))
+                        pc = s;
+                
+                gotoxy(79,25);
+                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                putch(*pc);
+                tui_flush();
+                pc++;
+        }
         return 0;     
 }
 
-int draw_floating_text() {
+int draw_floating_text(enum W_ACTION a) {
         #define FT_X 5
         #define FT_Y 25
         #define FT_LEN 70
@@ -353,35 +361,37 @@ int draw_floating_text() {
         static char *p = NULL;
         static i = 0;
         
-        gotoxy(FT_X,FT_Y);
-        tui_set_attr(0, DARKGRAY, TUI_BKCOL);
-        
-        if (p == NULL) {
-                p = floating_text;
+        if (a == RUN) {
+                gotoxy(FT_X,FT_Y);
+                tui_set_attr(0, DARKGRAY, TUI_BKCOL);
+                
+                if (p == NULL) {
+                        p = floating_text;
+                }
+                
+                gettext(FT_X + 1 , FT_Y, FT_X + 1 + (FT_LEN - 2), FT_Y, b);
+                puttext(FT_X, FT_Y, FT_X + (FT_LEN - 2), FT_Y, b);
+                
+                gotoxy(FT_X + FT_LEN - 1, FT_Y);
+                
+                if (*p == '\0') {
+                        putch(' ');
+                        i++;
+                        if (i == FT_LEN) {
+                                p = NULL;
+                                i = 0;
+                        } 
+                } else {
+                        putch(*p);
+                        p++;
+                }
+                
+                tui_flush();
         }
-        
-        gettext(FT_X + 1 , FT_Y, FT_X + 1 + (FT_LEN - 2), FT_Y, b);
-        puttext(FT_X, FT_Y, FT_X + (FT_LEN - 2), FT_Y, b);
-        
-        gotoxy(FT_X + FT_LEN - 1, FT_Y);
-        
-        if (*p == '\0') {
-                putch(' ');
-                i++;
-                if (i == FT_LEN) {
-                        p = NULL;
-                        i = 0;
-                } 
-        } else {
-                putch(*p);
-                p++;
-        }
-        
-        tui_flush();
         return 0;
 }
 
-int play_sound() {
+int play_sound(enum W_ACTION a) {
         int d = 1000;
         int r = 250;
         int i;
@@ -406,26 +416,35 @@ int play_sound() {
                                {REST,O3,N2},
                                {END,O3,N2}
                         };
-                        
-        if (p == NULL) {
+            
+        if (a == RESET) {
                 p = pes;
-        }
-        if (pause == 0) {
-                snd_playnote(p->note, p->octave);
-                i = p->duration;
-                if (p->note == END) {
+                return 0;        
+        }            
+        
+        if (a == RUN) {
+                if (p == NULL) {
                         p = pes;
-                } else {
-                        p++;
                 }
-                pause = 1;
-        } else {
-                snd_playnote(REST, p->octave);
-                i = p->duration;
-                pause = 0;
+                if (pause == 0) {
+                        snd_playnote(p->note, p->octave);
+                        i = p->duration;
+                        if (p->note == END) {
+                                p = pes;
+                        } else {
+                                p++;
+                        }
+                        pause = 1;
+                } else {
+                        snd_playnote(REST, p->octave);
+                        i = p->duration;
+                        pause = 0;
+                }
+                
+                return (pause == 1) ? d/i : r/i;
         }
         
-        return (pause == 1) ? d/i : r/i;
+        return 0;
 }
 
 
