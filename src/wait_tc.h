@@ -18,10 +18,14 @@
 
 #include <time.h>
 
+enum W_ACTION {
+        RUN,
+        RESET
+};
 
 typedef struct JOB JOB_T;
 struct JOB {
-        int       (*run)();
+        int       (*run)(enum W_ACTION);
         long       period;
         clock_t    endwait;
         JOB_T      *prev;
@@ -30,7 +34,7 @@ struct JOB {
 
 
 extern void w_wait(long ms);
-extern JOB_T * w_register_job(unsigned ms, int (*run)(void));
+extern JOB_T * w_register_job(unsigned ms, int (*run)(enum W_ACTION));
 extern void w_unregister_job(JOB_T *j);
 
 #endif

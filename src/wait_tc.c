@@ -39,7 +39,7 @@ void w_wait(long ms) {
                         pq = pq->next;
                 }
                 if ((j != NULL) && (clock() >= j->endwait) && (endwait > j->endwait)) {
-                        ret = j->run();
+                        ret = j->run(RUN);
                         if (ret != 0) {
                                 j->endwait = calc_endwait(ret);
                         } else {
@@ -53,7 +53,7 @@ void w_wait(long ms) {
 }
 
 
-JOB_T * w_register_job(unsigned ms, int (*run)(void)) {
+JOB_T * w_register_job(unsigned ms, int (*run)(enum W_ACTION)) {
         JOB_T *j;
         
         j = (JOB_T *) malloc(sizeof(JOB_T));
