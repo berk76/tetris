@@ -49,7 +49,9 @@ enum SND_DURATION {
         N2  = 2,
         N4  = 4,
         N8  = 8,
-        N16 = 16
+        N16 = 16,
+        N32 = 32,
+        N64 = 64
 };
 
 typedef struct {

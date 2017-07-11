@@ -445,7 +445,7 @@ int play_sound(enum W_ACTION a) {
                                 {END,O4,N2} \
                         };
         */
-        
+        /*
         int d = 2000;
         int r = 54;
         static SND_PLAY_NOTE song[] = {{G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
@@ -459,7 +459,53 @@ int play_sound(enum W_ACTION a) {
                                {REST,O5,N2}, \
                                {END,O5,N2} \
                         };
-                                       
+        */
+        
+        /* Kosi pisnicka */
+        /*
+        int d = 1000;
+        int r = 60;
+        static SND_PLAY_NOTE song[] = {{C,O5,N4},{E,O5,N4},{E,O5,N2}, \
+                               {G,O5,N4},{E,O5,N4},{E,O5,N4},{REST,O5,N4}, \
+                               {C,O5,N4},{E,O5,N4},{E,O5,N4},{E,O5,N4}, \
+                               {G,O5,N4},{E,O5,N4},{E,O5,N4},{REST,O5,N4}, \
+                               {F,O5,N4},{F,O5,N8},{F,O5,N4},{G,O5,N4}, \
+                               {A,O5,N4},{A,O5,N4},{G,O5,N4},{F,O5,N4}, \
+                               {E,O5,N4},{E,O5,N8},{E,O5,N4},{F,O5,N4}, \
+                               {G,O5,N4},{G,O5,N4},{F,O5,N4},{E,O5,N4}, \
+                               {F,O5,N4},{F,O5,N4},{A,O5,N4},{REST,O5,N4}, \
+                               {F,O5,N4},{E,O5,N4},{G,O5,N4},{REST,O5,N4}, \
+                               {F,O5,N4},{G,O5,N4},{F,O5,N4},{E,O5,N4}, \
+                               {D,O5,N4},{D,O5,N4},{C,O5,N4},{REST,O5,N4}, \
+                               {REST,O5,N2}, \
+                               {END,O5,N2} \
+                        };
+        */
+        
+        /* Saxana */
+        int d = 1500;
+        int r = 60;
+        static SND_PLAY_NOTE song[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4}, \
+                               {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
+                               {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
+                               {E,O5,N8},{E,O5,N16},{E,O5,N16},{D,O5,N8},{D,O5,N8},{C,O5,N4},{REST,O5,N4},
+                               {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
+                               {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
+                               {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
+                               {E,O5,N8},{E,O5,N16},{E,O5,N16},{D,O5,N8},{D,O5,N8},
+                               {C,O5,N4},{REST,O5,N4},{REST,O5,N2},
+                               {C,O5,N16},{C,O5,N8},{C,O5,N16},{C,O5,N16},{C,O5,N8},{C,O5,N16},{E,O5,N16},{E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N8},{E,O5,N16},
+                               {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
+                               {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
+                               {B,O5,N1},
+                               {C,O5,N16},{C,O5,N8},{C,O5,N16},{C,O5,N16},{C,O5,N8},{C,O5,N16},{E,O5,N16},{E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N8},{E,O5,N16},
+                               {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
+                               {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
+                               {B,O5,N1},
+                               {REST,O5,N2}, \
+                               {END,O5,N2} \
+                        };                                       
+                                                                     
                                         
                                         
         if (a == RESET) {
