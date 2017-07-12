@@ -61,13 +61,14 @@ static int process_user_input();
 static int draw_star(enum W_ACTION a);
 static int draw_floating_text(enum W_ACTION a);
 static int play_sound(enum W_ACTION a);
+static int animate_scr_01(enum W_ACTION a);
 
 
 int main() {
         int c, seg, wide, ret;
         unsigned _delay;
         GAME_T game;
-        JOB_T *j1, *j2, *j3;
+        JOB_T *j1, *j2, *j3, *j4;
         char buff[512];
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
@@ -91,7 +92,10 @@ int main() {
                                "\x01\x0f S) Sound: %s\x01\x0b \n\n" \
                                "\x01\x0f Q) Quit\x01\x0b \n", \
                                (j3 == NULL) ? "off" : "on");
+                j4 = w_register_job(1000, &animate_scr_01);
                 c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
+                w_unregister_job(j4);
+                j4 = NULL;
                 game = -1;
                 
                 switch (c) {
@@ -140,6 +144,8 @@ int main() {
                                 w_unregister_job(j2);
                                 if (j3 != NULL)
                                         w_unregister_job(j3);
+                                if (j4 != NULL)
+                                        w_unregister_job(j4);
                                 snd_speaker(0);
                                 tui_delete_win(mainw);
                                 return 0;
@@ -483,7 +489,8 @@ int play_sound(enum W_ACTION a) {
         */
         
         /* Saxana */
-        int d = 1500;
+        /*
+        int d = 1700;
         int r = 60;
         static SND_PLAY_NOTE song[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4}, \
                                {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
@@ -502,10 +509,38 @@ int play_sound(enum W_ACTION a) {
                                {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
                                {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
                                {B,O5,N1},
-                               {REST,O5,N2}, \
-                               {END,O5,N2} \
-                        };                                       
-                                                                     
+                               {END,O5,N32} \
+                        };
+        */
+        
+        /* Dance of The Trolls */
+        int d = 1500;
+        int r = 60;
+        static SND_PLAY_NOTE song[] = {{F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
+                                       {B,O5,N8},{C,O6,N8},{D,O6,N8},{G,O5,N8},{A,O5,N4},{A,O5,N8},{REST,O5,N8},
+                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
+                                       {E,O6,N8},{D,O6,N8},{C,O6,N4},{B,O5,N4},{B,O5,N4},
+                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
+                                       {E,O6,N8},{C,O6,N8},{B,O5,N8},{C,O6,N8},{A,O5,N4},{A,O5,N4},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
+                                       {B,O5,N8},{C,O6,N8},{D,O6,N8},{G,O5,N8},{A,O5,N4},{A,O5,N8},{REST,O5,N8},
+                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
+                                       {E,O6,N8},{D,O6,N8},{C,O6,N4},{B,O5,N4},{B,O5,N4},
+                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
+                                       {E,O6,N8},{C,O6,N8},{B,O5,N8},{C,O6,N8},{A,O5,N4},{E,O6,N8},{F,O6,N8},
+                                       {E,O6,N4},{E,O6,N8},{F,O6,N8},{D,O6,N4},{D,O6,N8},{E,O6,N8},
+                                       {C,O6,N4},{C,O6,N8},{D,O6,N8},{B,O5,N4},{B,O5,N8},{C,O6,N8},
+                                       {E,O6,N8},{C,O6,N8},{B,O5,N8},{C,O6,N8},{A,O5,N4},{A,O5,N4},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
+                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
+                                       {B,O5,N8},{C,O6,N8},{D,O6,N8},{G,O5,N8},{A,O5,N4},{A,O5,N8},{REST,O5,N8},
+                                       {END,O5,N1}
+                        };                                                                     
                                         
                                         
         if (a == RESET) {
@@ -536,6 +571,83 @@ int play_sound(enum W_ACTION a) {
         }
         
         return 0;
+}
+
+animate_scr_01(enum W_ACTION a) {
+        static int step = 0;
+
+        if (a == RESET) {
+                return 0;        
+        }            
+        
+        if (a == RUN) {
+                switch (step) {
+                        case 0:
+                                switch (rand() % 10) {
+                                        case 1:
+                                                step = 1;
+                                                break;
+                                        case 2:
+                                                step = 3;
+                                                break;
+                                }
+                                break;
+                        case 1:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(14, 10);
+                                putchar('-');
+                                gotoxy(16, 10);
+                                putchar('-');
+                                tui_set_attr(0, RED, TUI_BKCOL);
+                                gotoxy(15, 11);
+                                putchar('v');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 800;
+                        case 2:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(14, 10);
+                                putchar('.');
+                                gotoxy(16, 10);
+                                putchar('.');
+                                tui_set_attr(0, RED, TUI_BKCOL);
+                                gotoxy(15, 11);
+                                putchar('V');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step = 0;
+                                return 1000;
+                        case 3:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(63, 10);
+                                putchar('-');
+                                gotoxy(65, 10);
+                                putchar('-');
+                                tui_set_attr(0, RED, TUI_BKCOL);
+                                gotoxy(64, 11);
+                                putchar('v');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 800;
+                        case 4:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(63, 10);
+                                putchar('.');
+                                gotoxy(65, 10);
+                                putchar('.');
+                                tui_set_attr(0, RED, TUI_BKCOL);
+                                gotoxy(64, 11);
+                                putchar('V');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step = 0;
+                                return 1000;
+                }
+        }
+        
+        return 1000;
 }
 
 
