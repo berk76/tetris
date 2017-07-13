@@ -514,32 +514,32 @@ int play_sound(enum W_ACTION a) {
         */
         
         /* Dance of The Trolls */
-        int d = 1500;
+        int d = 1700;
         int r = 60;
-        static SND_PLAY_NOTE song[] = {{F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
-                                       {B,O5,N8},{C,O6,N8},{D,O6,N8},{G,O5,N8},{A,O5,N4},{A,O5,N8},{REST,O5,N8},
-                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
-                                       {E,O6,N8},{D,O6,N8},{C,O6,N4},{B,O5,N4},{B,O5,N4},
-                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
-                                       {E,O6,N8},{C,O6,N8},{B,O5,N8},{C,O6,N8},{A,O5,N4},{A,O5,N4},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
-                                       {B,O5,N8},{C,O6,N8},{D,O6,N8},{G,O5,N8},{A,O5,N4},{A,O5,N8},{REST,O5,N8},
-                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
-                                       {E,O6,N8},{D,O6,N8},{C,O6,N4},{B,O5,N4},{B,O5,N4},
-                                       {A,O5,N4},{B,O5,N4},{C,O6,N8},{D,O6,N8},{E,O6,N4},
-                                       {E,O6,N8},{C,O6,N8},{B,O5,N8},{C,O6,N8},{A,O5,N4},{E,O6,N8},{F,O6,N8},
-                                       {E,O6,N4},{E,O6,N8},{F,O6,N8},{D,O6,N4},{D,O6,N8},{E,O6,N8},
-                                       {C,O6,N4},{C,O6,N8},{D,O6,N8},{B,O5,N4},{B,O5,N8},{C,O6,N8},
-                                       {E,O6,N8},{C,O6,N8},{B,O5,N8},{C,O6,N8},{A,O5,N4},{A,O5,N4},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{A,O5,N4},{A,O5,N4},
-                                       {F,O6,N8},{E,O6,N8},{C,O6,N8},{B,O5,N8},{D,O6,N4},{D,O6,N8},{REST,O6,N8},
-                                       {B,O5,N8},{C,O6,N8},{D,O6,N8},{G,O5,N8},{A,O5,N4},{A,O5,N8},{REST,O5,N8},
-                                       {END,O5,N1}
+        static SND_PLAY_NOTE song[] = {{F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
+                                       {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
+                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
+                                       {E,O5,N8},{D,O5,N8},{C,O5,N4},{B,O4,N4},{B,O4,N4},
+                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
+                                       {E,O5,N8},{C,O5,N8},{B,O4,N8},{C,O5,N8},{A,O4,N4},{A,O4,N4},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
+                                       {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
+                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
+                                       {E,O5,N8},{D,O5,N8},{C,O5,N4},{B,O4,N4},{B,O4,N4},
+                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
+                                       {E,O5,N8},{C,O5,N8},{B,O4,N8},{C,O5,N8},{A,O4,N4},{E,O5,N8},{F,O5,N8},
+                                       {E,O5,N4},{E,O5,N8},{F,O5,N8},{D,O5,N4},{D,O5,N8},{E,O5,N8},
+                                       {C,O5,N4},{C,O5,N8},{D,O5,N8},{B,O4,N4},{B,O4,N8},{C,O5,N8},
+                                       {E,O5,N8},{C,O5,N8},{B,O4,N8},{C,O5,N8},{A,O4,N4},{A,O4,N4},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
+                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
+                                       {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
+                                       {END,O4,N1}
                         };                                                                     
                                         
                                         
@@ -595,12 +595,12 @@ animate_scr_01(enum W_ACTION a) {
                         case 1:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(14, 10);
-                                putchar('-');
+                                putch('-');
                                 gotoxy(16, 10);
-                                putchar('-');
-                                tui_set_attr(0, RED, TUI_BKCOL);
+                                putch('-');
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
                                 gotoxy(15, 11);
-                                putchar('v');
+                                putch('v');
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
@@ -608,12 +608,12 @@ animate_scr_01(enum W_ACTION a) {
                         case 2:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(14, 10);
-                                putchar('.');
+                                putch('.');
                                 gotoxy(16, 10);
-                                putchar('.');
-                                tui_set_attr(0, RED, TUI_BKCOL);
+                                putch('.');
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
                                 gotoxy(15, 11);
-                                putchar('V');
+                                putch('V');
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
@@ -621,12 +621,12 @@ animate_scr_01(enum W_ACTION a) {
                         case 3:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(63, 10);
-                                putchar('-');
+                                putch('-');
                                 gotoxy(65, 10);
-                                putchar('-');
-                                tui_set_attr(0, RED, TUI_BKCOL);
+                                putch('-');
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
                                 gotoxy(64, 11);
-                                putchar('v');
+                                putch('v');
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
@@ -634,12 +634,12 @@ animate_scr_01(enum W_ACTION a) {
                         case 4:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(63, 10);
-                                putchar('.');
+                                putch('.');
                                 gotoxy(65, 10);
-                                putchar('.');
-                                tui_set_attr(0, RED, TUI_BKCOL);
+                                putch('.');
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
                                 gotoxy(64, 11);
-                                putchar('V');
+                                putch('V');
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
