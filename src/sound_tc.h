@@ -16,6 +16,9 @@
 #ifndef _SOUND_TC_
 #define _SOUND_TC_
 
+#include "wait_tc.h"
+
+
 enum SND_OCTAVE {
         O0 = 0,
         O1 = 1,
@@ -60,6 +63,12 @@ typedef struct {
         enum SND_DURATION duration;
 } SND_PLAY_NOTE;
       
+typedef struct {
+        int duration;
+        int rest;
+        SND_PLAY_NOTE *song;
+} SND_SONG;
+        
         
 /*      
 * Set frequency of oscillator feeding speaker.
@@ -78,6 +87,19 @@ extern void snd_speaker(int on);
 */      
         
 extern void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o);
+
+/*      
+* Setup song
+*/
+
+extern void snd_setsong(SND_SONG *s);
+
+/*      
+* Play song
+*/
+
+extern int snd_play_sound(enum W_ACTION a);
+
 
 #endif
 
