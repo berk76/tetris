@@ -192,11 +192,12 @@
  
 */
 
+#include <stdio.h>
 #include <dos.h>
 #include "sound_tc.h"
 
 /* Please note frequencies 16 and 17 are out of possibility of PC speaker */
-int not_freq[] = {  16,  17,  18,  19,  21,  22,  23,  24,  26,  27,  29,  31, \
+static int not_freq[] = {  16,  17,  18,  19,  21,  22,  23,  24,  26,  27,  29,  31, \
                     33,  35,  37,  39,  41,  44,  46,  49,  52,  55,  58,  62, \
                     65,  69,  73,  78,  82,  87,  92,  98, 104, 110, 116, 123, \
                    131, 139, 147, 155, 165, 175, 185, 196, 208, 220, 233, 245, \
@@ -204,7 +205,9 @@ int not_freq[] = {  16,  17,  18,  19,  21,  22,  23,  24,  26,  27,  29,  31, \
                    523, 554, 587, 622, 659, 698, 740, 784, 831, 880, 932, 988, \
                   1046,1109,1175,1244,1328,1397,1480,1568,1661,1760,1865,1975, \
                   2093,2217,2349,2489,2637,2794,2960,3136,3322,3520,3729,3951};
-                  
+       
+/* Song for play */           
+static SND_SONG *song = NULL;
 
 /*
 * Set frequency of oscillator feeding speaker.
@@ -248,6 +251,58 @@ void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o) {
                 snd_setfreq(not_freq[n + o*12]);
                 snd_speaker(1);
         }
+}
+
+
+/*      
+* Setup song
+*/
+
+void snd_setsong(SND_SONG *s) {
+        song = s;
+}
+
+
+/*      
+* Play song
+*/
+
+int snd_play_sound(enum W_ACTION a) {
+        int i;
+        static int pause = 0;
+        static SND_PLAY_NOTE *p = NULL;
+        
+        if (song == NULL)
+                return 0;
+                                        
+        if (a == RESET) {
+                p = song->song;
+                return 0;        
+        }            
+        
+        if (a == RUN) {
+                if (p == NULL) {
+                        p = song->song;
+                }
+                if (pause == 0) {
+                        snd_playnote(p->note, p->octave);
+                        i = p->duration;
+                        if (p->note == END) {
+                                p = song->song;
+                        } else {
+                                p++;
+                        }
+                        pause = 1;
+                } else {
+                        snd_playnote(REST, p->octave);
+                        i = p->duration;
+                        pause = 0;
+                }
+                
+                return (pause == 1) ? song->duration/i : song->rest;
+        }
+        
+        return 0;
 }
 
 

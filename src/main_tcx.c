@@ -20,8 +20,8 @@
 #include "sound_tc.h"
 #include "tetris.h"
 #include "tui_tc.h"
-#include "tui_gfx.h"
 #include "wait_tc.h"
+#include "res_tc.h"
 #include "main.h"
 
 
@@ -60,7 +60,6 @@ static void g_update_score();
 static int process_user_input();
 static int draw_star(enum W_ACTION a);
 static int draw_floating_text(enum W_ACTION a);
-static int play_sound(enum W_ACTION a);
 static int animate_scr_01(enum W_ACTION a);
 
 
@@ -68,6 +67,7 @@ int main() {
         int c, seg, wide, ret;
         unsigned _delay;
         GAME_T game;
+        SND_SONG song;
         JOB_T *j1, *j2, *j3, *j4;
         char buff[512];
 
@@ -75,7 +75,11 @@ int main() {
         srand(time(NULL) % 37);
         /* j1 = w_register_job(300, &draw_star); */
         j2 = w_register_job(250, &draw_floating_text);
-        j3 = w_register_job(300, &play_sound);
+        song.duration = D5;
+        song.rest = R5;
+        song.song = s5;
+        snd_setsong(&song);
+        j3 = w_register_job(300, &snd_play_sound);
         game = TETRIS;
 
         do {
@@ -134,8 +138,8 @@ int main() {
                                         j3 = NULL;
                                         snd_speaker(0);
                                 } else {
-                                        play_sound(RESET);
-                                        j3 = w_register_job(300, &play_sound);
+                                        snd_play_sound(RESET);
+                                        j3 = w_register_job(300, &snd_play_sound);
                                 }
                                 break;
                         case 'Q':
@@ -155,7 +159,7 @@ int main() {
                         t_create_game(&tetris, game, wide, 20, seg);
         
                         g_draw_mesh(1);
-                        tui_message("\nPress any key to start ...\n", TUI_COL, TUI_BKCOL);
+                        tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
         
                         do {
                                 int i;
@@ -171,7 +175,7 @@ int main() {
         
                         t_delete_game(&tetris);
                         if (c != -1)
-                                tui_message("\nGAME OVER\n", TUI_COL, TUI_BKCOL);
+                                tui_message("\n\x01\x0fGAME OVER\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
                 }
                 
         } while (1);
@@ -200,7 +204,7 @@ void g_draw_mesh(int grid_size) {
                         break; 
         }
         
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        tui_set_attr(0, LIGHTMAGENTA, TUI_BKCOL);
 
         for (y = 0; y < tetris.element_size * tetris.grid_size_y; y++) {
                 gotoxy(tetris.origin_x - 1, tetris.origin_y + y);
@@ -218,18 +222,15 @@ void g_draw_mesh(int grid_size) {
         }
         putch('+');
         
-        if ((tetris.game == TETRIS) && (tetris.grid_size_x <= 10)) {
-                /*
-                tui_draw_box(tetris.origin_x + tetris.grid_size_x * 2, \
-                        tetris.origin_y + 4, TUI_COL, TUI_BKCOL, gfx_bird_02, FALSE);
-                */        
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        
+        if ((tetris.game == TETRIS) && (tetris.grid_size_x <= 10)) {        
                 tui_draw_box(tetris.origin_x + 23, \
                         1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                         
                 tui_draw_box(tetris.origin_x + 23, \
-                        7, TUI_COL, TUI_BKCOL, \
-                        "Jaroslav Beran\n  GNU/GPL v3\n   (c) 2017\n" \
-                        " Creatures by:\n www.chris.com", \
+                        7, LIGHTMAGENTA, TUI_BKCOL, \
+                        "              \n\n\n\n", \
                         TRUE);
                         
                 tui_draw_box(tetris.origin_x + 23, \
@@ -305,10 +306,10 @@ int process_user_input() {
                                 }
                                 break;
                         case 'p':
-                                tui_message("\nPaused\n", TUI_COL, TUI_BKCOL);
+                                tui_message("\n\x01\x0fPaused\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
                                 break;
                         case 'q':
-                                if (tui_confirm("\nDo you want to quit game? (Y/N)\n", TUI_COL, TUI_BKCOL) == TRUE) {
+                                if (tui_confirm("\n\x01\x0f Do you want to quit game? (Y/N) \x01\x0b\n", LIGHTCYAN, TUI_BKCOL) == TRUE) {
                                         result = -1;
                                 }
                 }
@@ -397,181 +398,6 @@ int draw_floating_text(enum W_ACTION a) {
         return 0;
 }
 
-int play_sound(enum W_ACTION a) {
-        int i;
-        static int pause = 0;
-        static SND_PLAY_NOTE *p = NULL;
-        
-        /* Skakal pes */
-        /*
-        int d = 1200;
-        int r = 250; 
-        static SND_PLAY_NOTE song[] = {{G,O3,N4},{G,O3,N4}, \
-                               {E,O3,N4},{REST,O3,N4}, \
-                               {G,O3,N4},{G,O3,N4}, \
-                               {E,O3,N4},{REST,O3,N4}, \
-                               {G,O3,N4},{G,O3,N4}, \
-                               {A,O3,N4},{G,O3,N4}, \
-                               {G,O3,N2},
-                               {F,O3,N2},
-                               {F,O3,N4},{F,O3,N4}, \
-                               {D,O3,N4},{REST,O3,N4}, \
-                               {F,O3,N4},{F,O3,N4}, \
-                               {D,O3,N4},{REST,O3,N4}, \
-                               {F,O3,N4},{F,O3,N4}, \
-                               {G,O3,N4},{F,O3,N4}, \
-                               {F,O3,N2}, \
-                               {E,O3,N2}, \
-                               {REST,O3,N2}, \
-                               {END,O3,N2} \
-                        };
-        */
-        
-        /* Holka modrooka */
-        /*
-        int d = 2000;
-        int r = 54;
-        static SND_PLAY_NOTE song[] = {{F,O4,N4},{B,O4,N4}, \
-                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
-                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
-                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
-                                {F,O4,N4},{B,O4,N4}, \
-                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
-                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
-                                {F,O4,N4},{REST,O4,N4}, \
-                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
-                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
-                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
-                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
-                                {F,O4,N4},{B,O4,N4}, \
-                                {G,O4,N8},{F,O4,N8},{E,O4,N8},{G,O4,N8}, \
-                                {A,O4,N8},{G,O4,N8},{F,O4,N8},{A,O4,N8}, \
-                                {F,O4,N4},{REST,O4,N4}, \
-                                {REST,O4,N2}, \
-                                {END,O4,N2} \
-                        };
-        */
-        /*
-        int d = 2000;
-        int r = 54;
-        static SND_PLAY_NOTE song[] = {{G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
-                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{F,O5,N8}, \
-                               {G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
-                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{E,O5,N4},{REST,O5,N4}, \
-                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
-                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{F,O5,N8}, \
-                               {G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, \
-                               {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{E,O5,N4},{REST,O5,N4}, \
-                               {REST,O5,N2}, \
-                               {END,O5,N2} \
-                        };
-        */
-        
-        /* Kosi pisnicka */
-        /*
-        int d = 1000;
-        int r = 60;
-        static SND_PLAY_NOTE song[] = {{C,O5,N4},{E,O5,N4},{E,O5,N2}, \
-                               {G,O5,N4},{E,O5,N4},{E,O5,N4},{REST,O5,N4}, \
-                               {C,O5,N4},{E,O5,N4},{E,O5,N4},{E,O5,N4}, \
-                               {G,O5,N4},{E,O5,N4},{E,O5,N4},{REST,O5,N4}, \
-                               {F,O5,N4},{F,O5,N8},{F,O5,N4},{G,O5,N4}, \
-                               {A,O5,N4},{A,O5,N4},{G,O5,N4},{F,O5,N4}, \
-                               {E,O5,N4},{E,O5,N8},{E,O5,N4},{F,O5,N4}, \
-                               {G,O5,N4},{G,O5,N4},{F,O5,N4},{E,O5,N4}, \
-                               {F,O5,N4},{F,O5,N4},{A,O5,N4},{REST,O5,N4}, \
-                               {F,O5,N4},{E,O5,N4},{G,O5,N4},{REST,O5,N4}, \
-                               {F,O5,N4},{G,O5,N4},{F,O5,N4},{E,O5,N4}, \
-                               {D,O5,N4},{D,O5,N4},{C,O5,N4},{REST,O5,N4}, \
-                               {REST,O5,N2}, \
-                               {END,O5,N2} \
-                        };
-        */
-        
-        /* Saxana */
-        /*
-        int d = 1700;
-        int r = 60;
-        static SND_PLAY_NOTE song[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4}, \
-                               {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
-                               {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
-                               {E,O5,N8},{E,O5,N16},{E,O5,N16},{D,O5,N8},{D,O5,N8},{C,O5,N4},{REST,O5,N4},
-                               {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
-                               {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
-                               {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
-                               {E,O5,N8},{E,O5,N16},{E,O5,N16},{D,O5,N8},{D,O5,N8},
-                               {C,O5,N4},{REST,O5,N4},{REST,O5,N2},
-                               {C,O5,N16},{C,O5,N8},{C,O5,N16},{C,O5,N16},{C,O5,N8},{C,O5,N16},{E,O5,N16},{E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N8},{E,O5,N16},
-                               {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
-                               {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
-                               {B,O5,N1},
-                               {C,O5,N16},{C,O5,N8},{C,O5,N16},{C,O5,N16},{C,O5,N8},{C,O5,N16},{E,O5,N16},{E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N8},{E,O5,N16},
-                               {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
-                               {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
-                               {B,O5,N1},
-                               {END,O5,N32} \
-                        };
-        */
-        
-        /* Dance of The Trolls */
-        int d = 1700;
-        int r = 60;
-        static SND_PLAY_NOTE song[] = {{F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
-                                       {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
-                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
-                                       {E,O5,N8},{D,O5,N8},{C,O5,N4},{B,O4,N4},{B,O4,N4},
-                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
-                                       {E,O5,N8},{C,O5,N8},{B,O4,N8},{C,O5,N8},{A,O4,N4},{A,O4,N4},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
-                                       {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
-                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
-                                       {E,O5,N8},{D,O5,N8},{C,O5,N4},{B,O4,N4},{B,O4,N4},
-                                       {A,O4,N4},{B,O4,N4},{C,O5,N8},{D,O5,N8},{E,O5,N4},
-                                       {E,O5,N8},{C,O5,N8},{B,O4,N8},{C,O5,N8},{A,O4,N4},{E,O5,N8},{F,O5,N8},
-                                       {E,O5,N4},{E,O5,N8},{F,O5,N8},{D,O5,N4},{D,O5,N8},{E,O5,N8},
-                                       {C,O5,N4},{C,O5,N8},{D,O5,N8},{B,O4,N4},{B,O4,N8},{C,O5,N8},
-                                       {E,O5,N8},{C,O5,N8},{B,O4,N8},{C,O5,N8},{A,O4,N4},{A,O4,N4},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
-                                       {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
-                                       {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
-                                       {END,O4,N1}
-                        };                                                                     
-                                        
-                                        
-        if (a == RESET) {
-                p = song;
-                return 0;        
-        }            
-        
-        if (a == RUN) {
-                if (p == NULL) {
-                        p = song;
-                }
-                if (pause == 0) {
-                        snd_playnote(p->note, p->octave);
-                        i = p->duration;
-                        if (p->note == END) {
-                                p = song;
-                        } else {
-                                p++;
-                        }
-                        pause = 1;
-                } else {
-                        snd_playnote(REST, p->octave);
-                        i = p->duration;
-                        pause = 0;
-                }
-                
-                return (pause == 1) ? d/i : r;
-        }
-        
-        return 0;
-}
 
 animate_scr_01(enum W_ACTION a) {
         static int step = 0;
