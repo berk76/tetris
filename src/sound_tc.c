@@ -299,7 +299,7 @@ int snd_play_sound(enum W_ACTION a) {
                         pause = 0;
                 }
                 
-                return (pause == 1) ? song->duration/i : song->rest;
+                return (pause == 1) ? song->duration*i : song->rest;
         }
         
         return 0;

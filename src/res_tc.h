@@ -256,7 +256,111 @@ static SND_PLAY_NOTE s5[] = {{F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{
                                {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
                                {END,O4,N16}
                 };
-
-
+                
+/* Can Can */
+#define D6 1200/110
+#define R6 60
+static SND_PLAY_NOTE s6[] = {{D,O4,N8},{A,O4,N8},{A,O4,N8},{B,O4,N8},
+                             {A,O4,N8},{G,O4,N8},{G,O4,N8},{B,O4,N8},
+                             {C,O5,N8},{E,O5,N8},{G,O5,N8},{E,O5,N8},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{F,O4,N8},{F,O4,N8},{E,O5,N8},
+                             {D,O5,N8},{G,O4,N8},{G,O4,N8},{B,O4,N8},
+                             {B,O4,N8},{A,O4,N8},{B,O4,N8},{A,O4,N8},
+                             {B,O4,N8},{A,O4,N8},{B,O4,N8},{A,O4,N8},
+                             /* 09 */
+                             {A,O4,N8},{G,O4,N8},{G,O4,N4},
+                             {B,O4,N4},{G,O4,N4},
+                             {E,O4,N4},{D,O4,N4},
+                             {D,O4,N8},{A,O4,N8},{B,O4,N8},{C,O5,N8},
+                             {B,O4,N8},{A,O4,N8},{G,O4,N4},
+                             {B,O4,N4},{G,O4,N4},
+                             {E,O4,N4},{D,O4,N4},
+                             {CS,O4,N8},{D,O4,N8},{E,O4,N8},{F,O4,N8},
+                             {A,O4,N8},{G,O4,N8},{G,O4,N4},
+                             /* 18 */
+                             {G,O4,N8},{D,O4,N8},{F,O4,N8},{D,O4,N8},
+                             {G,O4,N8},{D,O4,N8},{F,O4,N8},{D,O4,N8},
+                             {G,O4,N8},{D,O4,N8},{F,O4,N8},{D,O4,N8},
+                             {G,O4,N8},{D,O4,N8},{F,O4,N8},{D,O4,N8},
+                             {G,O4,N8DOT},{G,O4,N16},{G,O4,N8DOT},{G,O4,N16},
+                             {G,O4,N8DOT},{G,O4,N16},{G,O4,N8DOT},{G,O4,N16},
+                             {G,O4,N8DOT},{G,O4,N16},{G,O4,N8DOT},{G,O4,N16},
+                             {G,O4,N8DOT},{G,O4,N16},{G,O4,N8DOT},{G,O4,N16},
+                             /* 26 */
+                             {C,O4,N2},
+                             {D,O4,N8},{F,O4,N8},{E,O4,N8},{D,O4,N8},
+                             {G,O4,N4},{G,O4,N4},
+                             {G,O4,N8},{A,O4,N8},{E,O4,N8},{F,O4,N8},
+                             {D,O4,N4},{D,O4,N4},
+                             {D,O4,N8},{F,O4,N8},{E,O4,N8},{D,O4,N8},
+                             {C,O4,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {G,O4,N8},{F,O4,N8},{E,O4,N8},{D,O4,N8},
+                             {C,O4,N2},
+                             {D,O4,N8},{F,O4,N8},{E,O4,N8},{D,O4,N8},
+                             /* 36 */
+                             {G,O4,N4},{G,O4,N4},
+                             {G,O4,N8},{A,O4,N8},{E,O4,N8},{F,O4,N8},
+                             {D,O4,N4},{D,O4,N4},
+                             {D,O4,N8},{F,O4,N8},{E,O4,N8},{D,O4,N8},
+                             {C,O4,N8},{G,O4,N8},{D,O4,N8},{E,O4,N8},
+                             {C,O4,N4},{G,O4,N4},
+                             {C,O4,N4},{C,O4,N4},
+                             {D,O4,N8},{A,O4,N8},{A,O4,N8},{B,O4,N8},
+                             {A,O4,N8},{G,O4,N8},{G,O4,N8},{B,O4,N8},
+                             /* 45 */
+                             {C,O5,N8},{E,O5,N8},{G,O5,N8},{E,O5,N8},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{F,O4,N8},{F,O4,N8},{E,O5,N8},
+                             {D,O5,N8},{G,O4,N8},{G,O4,N8},{B,O4,N8},
+                             {B,O4,N8},{A,O4,N8},{B,O4,N8},{A,O4,N8},
+                             {B,O4,N8},{A,O4,N8},{B,O4,N8},{A,O4,N8},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             /* 54 */
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{D,O5,N4},
+                             {E,O5,N8},{D,O5,N8},{E,O5,N8},{D,O5,N8},
+                             {E,O5,N8},{D,O5,N8},{E,O5,N8},{D,O5,N8},
+                             {G,O4,N2},
+                             {A,O4,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {D,O5,N4},{D,O5,N4},
+                             /* 64 */
+                             {D,O5,N8},{E,O5,N8},{B,O4,N8},{C,O5,N8},
+                             {A,O4,N4},{A,O4,N4},
+                             {A,O4,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {G,O4,N8},{G,O5,N8},{F,O5,N8},{E,O5,N8},
+                             {D,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {G,O4,N2},
+                             {A,O4,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {D,O5,N4},{D,O5,N4},
+                             {D,O5,N8},{E,O5,N8},{B,O4,N8},{C,O5,N8},
+                             /* 73 */
+                             {A,O4,N4},{A,O4,N4},
+                             {A,O4,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {G,O4,N8},{D,O5,N8},{A,O4,N8},{B,O4,N8},
+                             {G,O4,N4},{D,O4,N4},
+                             {G,O4,N4},{G,O4,N4},
+                             {A,O4,N4},{B,O4,N4},
+                             {D,O5,N8},{C,O5,N8},{F,O5,N8},{E,O5,N8},
+                             {D,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {G,O4,N4},{G,O4,N4},
+                             {A,O4,N4},{B,O4,N4},
+                             /* 83 */
+                             {D,O5,N8},{C,O5,N8},{F,O5,N8},{E,O5,N8},
+                             {D,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N8},
+                             {G,O4,N8},{D,O5,N8},{A,O4,N8},{B,O4,N8},
+                             {G,O4,N8},{D,O5,N8},{A,O4,N8},{B,O4,N8},
+                             {G,O4,N8},{D,O5,N8},{A,O4,N8},{B,O4,N8},
+                             {G,O4,N8},{D,O5,N8},{A,O4,N8},{B,O4,N8},
+                             {G,O4,N4},{REST,O4,N4},
+                             {G,O4,N4},{G,O5,N4},
+                             {G,O4,N4},{REST,O4,N4},
+                             {END,O4,N1}
+                };
 #endif
 
