@@ -75,9 +75,9 @@ int main() {
         srand(time(NULL) % 37);
         /* j1 = w_register_job(300, &draw_star); */
         j2 = w_register_job(250, &draw_floating_text);
-        song.duration = D5;
-        song.rest = R5;
-        song.song = s5;
+        song.duration = D6;
+        song.rest = R6;
+        song.song = s6;
         snd_setsong(&song);
         j3 = w_register_job(300, &snd_play_sound);
         game = TETRIS;

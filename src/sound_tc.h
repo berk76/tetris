@@ -48,13 +48,21 @@ enum SND_NOTE {
 };
 
 enum SND_DURATION {
-        N1  = 1, 
-        N2  = 2,
-        N4  = 4,
-        N8  = 8,
-        N16 = 16,
-        N32 = 32,
-        N64 = 64
+        N1DOT   = 192,
+        N1      = 128, 
+        N2DOT   = 96,
+        N2      = 64,
+        N4DOT   = 48,
+        N4      = 32,
+        N8DOT   = 24,
+        N8      = 16,
+        N16DOT  = 12,
+        N16     = 8,
+        N32DOT  = 6,
+        N32     = 4,
+        N64DOT  = 3,
+        N64     = 2,
+        N128    = 1
 };
 
 typedef struct {
