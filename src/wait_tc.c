@@ -20,15 +20,13 @@
 
 
 static JOB_T *job_q = NULL;
-#define calc_endwait(ms) (clock() + ((double) ms) * CLK_TCK / 1000.0)
 
 
-void w_wait(long ms) {
-        int ret;
-        clock_t endwait;
+void w_wait(long tck) {
+        long ret;
         JOB_T *j, *pq;
 
-        endwait = calc_endwait(ms);
+        tck += clock();
         while (1) {
                 pq = job_q;
                 j = NULL;
@@ -38,30 +36,30 @@ void w_wait(long ms) {
                         } 
                         pq = pq->next;
                 }
-                if ((j != NULL) && (clock() >= j->endwait) && (endwait > j->endwait)) {
+                if ((j != NULL) && (clock() >= j->endwait) && (tck > j->endwait)) {
                         ret = j->run(RUN);
                         if (ret != 0) {
-                                j->endwait = calc_endwait(ret);
+                                j->endwait = ret + clock();
                         } else {
-                                j->endwait = calc_endwait(j->period);
+                                j->endwait = j->period + clock();
                         }
                 } else 
-                if (clock() >= endwait) {
+                if (clock() >= tck) {
                         return;
                 }
         }
 }
 
 
-JOB_T * w_register_job(unsigned ms, int (*run)(enum W_ACTION)) {
+JOB_T * w_register_job(long tck, long (*run)(enum W_ACTION)) {
         JOB_T *j;
         
         j = (JOB_T *) malloc(sizeof(JOB_T));
         assert(j != NULL);
         
         j->run = run;
-        j->period = ms;
-        j->endwait = calc_endwait(ms);
+        j->period = tck;
+        j->endwait = tck + clock();
         j->prev = NULL;
         j->next = job_q;
         job_q = j;

@@ -106,7 +106,7 @@ extern void snd_setsong(SND_SONG *s);
 * Play song
 */
 
-extern int snd_play_sound(enum W_ACTION a);
+extern long snd_play_sound(enum W_ACTION a);
 
 
 #endif
