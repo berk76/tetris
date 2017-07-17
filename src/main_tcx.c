@@ -58,9 +58,9 @@ static void g_draw_mesh(int grid_size);
 static void g_print_controls();
 static void g_update_score();
 static int process_user_input();
-static int draw_star(enum W_ACTION a);
-static int draw_floating_text(enum W_ACTION a);
-static int animate_scr_01(enum W_ACTION a);
+static long draw_star(enum W_ACTION a);
+static long draw_floating_text(enum W_ACTION a);
+static long animate_scr_01(enum W_ACTION a);
 
 
 int main() {
@@ -73,13 +73,13 @@ int main() {
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
-        /* j1 = w_register_job(300, &draw_star); */
-        j2 = w_register_job(250, &draw_floating_text);
+        /* j1 = w_register_job(6, &draw_star); */
+        j2 = w_register_job(4, &draw_floating_text);
         song.duration = D6;
         song.rest = R6;
         song.song = s6;
         snd_setsong(&song);
-        j3 = w_register_job(300, &snd_play_sound);
+        j3 = w_register_job(6, &snd_play_sound);
         game = TETRIS;
 
         do {
@@ -96,7 +96,7 @@ int main() {
                                "\x01\x0f S) Sound: %s\x01\x0b \n\n" \
                                "\x01\x0f Q) Quit\x01\x0b \n", \
                                (j3 == NULL) ? "off" : "on");
-                j4 = w_register_job(1000, &animate_scr_01);
+                j4 = w_register_job(18, &animate_scr_01);
                 c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
                 w_unregister_job(j4);
                 j4 = NULL;
@@ -107,13 +107,13 @@ int main() {
                                 game = ADDTRIS;
                                 seg = 1;
                                 wide = 10;
-                                _delay = 170;
+                                _delay = 3;
                                 break;
                         case '2':
                                 game = TETRIS;
                                 seg = 4;
                                 wide = 10;
-                                _delay = 100;
+                                _delay = 2;
                                 break;
                         case '3':
                                 game = XTRIS;
@@ -126,9 +126,9 @@ int main() {
                                         wide = 20;
                                 }
                                 if (seg > 4) {
-                                        _delay = 170;
+                                        _delay = 3;
                                 } else {
-                                        _delay = 100;
+                                        _delay = 2;
                                 }
                                 break;
                         case 'S':
@@ -139,7 +139,7 @@ int main() {
                                         snd_speaker(0);
                                 } else {
                                         snd_play_sound(RESET);
-                                        j3 = w_register_job(300, &snd_play_sound);
+                                        j3 = w_register_job(6, &snd_play_sound);
                                 }
                                 break;
                         case 'Q':
@@ -342,7 +342,7 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         tui_flush();
 }
 
-int draw_star(enum W_ACTION a) {
+long draw_star(enum W_ACTION a) {
         static char s[] = " .+***+. ";
         static char *pc;
         
@@ -359,7 +359,7 @@ int draw_star(enum W_ACTION a) {
         return 0;     
 }
 
-int draw_floating_text(enum W_ACTION a) {
+long draw_floating_text(enum W_ACTION a) {
         #define FT_X 5
         #define FT_Y 25
         #define FT_LEN 70
@@ -399,7 +399,7 @@ int draw_floating_text(enum W_ACTION a) {
 }
 
 
-animate_scr_01(enum W_ACTION a) {
+long animate_scr_01(enum W_ACTION a) {
         static int step = 0;
 
         if (a == RESET) {
@@ -430,7 +430,7 @@ animate_scr_01(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 800;
+                                return 16;
                         case 2:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(14, 10);
@@ -443,7 +443,7 @@ animate_scr_01(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
-                                return 1000;
+                                return 18;
                         case 3:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(63, 10);
@@ -456,7 +456,7 @@ animate_scr_01(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 800;
+                                return 16;
                         case 4:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(63, 10);
@@ -469,11 +469,11 @@ animate_scr_01(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
-                                return 1000;
+                                return 18;
                 }
         }
         
-        return 1000;
+        return 18;
 }
 
 

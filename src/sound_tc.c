@@ -267,7 +267,7 @@ void snd_setsong(SND_SONG *s) {
 * Play song
 */
 
-int snd_play_sound(enum W_ACTION a) {
+long snd_play_sound(enum W_ACTION a) {
         int i;
         static int pause = 0;
         static SND_PLAY_NOTE *p = NULL;
@@ -299,7 +299,7 @@ int snd_play_sound(enum W_ACTION a) {
                         pause = 0;
                 }
                 
-                return (pause == 1) ? song->duration*i : song->rest;
+                return (pause == 1) ? w_mstotck(song->duration*i) : w_mstotck(song->rest);
         }
         
         return 0;

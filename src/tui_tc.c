@@ -276,7 +276,7 @@ int tui_wait_for_key(char *s) {
                         if (strchr(s, c) != NULL)
                                 return c;
                 }
-                w_wait(100);
+                w_wait(2);
         }
 }
 
@@ -287,7 +287,7 @@ void tui_wait_for_any_key() {
         }
 
         while (!kbhit()) {
-                w_wait(100);
+                w_wait(2);
         }
         getch();
 }
