@@ -145,31 +145,31 @@ char *gfx_caterpillar_01 = " .--.--.--.--.--.-\\_/\n" \
 
 /* Skakal pes */
  
-#define D1 1700
+#define D1 12
 #define R1 60
-static SND_PLAY_NOTE s1[] = {{G,O3,N4},{G,O3,N4}, 
-                       {E,O3,N4},{REST,O3,N4}, 
-                       {G,O3,N4},{G,O3,N4}, 
-                       {E,O3,N4},{REST,O3,N4}, 
-                       {G,O3,N4},{G,O3,N4}, 
-                       {A,O3,N4},{G,O3,N4}, 
-                       {G,O3,N2},
-                       {F,O3,N2},
-                       {F,O3,N4},{F,O3,N4}, 
-                       {D,O3,N4},{REST,O3,N4}, 
-                       {F,O3,N4},{F,O3,N4}, 
-                       {D,O3,N4},{REST,O3,N4}, 
-                       {F,O3,N4},{F,O3,N4}, 
-                       {G,O3,N4},{F,O3,N4}, 
-                       {F,O3,N2}, 
-                       {E,O3,N2}, 
-                       {REST,O3,N2}, 
-                       {END,O3,N2} 
+static SND_PLAY_NOTE s1[] = {{G,O4,N4},{G,O4,N4}, 
+                       {E,O4,N4},{REST,O4,N4}, 
+                       {G,O4,N4},{G,O4,N4}, 
+                       {E,O4,N4},{REST,O4,N4}, 
+                       {G,O4,N4},{G,O4,N4}, 
+                       {A,O4,N4},{G,O4,N4}, 
+                       {G,O4,N2},
+                       {F,O4,N2},
+                       {F,O4,N4},{F,O4,N4}, 
+                       {D,O4,N4},{REST,O4,N4}, 
+                       {F,O4,N4},{F,O4,N4}, 
+                       {D,O4,N4},{REST,O4,N4}, 
+                       {F,O4,N4},{F,O4,N4}, 
+                       {G,O4,N4},{F,O4,N4}, 
+                       {F,O4,N2}, 
+                       {E,O4,N2}, 
+                       {REST,O4,N2}, 
+                       {END,O4,N2} 
                 };
 
 
 /* Holka modrooka */
-#define D2 1700
+#define D2 17
 #define R2 60
 static SND_PLAY_NOTE s2[] = {{G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, 
                        {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{G,O5,N8},{G,O5,N8},{E,O5,N8},{F,O5,N8}, 
@@ -185,13 +185,13 @@ static SND_PLAY_NOTE s2[] = {{G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{
                 
 
 /* Kosi pisnicka */
-#define D3 1000
+#define D3 10
 #define R3 60
 static SND_PLAY_NOTE s3[] = {{C,O5,N4},{E,O5,N4},{E,O5,N2}, 
                        {G,O5,N4},{E,O5,N4},{E,O5,N4},{REST,O5,N4}, 
                        {C,O5,N4},{E,O5,N4},{E,O5,N4},{E,O5,N4}, 
                        {G,O5,N4},{E,O5,N4},{E,O5,N4},{REST,O5,N4}, 
-                       {F,O5,N4},{F,O5,N8},{F,O5,N4},{G,O5,N4}, 
+                       {F,O5,N4DOT},{F,O5,N8},{F,O5,N4},{G,O5,N4}, 
                        {A,O5,N4},{A,O5,N4},{G,O5,N4},{F,O5,N4}, 
                        {E,O5,N4},{E,O5,N8},{E,O5,N4},{F,O5,N4}, 
                        {G,O5,N4},{G,O5,N4},{F,O5,N4},{E,O5,N4}, 
@@ -205,7 +205,7 @@ static SND_PLAY_NOTE s3[] = {{C,O5,N4},{E,O5,N4},{E,O5,N2},
 
 
 /* Saxana */
-#define D4 1700
+#define D4 17
 #define R4 60
 static SND_PLAY_NOTE s4[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4}, 
                        {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
@@ -229,7 +229,7 @@ static SND_PLAY_NOTE s4[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
 
 
 /* Dance of The Trolls */
-#define D5 1700
+#define D5 17
 #define R5 60
 static SND_PLAY_NOTE s5[] = {{F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
                                {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
@@ -258,7 +258,7 @@ static SND_PLAY_NOTE s5[] = {{F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{
                 };
                 
 /* Can Can */
-#define D6 1200/110
+#define D6 11
 #define R6 60
 static SND_PLAY_NOTE s6[] = {{D,O4,N8},{A,O4,N8},{A,O4,N8},{B,O4,N8},
                              {A,O4,N8},{G,O4,N8},{G,O4,N8},{B,O4,N8},
