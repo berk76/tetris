@@ -107,13 +107,13 @@ int main() {
                                 game = ADDTRIS;
                                 seg = 1;
                                 wide = 10;
-                                _delay = 3;
+                                _delay = 15;
                                 break;
                         case '2':
                                 game = TETRIS;
                                 seg = 4;
                                 wide = 10;
-                                _delay = 2;
+                                _delay = 10;
                                 break;
                         case '3':
                                 game = XTRIS;
@@ -126,9 +126,9 @@ int main() {
                                         wide = 20;
                                 }
                                 if (seg > 4) {
-                                        _delay = 3;
+                                        _delay = 15;
                                 } else {
-                                        _delay = 2;
+                                        _delay = 10;
                                 }
                                 break;
                         case 'S':
@@ -162,12 +162,17 @@ int main() {
                         tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
         
                         do {
-                                int i;
-                                for (i = 0; i < 5; i++) {
+                                int i, d;
+                                
+                                d = _delay - (tetris.score / 20);
+                                if (d < 5)
+                                        d = 5;
+                                        
+                                for (i = 0; i < d; i++) {
                                         c = process_user_input();
                                         if (c == -1)
                                                 break;
-                                        w_wait(_delay);
+                                        w_wait(1);
                                 }
                                 ret = t_go(&tetris);
                                 g_update_score();  
