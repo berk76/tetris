@@ -56,39 +56,40 @@ static char floating_text[] = "Ptakovina game was created in year 2017 " \
 
 static void g_draw_mesh(int grid_size);
 static void g_print_controls();
-static void g_update_score();
+static int g_update_score(int reset);
 static int process_user_input();
-static long draw_star(enum W_ACTION a);
 static long draw_floating_text(enum W_ACTION a);
 static long animate_scr_01(enum W_ACTION a);
 
 
 int main() {
         int c, seg, wide, ret;
-        unsigned _delay;
+        int _delay, d;
         GAME_T game;
         SND_SONG song;
-        JOB_T *j1, *j2, *j3, *j4;
+        JOB_T *j2, *j3, *j4;
         char buff[512];
+        int change_settings_only;
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
-        /* j1 = w_register_job(6, &draw_star); */
         j2 = w_register_job(4, &draw_floating_text);
-        song.duration = D6;
-        song.rest = R6;
-        song.song = s6;
-        snd_setsong(&song);
-        j3 = w_register_job(6, &snd_play_sound);
-        game = TETRIS;
+        change_settings_only = 0;
 
         do {
-                if (game != -1) {
+                if (change_settings_only != 1) {
                         tui_cls_win(mainw, FALSE);
                         tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
                         tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
                         tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
+                        song.duration = D6;
+                        song.rest = R6;
+                        song.song = s6;
+                        snd_play_sound(RESET);
+                        snd_setsong(&song);
+                        j3 = w_register_job(6, &snd_play_sound);
                 }
+                change_settings_only = 0;
                 
                 sprintf(buff, "\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
                                "\x01\x0f 2) Tetris\x01\x0b \n\n" \
@@ -100,7 +101,6 @@ int main() {
                 c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
                 w_unregister_job(j4);
                 j4 = NULL;
-                game = -1;
                 
                 switch (c) {
                         case '1':
@@ -141,10 +141,10 @@ int main() {
                                         snd_play_sound(RESET);
                                         j3 = w_register_job(6, &snd_play_sound);
                                 }
+                                change_settings_only = 1;
                                 break;
                         case 'Q':
                         case 'q':
-                                /* w_unregister_job(j1); */
                                 w_unregister_job(j2);
                                 if (j3 != NULL)
                                         w_unregister_job(j3);
@@ -155,27 +155,36 @@ int main() {
                                 return 0;
                 }
 
-                if (game != -1) {
+                if (change_settings_only == 0) {
+                        if (j3 != NULL) {
+                                w_unregister_job(j3);
+                                j3 = NULL;
+                                snd_speaker(0);
+                        }
+                        
                         t_create_game(&tetris, game, wide, 20, seg);
         
                         g_draw_mesh(1);
                         tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                        d = _delay;
         
                         do {
-                                int i, d;
-                                
-                                d = _delay - (tetris.score / 20);
-                                if (d < 5)
-                                        d = 5;
-                                        
+                                int i;                                
+
                                 for (i = 0; i < d; i++) {
                                         c = process_user_input();
                                         if (c == -1)
                                                 break;
                                         w_wait(1);
                                 }
+                                
                                 ret = t_go(&tetris);
-                                g_update_score();  
+                                
+                                if (g_update_score(0) == 1) {
+                                        d = _delay - (tetris.score / 20);
+                                        if (d < 3)
+                                                d = 3;
+                                }  
                         } while ((ret != -1) && (c != -1));
         
                         t_delete_game(&tetris);
@@ -247,7 +256,7 @@ void g_draw_mesh(int grid_size) {
         }
 
         g_print_controls();
-        g_update_score();
+        g_update_score(1);
 }
 
 
@@ -268,17 +277,22 @@ void g_print_controls() {
 }
 
 
-void g_update_score() {
-        static int last_score = -1;
+int g_update_score(int reset) {
+        static int last_score;
         char s[20];
 
-        if (last_score == tetris.score)
-                return;
+        if (reset) {
+                last_score = 0;
+        }
+        
+        if ((last_score == tetris.score) && !reset)
+                return 0;
 
         last_score = tetris.score;
         
         sprintf(s, "Score: %4d", tetris.score);
         tui_draw_box(2, 9, TUI_COL, TUI_BKCOL, s, TRUE);
+        return 1;
 }
 
 
@@ -347,22 +361,6 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         tui_flush();
 }
 
-long draw_star(enum W_ACTION a) {
-        static char s[] = " .+***+. ";
-        static char *pc;
-        
-        if (a == RUN) {
-                if ((*pc == '\0') || (*pc == NULL))
-                        pc = s;
-                
-                gotoxy(79,25);
-                tui_set_attr(0, TUI_COL, TUI_BKCOL);
-                putch(*pc);
-                tui_flush();
-                pc++;
-        }
-        return 0;     
-}
 
 long draw_floating_text(enum W_ACTION a) {
         #define FT_X 5
