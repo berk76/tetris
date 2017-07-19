@@ -164,7 +164,7 @@ static SND_PLAY_NOTE s1[] = {{G,O4,N4},{G,O4,N4},
                        {F,O4,N2}, 
                        {E,O4,N2}, 
                        {REST,O4,N2}, 
-                       {END,O4,N2} 
+                       {REPEAT,O4,N2} 
                 };
 
 
@@ -180,7 +180,7 @@ static SND_PLAY_NOTE s2[] = {{G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{
                        {G,O5,N4},{A,O5,N4},{G,O5,N8},{G,O5,N8},{E,O5,N8},{G,O5,N8}, 
                        {F,O5,N8},{F,O5,N8},{D,O5,N8},{F,O5,N8},{E,O5,N4},{REST,O5,N4}, 
                        {REST,O5,N2}, 
-                       {END,O5,N2} 
+                       {REPEAT,O5,N2} 
                 };
                 
 
@@ -200,7 +200,7 @@ static SND_PLAY_NOTE s3[] = {{C,O5,N4},{E,O5,N4},{E,O5,N2},
                        {F,O5,N4},{G,O5,N4},{F,O5,N4},{E,O5,N4}, 
                        {D,O5,N4},{D,O5,N4},{C,O5,N4},{REST,O5,N4}, 
                        {REST,O5,N2}, 
-                       {END,O5,N2}
+                       {REPEAT,O5,N2}
                 };
 
 
@@ -224,7 +224,7 @@ static SND_PLAY_NOTE s4[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
                        {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
                        {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
                        {B,O5,N1},
-                       {END,O5,N32} 
+                       {REPEAT,O5,N32} 
                 };
 
 
@@ -254,7 +254,7 @@ static SND_PLAY_NOTE s5[] = {{F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{
                                {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{A,O4,N4},{A,O4,N4},
                                {F,O5,N8},{E,O5,N8},{C,O5,N8},{B,O4,N8},{D,O5,N4},{D,O5,N8},{REST,O5,N8},
                                {B,O4,N8},{C,O5,N8},{D,O5,N8},{G,O4,N8},{A,O4,N4},{A,O4,N8},{REST,O4,N8},
-                               {END,O4,N16}
+                               {REPEAT,O4,N16}
                 };
                 
 /* Can Can */
@@ -360,7 +360,23 @@ static SND_PLAY_NOTE s6[] = {{D,O4,N8},{A,O4,N8},{A,O4,N8},{B,O4,N8},
                              {G,O4,N4},{REST,O4,N4},
                              {G,O4,N4},{G,O5,N4},
                              {G,O4,N4},{REST,O4,N4},
-                             {END,O4,N1}
+                             {REPEAT,O4,N1}
                 };
+                
+                
+/* Fall */
+#define D7 11
+#define R7 60
+static SND_PLAY_NOTE s7[] = {{D,O4,N16},
+                             {STOP,O4,N1}
+                };
+                
+/* Destroy */
+#define D8 11
+#define R8 60
+static SND_PLAY_NOTE s8[] = {{D,O4,N16},{D,O3,N16},
+                             {STOP,O4,N1}
+                };
+                
 #endif
 

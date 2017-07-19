@@ -43,8 +43,9 @@ enum SND_NOTE {
         A  = 9,
         AS = 10,
         B  = 11,
-        REST = 99,
-        END = 100
+        REST = 98,
+        REPEAT = 99,
+        STOP = 100
 };
 
 enum SND_DURATION {
@@ -72,8 +73,8 @@ typedef struct {
 } SND_PLAY_NOTE;
       
 typedef struct {
-        int duration;
-        int rest;
+        long duration;
+        long rest;
         SND_PLAY_NOTE *song;
 } SND_SONG;
         

@@ -245,7 +245,7 @@ void snd_speaker(int on) {
 */      
         
 void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o) {
-        if ((n == REST) || (n == END)) {
+        if ((n == REST) || (n == REPEAT)) {
                 snd_speaker(0);
         } else {
                 snd_setfreq(not_freq[n + o*12]);
@@ -260,6 +260,7 @@ void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o) {
 
 void snd_setsong(SND_SONG *s) {
         song = s;
+        snd_play_sound(RESET);
 }
 
 
@@ -268,7 +269,7 @@ void snd_setsong(SND_SONG *s) {
 */
 
 long snd_play_sound(enum W_ACTION a) {
-        int i;
+        long i;
         static int pause = 0;
         static SND_PLAY_NOTE *p = NULL;
         
@@ -287,18 +288,23 @@ long snd_play_sound(enum W_ACTION a) {
                 if (pause == 0) {
                         snd_playnote(p->note, p->octave);
                         i = p->duration;
-                        if (p->note == END) {
-                                p = song->song;
-                        } else {
-                                p++;
+                        switch (p->note) {
+                                case REPEAT:
+                                        p = song->song;
+                                        break;
+                                case STOP:
+                                        snd_speaker(0);
+                                        /* unregister job */
+                                        return -1;
+                                default:
+                                        p++;
                         }
                         pause = 1;
                 } else {
                         snd_playnote(REST, p->octave);
-                        i = p->duration;
                         pause = 0;
                 }
-                
+
                 return (pause == 1) ? w_mstotck(song->duration*i) : w_mstotck(song->rest);
         }
         
