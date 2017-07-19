@@ -25,7 +25,20 @@ static JOB_T *job_q = NULL;
 void w_wait(long tck) {
         long ret;
         JOB_T *j, *pq;
-
+        
+        /* debug part
+        int i;
+        i = 0;
+        pq = job_q;
+        while (pq != NULL) {
+                i++;
+                pq = pq->next;
+        }
+        gotoxy(1,25);
+        printf("%d", i);
+        gotoxy(1,25);
+        */
+        
         tck += clock();
         while (1) {
                 pq = job_q;
@@ -38,11 +51,17 @@ void w_wait(long tck) {
                 }
                 if ((j != NULL) && (clock() >= j->endwait) && (tck > j->endwait)) {
                         ret = j->run(RUN);
-                        if (ret != 0) {
-                                j->endwait = ret + clock();
-                        } else {
-                                j->endwait = j->period + clock();
+                        switch (ret) {
+                                case -1:
+                                        w_unregister_job(j);
+                                        break;
+                                case 0:
+                                        j->endwait = j->period + clock();
+                                        break;
+                                default:
+                                        j->endwait = ret + clock();
                         }
+
                 } else 
                 if (clock() >= tck) {
                         return;

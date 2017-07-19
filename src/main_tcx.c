@@ -74,6 +74,8 @@ int main() {
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
         j2 = w_register_job(4, &draw_floating_text);
+        j3 = NULL;
+        j4 = NULL;
         change_settings_only = 0;
 
         do {
@@ -82,12 +84,13 @@ int main() {
                         tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
                         tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
                         tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
-                        song.duration = D6;
-                        song.rest = R6;
-                        song.song = s6;
-                        snd_play_sound(RESET);
-                        snd_setsong(&song);
-                        j3 = w_register_job(6, &snd_play_sound);
+                        if (j3 == NULL) {
+                                song.duration = D2;
+                                song.rest = R2;
+                                song.song = s2;
+                                snd_setsong(&song);
+                                j3 = w_register_job(6, &snd_play_sound);
+                        }
                 }
                 change_settings_only = 0;
                 
@@ -169,7 +172,7 @@ int main() {
                         d = _delay;
         
                         do {
-                                int i;                                
+                                int i;                             
 
                                 for (i = 0; i < d; i++) {
                                         c = process_user_input();
@@ -180,10 +183,23 @@ int main() {
                                 
                                 ret = t_go(&tetris);
                                 
-                                if (g_update_score(0) == 1) {
-                                        d = _delay - (tetris.score / 20);
-                                        if (d < 3)
-                                                d = 3;
+                                if ((ret != -1) && (c != -1)) {
+                                        if (g_update_score(0) == 1) {
+                                                d = _delay - (tetris.score / 20);
+                                                if (d < 3)
+                                                        d = 3;
+                                                song.duration = D8;
+                                                song.rest = R8;
+                                                song.song = s8;
+                                                snd_setsong(&song);
+                                                w_register_job(0, &snd_play_sound);
+                                        } else {
+                                                song.duration = D7;
+                                                song.rest = R7;
+                                                song.song = s7;
+                                                snd_setsong(&song);
+                                                w_register_job(0, &snd_play_sound);
+                                        }
                                 }  
                         } while ((ret != -1) && (c != -1));
         
