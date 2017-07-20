@@ -112,6 +112,8 @@ int main() {
                         
                 tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
                 d = _delay;
+                if (play_sound == 1)
+                        j3 = w_register_job(6, &snd_play_sound);
         
                 do {
                         int i;                             
@@ -290,7 +292,6 @@ void draw_addtris() {
                 song.rest = R4;
                 song.song = s4;
                 snd_setsong(&song);
-                j3 = w_register_job(6, &snd_play_sound);
         }
 }
 
@@ -346,7 +347,6 @@ void draw_tetris() {
                 song.rest = R6;
                 song.song = s6;
                 snd_setsong(&song);
-                j3 = w_register_job(6, &snd_play_sound);
         }
 }
 
@@ -389,7 +389,6 @@ void draw_xtris() {
                 song.rest = R5;
                 song.song = s5;
                 snd_setsong(&song);
-                j3 = w_register_job(6, &snd_play_sound);
         }
 }
 
