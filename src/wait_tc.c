@@ -26,7 +26,7 @@ void w_wait(long tck) {
         long ret;
         JOB_T *j, *pq;
         
-        /* debug part
+        /* debug part */
         int i;
         i = 0;
         pq = job_q;
@@ -37,7 +37,7 @@ void w_wait(long tck) {
         gotoxy(1,25);
         printf("%d", i);
         gotoxy(1,25);
-        */
+
         
         tck += clock();
         while (1) {

@@ -52,71 +52,159 @@ static char floating_text[] = "Ptakovina game was created in year 2017 " \
         "designer Alexey Pajitnov. 3) X-Tris is my own crazy modification of " \
         "Tetris game where you can cook by yourself some parameters and " \
         "create some crazy challenge to manage. - berk -";
+        
+static JOB_T *j2, *j3, *j4;
+static SND_SONG song;
+static int play_sound;
+static int _delay;
 
 
-static void g_draw_mesh(int grid_size);
+static int draw_mainscreen(TETRIS_T *t);
+static void draw_addtris();
+static void draw_tetris();
+static void draw_xtris();
 static void g_print_controls();
 static int g_update_score(int reset);
 static int process_user_input();
+/* Jobs */
 static long draw_floating_text(enum W_ACTION a);
 static long animate_scr_01(enum W_ACTION a);
 
 
 int main() {
-        int c, seg, wide, ret;
-        int _delay, d;
-        GAME_T game;
-        SND_SONG song;
-        JOB_T *j2, *j3, *j4;
-        char buff[512];
-        int change_settings_only;
+        int c, ret;
+        int d;
+        
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
         j2 = w_register_job(4, &draw_floating_text);
         j3 = NULL;
         j4 = NULL;
-        change_settings_only = 0;
+        play_sound = 1;
 
         do {
-                if (change_settings_only != 1) {
+                ret = draw_mainscreen(&tetris);
+                
+                /* Quit game */
+                if (ret == 0) {
+                        w_unregister_job(j2);
+                        if (j3 != NULL)
+                                w_unregister_job(j3);
+                        if (j4 != NULL)
+                                w_unregister_job(j4);
+                        snd_speaker(0);
+                        tui_delete_win(mainw);
+                        return 0;
+                }
+                         
+                switch (tetris.game) {
+                        case TETRIS:
+                                draw_tetris();
+                                break;
+                        case XTRIS:
+                                draw_xtris();
+                                break;
+                        case ADDTRIS:
+                                draw_addtris();
+                                break; 
+                }
+                        
+                tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                d = _delay;
+        
+                do {
+                        int i;                             
+
+                        for (i = 0; i < d; i++) {
+                                c = process_user_input();
+                                if (c == -1)
+                                        break;
+                                w_wait(1);
+                        }
+                        
+                        ret = t_go(&tetris);
+                        
+                        if (g_update_score(0) == 1) {
+                                d = _delay - (tetris.score / 20);
+                                if (d < 3)
+                                        d = 3;
+                        }  
+                } while ((ret != -1) && (c != -1));
+
+                t_delete_game(&tetris);
+                if (j3 != NULL) {
+                        w_unregister_job(j3);
+                        j3 = NULL;
+                        snd_speaker(0);
+                }
+                
+                if (c != -1)
+                        tui_message("\n\x01\x0fGAME OVER\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                
+        } while (1);
+}
+
+
+int draw_mainscreen(TETRIS_T *t) {
+        int c, seg, wide, ret;
+        char buff[512];
+        GAME_T game;
+        int menu_only;
+        
+        ret = -1;
+        menu_only = 0;
+        do {
+                if (menu_only == 0) {
                         tui_cls_win(mainw, FALSE);
                         tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
                         tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
                         tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
-                        if (j3 == NULL) {
-                                song.duration = D2;
-                                song.rest = R2;
-                                song.song = s2;
-                                snd_setsong(&song);
-                                j3 = w_register_job(6, &snd_play_sound);
-                        }
+                        menu_only = 1;
                 }
-                change_settings_only = 0;
+                
+                if ((play_sound == 1) && (j3 == NULL)) {
+                        song.duration = D2;
+                        song.rest = R2;
+                        song.song = s2;
+                        snd_setsong(&song);
+                        j3 = w_register_job(6, &snd_play_sound);
+                }
+                
+                if ((play_sound == 0) && (j3 != NULL)) {
+                        w_unregister_job(j3);
+                        j3 = NULL;
+                        snd_speaker(0);
+                }
                 
                 sprintf(buff, "\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
                                "\x01\x0f 2) Tetris\x01\x0b \n\n" \
                                "\x01\x0f 3) X-Tris\x01\x0b \n\n" \
                                "\x01\x0f S) Sound: %s\x01\x0b \n\n" \
                                "\x01\x0f Q) Quit\x01\x0b \n", \
-                               (j3 == NULL) ? "off" : "on");
+                               (play_sound == 0) ? "off" : "on");
+                               
                 j4 = w_register_job(18, &animate_scr_01);
+                
                 c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
+                
                 w_unregister_job(j4);
                 j4 = NULL;
-                
+                        
                 switch (c) {
                         case '1':
                                 game = ADDTRIS;
                                 seg = 1;
                                 wide = 10;
                                 _delay = 15;
+                                ret = 1;
                                 break;
                         case '2':
                                 game = TETRIS;
                                 seg = 4;
                                 wide = 10;
                                 _delay = 10;
+                                ret = 1;
                                 break;
                         case '3':
                                 game = XTRIS;
@@ -133,106 +221,89 @@ int main() {
                                 } else {
                                         _delay = 10;
                                 }
+                                ret = 1;
                                 break;
                         case 'S':
                         case 's':
-                                if (j3 != NULL) {
-                                        w_unregister_job(j3);
-                                        j3 = NULL;
-                                        snd_speaker(0);
+                                if (play_sound == 0) {
+                                        play_sound = 1;
                                 } else {
-                                        snd_play_sound(RESET);
-                                        j3 = w_register_job(6, &snd_play_sound);
+                                        play_sound = 0;
                                 }
-                                change_settings_only = 1;
                                 break;
                         case 'Q':
                         case 'q':
-                                w_unregister_job(j2);
-                                if (j3 != NULL)
-                                        w_unregister_job(j3);
-                                if (j4 != NULL)
-                                        w_unregister_job(j4);
-                                snd_speaker(0);
-                                tui_delete_win(mainw);
-                                return 0;
+                                ret = 0;
+                                break;
                 }
-
-                if (change_settings_only == 0) {
-                        if (j3 != NULL) {
-                                w_unregister_job(j3);
-                                j3 = NULL;
-                                snd_speaker(0);
-                        }
-                        
-                        t_create_game(&tetris, game, wide, 20, seg);
+        } while (ret == -1);
         
-                        g_draw_mesh(1);
-                        tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
-                        d = _delay;
+        if (j3 != NULL) {
+                w_unregister_job(j3);
+                j3 = NULL;
+                snd_speaker(0);
+        }
         
-                        do {
-                                int i;                             
-
-                                for (i = 0; i < d; i++) {
-                                        c = process_user_input();
-                                        if (c == -1)
-                                                break;
-                                        w_wait(1);
-                                }
-                                
-                                ret = t_go(&tetris);
-                                
-                                if ((ret != -1) && (c != -1)) {
-                                        if (g_update_score(0) == 1) {
-                                                d = _delay - (tetris.score / 20);
-                                                if (d < 3)
-                                                        d = 3;
-                                                song.duration = D8;
-                                                song.rest = R8;
-                                                song.song = s8;
-                                                snd_setsong(&song);
-                                                w_register_job(0, &snd_play_sound);
-                                        } else {
-                                                song.duration = D7;
-                                                song.rest = R7;
-                                                song.song = s7;
-                                                snd_setsong(&song);
-                                                w_register_job(0, &snd_play_sound);
-                                        }
-                                }  
-                        } while ((ret != -1) && (c != -1));
+        t_create_game(t, game, wide, 20, seg);
         
-                        t_delete_game(&tetris);
-                        if (c != -1)
-                                tui_message("\n\x01\x0fGAME OVER\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
-                }
-                
-        } while (1);
+        /* 0=quit game; 1=game created */
+        return ret;
 }
 
 
-void g_draw_mesh(int grid_size) {
+void draw_addtris() {
         int x, y;
 
         tui_cls_win(mainw, FALSE);
-	tetris.element_size = grid_size;
+	tetris.element_size = 1;
         tetris.origin_y = 3;
 
-        switch (tetris.game) {
-                case TETRIS:
-                        tetris.origin_x = 39;
-                        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
-                        break;
-                case XTRIS:
-                        tetris.origin_x = 40;
-                        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_xtris, FALSE);
-                        break;
-                case ADDTRIS:
-                        tetris.origin_x = 47;
-                        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_addtris, FALSE);
-                        break; 
+        tetris.origin_x = 47;
+        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_addtris, FALSE);
+        
+        tui_set_attr(0, LIGHTMAGENTA, TUI_BKCOL);
+
+        for (y = 0; y < tetris.element_size * tetris.grid_size_y; y++) {
+                gotoxy(tetris.origin_x - 1, tetris.origin_y + y);
+                putch('|');
+                for (x = 0; x < tetris.element_size * 2 * tetris.grid_size_x; x++) {
+                        putch(' ');
+                }
+                putch('|');
         }
+
+        gotoxy(tetris.origin_x - 1, tetris.origin_y + tetris.element_size * tetris.grid_size_y);
+        putch('+');
+        for (x = 0; x < tetris.element_size * 2 * tetris.grid_size_x; x++) {
+                putch('-');
+        }
+        putch('+');
+        
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        tui_draw_box(69, 19, TUI_COL, TUI_BKCOL, gfx_mush_01, FALSE);
+
+        g_print_controls();
+        g_update_score(1);
+        
+        if ((play_sound == 1) && (j3 == NULL)) {
+                song.duration = D4;
+                song.rest = R4;
+                song.song = s4;
+                snd_setsong(&song);
+                j3 = w_register_job(6, &snd_play_sound);
+        }
+}
+
+
+void draw_tetris() {
+        int x, y;
+
+        tui_cls_win(mainw, FALSE);
+	tetris.element_size = 1;
+        tetris.origin_y = 3;
+
+        tetris.origin_x = 39;
+        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
         
         tui_set_attr(0, LIGHTMAGENTA, TUI_BKCOL);
 
@@ -254,7 +325,7 @@ void g_draw_mesh(int grid_size) {
         
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
         
-        if ((tetris.game == TETRIS) && (tetris.grid_size_x <= 10)) {        
+        if (tetris.grid_size_x <= 10) {        
                 tui_draw_box(tetris.origin_x + 23, \
                         1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                         
@@ -266,13 +337,60 @@ void g_draw_mesh(int grid_size) {
                 tui_draw_box(tetris.origin_x + 23, \
                         15, TUI_COL, TUI_BKCOL, gfx_bird_04, FALSE);
         }
-        
-        if (tetris.game == ADDTRIS) {
-                tui_draw_box(69, 19, TUI_COL, TUI_BKCOL, gfx_mush_01, FALSE);
-        }
 
         g_print_controls();
         g_update_score(1);
+        
+        if ((play_sound == 1) && (j3 == NULL)) {
+                song.duration = D6;
+                song.rest = R6;
+                song.song = s6;
+                snd_setsong(&song);
+                j3 = w_register_job(6, &snd_play_sound);
+        }
+}
+
+
+void draw_xtris() {
+        int x, y;
+
+        tui_cls_win(mainw, FALSE);
+	tetris.element_size = 1;
+        tetris.origin_y = 3;
+
+        tetris.origin_x = 40;
+        tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_xtris, FALSE);
+        
+        tui_set_attr(0, LIGHTMAGENTA, TUI_BKCOL);
+
+        for (y = 0; y < tetris.element_size * tetris.grid_size_y; y++) {
+                gotoxy(tetris.origin_x - 1, tetris.origin_y + y);
+                putch('|');
+                for (x = 0; x < tetris.element_size * 2 * tetris.grid_size_x; x++) {
+                        putch(' ');
+                }
+                putch('|');
+        }
+
+        gotoxy(tetris.origin_x - 1, tetris.origin_y + tetris.element_size * tetris.grid_size_y);
+        putch('+');
+        for (x = 0; x < tetris.element_size * 2 * tetris.grid_size_x; x++) {
+                putch('-');
+        }
+        putch('+');
+        
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+
+        g_print_controls();
+        g_update_score(1);
+        
+        if ((play_sound == 1) && (j3 == NULL)) {
+                song.duration = D5;
+                song.rest = R5;
+                song.song = s5;
+                snd_setsong(&song);
+                j3 = w_register_job(6, &snd_play_sound);
+        }
 }
 
 
