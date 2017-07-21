@@ -687,7 +687,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 16;
+                                return 20;
                         case 6:
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 gotoxy(73, 4);
