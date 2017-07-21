@@ -237,24 +237,24 @@ static SND_PLAY_NOTE s3[] = {{C,O5,N4},{E,O5,N4},{E,O5,N2},
 /* Saxana */
 #define D4 17
 #define R4 60
-static SND_PLAY_NOTE s4[] = {{C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4}, 
-                       {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
-                       {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
-                       {E,O5,N8},{E,O5,N16},{E,O5,N16},{D,O5,N8},{D,O5,N8},{C,O5,N4},{REST,O5,N4},
-                       {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
-                       {E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N64},{D,O5,N16},{C,O5,N8},{E,O5,N4},{D,O5,N4},
-                       {C,O5,N4},{A,O5,N4},{G,O5,N4},{REST,O5,N4},
-                       {E,O5,N8},{E,O5,N16},{E,O5,N16},{D,O5,N8},{D,O5,N8},
-                       {C,O5,N4},{REST,O5,N4},{REST,O5,N2},
-                       {C,O5,N16},{C,O5,N8},{C,O5,N16},{C,O5,N16},{C,O5,N8},{C,O5,N16},{E,O5,N16},{E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N8},{E,O5,N16},
-                       {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
-                       {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
-                       {B,O5,N1},
-                       {C,O5,N16},{C,O5,N8},{C,O5,N16},{C,O5,N16},{C,O5,N8},{C,O5,N16},{E,O5,N16},{E,O5,N16},{E,O5,N8},{E,O5,N16},{E,O5,N8},{E,O5,N16},
-                       {F,O5,N16},{F,O5,N16},{F,O5,N8},{F,O5,N16},{F,O5,N8},{F,O5,N16},{A,O5,N4},{A,O5,N16},{A,O5,N8},{B,O5,N16},
-                       {B,O5,N2},{REST,O5,N16},{B,O5,N16},{B,O5,N8},
-                       {B,O5,N1},
-                       {REPEAT,O5,N32} 
+static SND_PLAY_NOTE s4[] = {{C,O4,N4},{A,O4,N4},{G,O4,N4},{REST,O4,N4}, 
+                       {E,O4,N16},{E,O4,N8},{E,O4,N16},{E,O4,N64},{D,O4,N16},{C,O4,N8},{E,O4,N4},{D,O4,N4},
+                       {C,O4,N4},{A,O4,N4},{G,O4,N4},{REST,O4,N4},
+                       {E,O4,N8},{E,O4,N16},{E,O4,N16},{D,O4,N8},{D,O4,N8},{C,O4,N4},{REST,O4,N4},
+                       {C,O4,N4},{A,O4,N4},{G,O4,N4},{REST,O4,N4},
+                       {E,O4,N16},{E,O4,N8},{E,O4,N16},{E,O4,N64},{D,O4,N16},{C,O4,N8},{E,O4,N4},{D,O4,N4},
+                       {C,O4,N4},{A,O4,N4},{G,O4,N4},{REST,O4,N4},
+                       {E,O4,N8},{E,O4,N16},{E,O4,N16},{D,O4,N8},{D,O4,N8},
+                       {C,O4,N4},{REST,O4,N4},{REST,O4,N2},
+                       {C,O4,N16},{C,O4,N8},{C,O4,N16},{C,O4,N16},{C,O4,N8},{C,O4,N16},{E,O4,N16},{E,O4,N16},{E,O4,N8},{E,O4,N16},{E,O4,N8},{E,O4,N16},
+                       {F,O4,N16},{F,O4,N16},{F,O4,N8},{F,O4,N16},{F,O4,N8},{F,O4,N16},{A,O4,N4},{A,O4,N16},{A,O4,N8},{B,O4,N16},
+                       {B,O4,N2},{REST,O4,N16},{B,O4,N16},{B,O4,N8},
+                       {B,O4,N1},
+                       {C,O4,N16},{C,O4,N8},{C,O4,N16},{C,O4,N16},{C,O4,N8},{C,O4,N16},{E,O4,N16},{E,O4,N16},{E,O4,N8},{E,O4,N16},{E,O4,N8},{E,O4,N16},
+                       {F,O4,N16},{F,O4,N16},{F,O4,N8},{F,O4,N16},{F,O4,N8},{F,O4,N16},{A,O4,N4},{A,O4,N16},{A,O4,N8},{B,O4,N16},
+                       {B,O4,N2},{REST,O4,N16},{B,O4,N16},{B,O4,N8},
+                       {B,O4,N1},
+                       {REPEAT,O4,N32} 
                 };
 
 
