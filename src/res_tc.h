@@ -16,6 +16,20 @@
 #ifndef _RES_TC_
 #define _RES_TC_
 
+
+static char *floating_text = "Ptakovina game was created in year 2017 " \
+        "as part of developers competition published at www.high-voltage.cz. " \
+        "I would like thank to Sledge for making such challenges and for " \
+        "pushing us to create crazy DOS games. Also I would like thank to web " \
+        "www.chris.com and all ascii art creators such as jgs, mrf, as, lc " \
+        "and many others for their wonderful ascii creatures. " \
+        "This software consists of three games: 1) ADDTRIS is game invented " \
+        "in 2016 by Vasek Petourka. Game was published at www.8bity.cz. "\
+        "2) TETRIS is well known game invented in 1984 by Russian game " \
+        "designer Alexey Pajitnov. 3) X-Tris is my own crazy modification of " \
+        "Tetris game where you can cook by yourself some parameters and " \
+        "create some crazy challenge to manage. - berk -";
+
 /*
 *       Gtaphics mostly comes from:
 *       
@@ -108,13 +122,41 @@ char *gfx_bird_04 = "\x01\x0a (\x01\x0e'\x01\x0c<        >\x01\x0e'\x01\x0a)\n" 
                     "    _|   |_\n" \
                     "   (_______)";
                     
-char *gfx_bird_05 = "\x01\x0f         .-.                                              .-.\n" \
-                    "        (. .)__.')                                  (`.__(. .)\n" \
-                    "        / \x01\x0cV\x01\x0f      )                                  (      \x01\x0cV\x01\x0f \\\n" \
-                    "  \x01\x0a()\x01\x0f    \\  (   \\/                                    \\/   )  /    \x01\x0a()\n" \
-                    "\x01\x0a<)-`\\()\x01\x0f  `._`._ \\                                    / _.'_.'  \x01\x0a()/'-(>\n" \
-                    "\x01\x0a  <)_>\x01\x06=====\x01\x04<<\x01\x06==\x01\x0f`'\x01\x06====================================\x01\x0f`'\x01\x06==\x01\x04>>\x01\x06=====\x01\x0a<_(>\n" \
-                    "\x01\x0a <>-'`(>                                                      <)'`-<>";
+char *gfx_bird_06 = " ,_\n" \
+                    ">' )\n" \
+                    "( ( \\\n" \
+                    " ''|\\";
+
+char *gfx_bird_07 = "   .-.\n" \
+                    "  /'v'\\\n" \
+                    " (/   \\)\n" \
+                    "='=\"=\"==\n" \
+                    "   |_|";
+ 
+char *gfx_bird_08 = "\x01\x0a  ()\n" \
+                    "<)-`\\()\n" \
+                    "  <)_>\x01\x06==\x01\x0a\n" \
+                    " <>-'`(>";
+
+char *gfx_bird_09 = "\x01\x0a    ()\n" \
+                    " ()/'-(>\n" \
+                    "\x01\x06==\x01\x0a<_(>\n" \
+                    "<)'`-<>";
+
+char *gfx_bird_10 = "\x01\x0f .-.\n" \
+                    "(. .)__.')\n" \
+                    "/ \x01\x0cV\x01\x0f      )\n" \
+                    "\\  (   \\/\n" \
+                    " `._`._ \\\n" \
+                    "\x01\x06===\x01\x04<<\x01\x06==\x01\x0f`'\x01\x06=";
+
+char *gfx_bird_11 = "\x01\x0f      .-.\n" \
+                    "(`.__(. .)\n" \
+                    "(      \x01\x0cV\x01\x0f \\\n" \
+                    " \\/   )  /\n" \
+                    " / _.'_.'\n" \
+                    "\x01\x06=\x01\x0f`'\x01\x06==\x01\x04>>\x01\x06===";
+
 
 char *gfx_owl_01 =  "  ,___,\n" \
                     "  (9v9)\n" \
@@ -167,6 +209,42 @@ char *gfx_witch_01 = "(       \"     )\n" \
                      "   \\    (. ) ,   /  /__I_____\\\n" \
                      "    '._/_)_(\\__.'   (__,(__,_]\n" \
                      "   @---()_.'---@";
+
+char *gfx_rabbit_01 = "   \\(,%%*%,_\n" \
+                      " %%/*(\n" \
+                      "%% )\\|\n" \
+                      " _/ #)\n" \
+                      ".) ,/\n" \
+                      "/)#(_,,,,,,,";
+
+char *gfx_rabbit_02 = "-%*%%,)/\n" \
+                      "     )*\\%%\n" \
+                      "     |/( %%\n" \
+                      "     (# \\_\n" \
+                      "      \\, (.\n" \
+                      ",,,,,,_)#(\\";
+
+char *gfx_rabbit_03 = "      /)\n" \
+                      "     (/ \n" \
+                      "   __/')\n" \
+                      " _/  /  \n" \
+                      ",\\,((,,,";
+ 
+char *gfx_rabbit_04 = "  /)    \n" \
+                      " (/     \n" \
+                      "('\\__   \n" \
+                      "  \\  \\_ \n" \
+                      ",,,)),/,";
+                      
+char *gfx_rabbit_05 = "        //\n" \
+                      "      _//\n" \
+                      "     .. ~~-_\n" \
+                      "___m<___m___~.\n" \
+                      "_|__|__|__|__|__|\n" \
+                      "|__|__|__|__|__|_";
+
+
+
  
 
 /*

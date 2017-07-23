@@ -39,20 +39,7 @@ static int color_vec[] = {LIGHTBLUE,
                           WHITE,
                           BLACK,
                           BLUE};
-static WINDOW_T *mainw = NULL;
-static char floating_text[] = "Ptakovina game was created in year 2017 " \
-        "as part of developers competition published at www.high-voltage.cz. " \
-        "I would like thank to Sledge for making such challenges and for " \
-        "pushing us to create crazy DOS games. Also I would like thank to web " \
-        "www.chris.com and all ascii art creators such as jgs, mrf, as, lc " \
-        "and many others for their wonderful ascii creatures. " \
-        "This software consists of three games: 1) ADDTRIS is game invented " \
-        "in 2016 by Vasek Petourka. Game was published at www.8bity.cz. "\
-        "2) TETRIS is well known game invented in 1984 by Russian game " \
-        "designer Alexey Pajitnov. 3) X-Tris is my own crazy modification of " \
-        "Tetris game where you can cook by yourself some parameters and " \
-        "create some crazy challenge to manage. - berk -";
-        
+static WINDOW_T *mainw = NULL;        
 static JOB_T *j2, *j3, *j4;
 static SND_SONG song;
 static int play_sound;
@@ -65,13 +52,14 @@ static int draw_mainscreen(TETRIS_T *t);
 static void draw_addtris();
 static void draw_tetris();
 static void draw_xtris();
-static void g_print_controls();
-static int g_update_score(int reset);
+static void print_controls(int x, int y);
+static int update_score(int reset);
 static int process_user_input();
 /* Jobs */
 static long draw_floating_text(enum W_ACTION a);
-static long animate_scr_01(enum W_ACTION a);
+static long animate_scr_main(enum W_ACTION a);
 static long animate_scr_add(enum W_ACTION a);
+static long animate_scr_tet(enum W_ACTION a);
 
 
 int main() {
@@ -130,7 +118,7 @@ int main() {
                         
                         ret = t_go(&tetris);
                         
-                        if (g_update_score(0) == 1) {
+                        if (update_score(0) == 1) {
                                 d = _delay - (tetris.score / 20);
                                 if (d < 3)
                                         d = 3;
@@ -157,7 +145,7 @@ int main() {
 
 
 int draw_mainscreen(TETRIS_T *t) {
-        int c, seg, wide, ret;
+        int i, c, seg, wide, ret;
         char buff[512];
         GAME_T game;
         int menu_only;
@@ -168,7 +156,16 @@ int draw_mainscreen(TETRIS_T *t) {
                 if (menu_only == 0) {
                         tui_cls_win(mainw, FALSE);
                         tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
-                        tui_draw_box(5, 9, TUI_COL, TUI_BKCOL, gfx_bird_05, FALSE);
+                        
+                        gotoxy(23,14);
+                        tui_set_attr(0, BROWN, TUI_BKCOL);
+                        for (i = 0; i < 34; i++)
+                                putch('=');
+                        tui_draw_box(5, 12, TUI_COL, TUI_BKCOL, gfx_bird_08, FALSE);
+                        tui_draw_box(13, 9, TUI_COL, TUI_BKCOL, gfx_bird_10, FALSE);
+                        tui_draw_box(57, 9, TUI_COL, TUI_BKCOL, gfx_bird_11, FALSE);
+                        tui_draw_box(67, 12, TUI_COL, TUI_BKCOL, gfx_bird_09, FALSE);
+                        
                         tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
                         menu_only = 1;
                 }
@@ -194,7 +191,7 @@ int draw_mainscreen(TETRIS_T *t) {
                                "\x01\x0f Q) Quit\x01\x0b \n", \
                                (play_sound == 0) ? "off" : "on");
                                
-                j4 = w_register_job(18, &animate_scr_01);
+                j4 = w_register_job(18, &animate_scr_main);
                 
                 c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
                 
@@ -298,7 +295,7 @@ void draw_addtris() {
 
         score_x = 70;
         score_y = 9;        
-        g_update_score(1);
+        update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
                 song.duration = D4;
@@ -312,7 +309,7 @@ void draw_addtris() {
 
 
 void draw_tetris() {
-        int x, y;
+        int i, x, y;
 
         tui_cls_win(mainw, FALSE);
 	tetris.element_size = 1;
@@ -339,25 +336,31 @@ void draw_tetris() {
         }
         putch('+');
         
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        gotoxy(5,9);
+        tui_set_attr(0, BROWN, TUI_BKCOL);
+        for (i = 0; i < 15; i++)
+                putch('=');
+        tui_draw_box(20, 7, TUI_COL, TUI_BKCOL, gfx_bird_09, FALSE);
+        tui_draw_box(10, 6, TUI_COL, TUI_BKCOL, gfx_bird_07, FALSE);
+                
+        print_controls(2, 12);
         
-        if (tetris.grid_size_x <= 10) {        
-                tui_draw_box(tetris.origin_x + 23, \
-                        1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
-                        
-                tui_draw_box(tetris.origin_x + 23, \
-                        7, LIGHTMAGENTA, TUI_BKCOL, \
-                        "              \n\n\n\n", \
-                        TRUE);
-                        
-                tui_draw_box(tetris.origin_x + 23, \
-                        15, TUI_COL, TUI_BKCOL, gfx_bird_04, FALSE);
-        }
+        gotoxy(2, 23);
+        for (x = 2; x < 24; x++)
+                putch(',');
+        tui_draw_box(2, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_01, FALSE);
+        tui_draw_box(26, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_02, FALSE);        
+        tui_draw_box(12, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+        tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+        
+        tui_draw_box(tetris.origin_x + 23, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+        tui_draw_box(71, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
+        tui_draw_box(tetris.origin_x + 23, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_05, FALSE);
 
-        score_x = 2;
-        score_y = 9;
-        g_print_controls();
-        g_update_score(1);
+
+        score_x = 65;
+        score_y = 12;
+        update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
                 song.duration = D6;
@@ -365,6 +368,8 @@ void draw_tetris() {
                 song.song = s6;
                 snd_setsong(&song);
         }
+        
+        j4 = w_register_job(18, &animate_scr_tet);
 }
 
 
@@ -400,8 +405,8 @@ void draw_xtris() {
 
         score_x = 2;
         score_y = 9;
-        g_print_controls();
-        g_update_score(1);
+        print_controls(10, 12);
+        update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
                 song.duration = D5;
@@ -412,24 +417,17 @@ void draw_xtris() {
 }
 
 
-void g_print_controls() {
+void print_controls(int x, int y) {
 
-        tui_draw_box(2, 14, TUI_COL, TUI_BKCOL, \
-                "Controls:\n\n" \
-                "Left   ---------- arrow\n" \
-                "Right  ---------- arrow\n" \
-                "Rotate ---------- arrow\n" \
-                "Drop   ---------- arrow\n\n\n" \
+        tui_draw_box(x, y, TUI_COL, TUI_BKCOL, \
+                "For controls use arrows\n\n" \
                 "Pause  ---------- P\n" \
-                "Quit   ---------- Q\n", \
+                "Quit   ---------- Q\n\n", \
                 FALSE);
-                
-        tui_draw_box(10, 12, TUI_COL, TUI_BKCOL, gfx_bird_01, FALSE);
-        
 }
 
 
-int g_update_score(int reset) {
+int update_score(int reset) {
         static int last_score;
         char s[20];
 
@@ -472,7 +470,7 @@ int process_user_input() {
                                                 break;
                                         case 80:
                                                 while(t_move_down(&tetris) != -1)
-                                                        ;
+                                                        w_wait(0);
                                                 break;
                                 }
                                 break;
@@ -554,7 +552,7 @@ long draw_floating_text(enum W_ACTION a) {
 }
 
 
-long animate_scr_01(enum W_ACTION a) {
+long animate_scr_main(enum W_ACTION a) {
         static int step = 0;
 
         if (a == RESET) {
@@ -694,6 +692,104 @@ long animate_scr_add(enum W_ACTION a) {
                                 putch('*');
                                 gotoxy(75, 4);
                                 putch('*');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step = 0;
+                                return 18;
+                }
+        }
+        
+        return 18;
+}
+
+
+long animate_scr_tet(enum W_ACTION a) {
+        static int step = 0;
+
+        if (a == RESET) {
+                return 0;        
+        }            
+        
+        if (a == RUN) {
+                switch (step) {
+                        case 0:
+                                switch (rand() % 20) {
+                                        case 1:
+                                                step = 1;
+                                                break;
+                                        case 2:
+                                                step = 7;
+                                                break;
+                                }
+                                break;
+                        case 1:
+                                tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 2:
+                                tui_draw_box(14, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 16;
+                        case 3:
+                                tui_draw_box(14, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 4:
+                                tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 5:
+                                tui_draw_box(12, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 6:
+                                tui_draw_box(12, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step = 0;
+                                return 18;
+                        case 7:
+                                tui_draw_box(21, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 8:
+                                tui_draw_box(20, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 16;
+                        case 9:
+                                tui_draw_box(20, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 10:
+                                tui_draw_box(21, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 11:
+                                tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 12:
+                                tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
