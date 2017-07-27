@@ -29,7 +29,7 @@ Compilation:
   b) download and extract Tetris sources into tetris directory
   c) copy *.BGI drivers from Turbo C directory to tetris sources directory
   d) run Turbo C
-  e) go to Project->Project name and choose TETRIS.PRJ
+  e) go to Project->Project name and choose TETRIS.PRJ or PTAKOVIN.PRJ
   f) go to Compile->Make EXE file
 
 * ZX Spectrum (Z88DK)

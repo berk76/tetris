@@ -346,6 +346,7 @@ void draw_tetris() {
         print_controls(2, 12);
         
         gotoxy(2, 23);
+        tui_set_attr(0, LIGHTGREEN, TUI_BKCOL);
         for (x = 2; x < 24; x++)
                 putch(',');
         tui_draw_box(2, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_01, FALSE);
@@ -713,7 +714,7 @@ long animate_scr_tet(enum W_ACTION a) {
         if (a == RUN) {
                 switch (step) {
                         case 0:
-                                switch (rand() % 20) {
+                                switch (rand() % 10) {
                                         case 1:
                                                 step = 1;
                                                 break;
@@ -723,7 +724,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 }
                                 break;
                         case 1:
-                                tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_031, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
@@ -741,7 +742,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 step++;
                                 return 5;
                         case 4:
-                                tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_041, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
@@ -759,7 +760,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 step = 0;
                                 return 18;
                         case 7:
-                                tui_draw_box(21, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_draw_box(21, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_041, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
@@ -771,7 +772,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 step++;
                                 return 16;
                         case 9:
-                                tui_draw_box(20, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_draw_box(20, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_031, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
@@ -783,7 +784,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 step++;
                                 return 5;
                         case 11:
-                                tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
+                                tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_031, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
