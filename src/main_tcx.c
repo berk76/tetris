@@ -52,7 +52,6 @@ static int draw_mainscreen(TETRIS_T *t);
 static void draw_addtris();
 static void draw_tetris();
 static void draw_xtris();
-static void print_controls(int x, int y);
 static int update_score(int reset);
 static int process_user_input();
 /* Jobs */
@@ -60,6 +59,7 @@ static long draw_floating_text(enum W_ACTION a);
 static long animate_scr_main(enum W_ACTION a);
 static long animate_scr_add(enum W_ACTION a);
 static long animate_scr_tet(enum W_ACTION a);
+static long animate_scr_xte(enum W_ACTION a);
 
 
 int main() {
@@ -290,12 +290,21 @@ void draw_addtris() {
         tui_draw_box(69, 19, TUI_COL, TUI_BKCOL, gfx_mush_01, FALSE);
         tui_draw_box(6, 8, TUI_COL, TUI_BKCOL, gfx_witch_01, FALSE);
         
-        tui_draw_box(35, 6, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
+        #define ADD_OWL_X 34
+        #define ADD_OWL_Y 6
+        tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
         tui_draw_box(70, 3, TUI_COL, TUI_BKCOL, gfx_owl_02, FALSE);
 
-        score_x = 70;
-        score_y = 9;        
+        score_x = 69;
+        score_y = 11;        
         update_score(1);
+
+        tui_set_attr(0, WHITE, TUI_BKCOL);        
+        gotoxy(69, 13);
+        cprintf("Pause .. P");
+        gotoxy(69, 14);
+        cprintf("Quit  .. Q");
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
         
         if ((play_sound == 1) && (j3 == NULL)) {
                 song.duration = D4;
@@ -343,7 +352,11 @@ void draw_tetris() {
         tui_draw_box(20, 7, TUI_COL, TUI_BKCOL, gfx_bird_09, FALSE);
         tui_draw_box(10, 6, TUI_COL, TUI_BKCOL, gfx_bird_07, FALSE);
                 
-        print_controls(2, 12);
+        tui_draw_box(2, 12, TUI_COL, TUI_BKCOL, \
+                "For controls use arrows\n\n" \
+                "Pause  ---------- P\n" \
+                "Quit   ---------- Q\n\n", \
+                FALSE);
         
         gotoxy(2, 23);
         tui_set_attr(0, LIGHTGREEN, TUI_BKCOL);
@@ -403,10 +416,12 @@ void draw_xtris() {
         putch('+');
         
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        
+        tui_draw_box(14, 16, TUI_COL, TUI_BKCOL, gfx_plant_01, FALSE);
+        tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);
 
-        score_x = 2;
+        score_x = 23;
         score_y = 9;
-        print_controls(10, 12);
         update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
@@ -415,16 +430,8 @@ void draw_xtris() {
                 song.song = s5;
                 snd_setsong(&song);
         }
-}
-
-
-void print_controls(int x, int y) {
-
-        tui_draw_box(x, y, TUI_COL, TUI_BKCOL, \
-                "For controls use arrows\n\n" \
-                "Pause  ---------- P\n" \
-                "Quit   ---------- Q\n\n", \
-                FALSE);
+        
+        j4 = w_register_job(18, &animate_scr_xte);
 }
 
 
@@ -441,8 +448,8 @@ int update_score(int reset) {
 
         last_score = tetris.score;
         
-        sprintf(s, "Score\n %4d", tetris.score);
-        tui_draw_box(score_x, score_y, TUI_COL, TUI_BKCOL, s, TRUE);
+        sprintf(s, "Score: %3d", tetris.score);
+        tui_draw_box(score_x, score_y, WHITE, TUI_BKCOL, s, FALSE);
         return 1;
 }
 
@@ -498,7 +505,9 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
                 cprintf("%c%c", 0xdb, 0xdb);
                 textcolor(color_vec[MESH_BK_COLOR]);
         } else {
-                printf("%d ", tetris->brick.value);
+                textcolor(WHITE);
+                cprintf("%d ", tetris->brick.value);
+                textcolor(color_vec[MESH_BK_COLOR]);
         }
         tui_flush();
 }
@@ -651,28 +660,31 @@ long animate_scr_add(enum W_ACTION a) {
                                         case 3:
                                                 step = 5;
                                                 break;
+                                        default:
+                                                step = 7;
+                                                break;
                                 }
                                 break;
                         case 1:
-                                tui_draw_box(35, 6, TUI_COL, TUI_BKCOL, gfx_owl_04, FALSE);
+                                tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_04, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
                                 return 5;
                         case 2:
-                                tui_draw_box(35, 6, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
+                                tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
                                 return 8;
                         case 3:
-                                tui_draw_box(35, 6, TUI_COL, TUI_BKCOL, gfx_owl_04, FALSE);
+                                tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_04, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
                                 return 5;
                         case 4:
-                                tui_draw_box(35, 6, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
+                                tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
@@ -697,6 +709,169 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_flush();
                                 step = 0;
                                 return 18;
+                                
+                        case 7:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(14, 22);
+                                putch(')');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 8:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(17, 22);
+                                putch('(');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 9:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(15, 23);
+                                putch('(');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 10:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(17, 23);
+                                putch(')');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 11:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(14, 24);
+                                putch('(');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 12:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(13, 24);
+                                putch(')');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                                
+                        case 13:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(14, 22);
+                                putch('(');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 14:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(17, 22);
+                                putch(')');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 15:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(15, 23);
+                                putch(')');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 16:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(17, 23);
+                                putch('(');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 17:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(14, 24);
+                                putch(')');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 2;
+                        case 18:
+                                tui_set_attr(0, LIGHTRED, TUI_BKCOL);
+                                gotoxy(13, 24);
+                                putch('(');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step ++;
+                                return 2;
+                                
+                        case 19:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(13, 14);
+                                putch('.');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;
+                        case 20:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(13, 14);
+                                putch('*');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;
+                        case 21:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(16, 12);
+                                putch('.');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;
+                        case 22:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(16, 12);
+                                putch('*');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;        
+                        case 23:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(10, 10);
+                                putch('.');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;
+                        case 24:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(10, 10);
+                                putch('*');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;        
+                        case 25:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(12, 9);
+                                putch('.');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 4;
+                        case 26:
+                                tui_set_attr(0, WHITE, TUI_BKCOL);
+                                gotoxy(12, 9);
+                                putch('*');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step=0;
+                                return 4;
                 }
         }
         
@@ -799,6 +974,43 @@ long animate_scr_tet(enum W_ACTION a) {
         }
         
         return 18;
+}
+
+long animate_scr_xte(enum W_ACTION a) {
+        static int x = 2;
+        static int y = 10;
+        static int direction = 0;
+
+        if (a == RESET) {
+                return 0;        
+        }            
+        
+        if (a == RUN) {
+                switch (y) {
+                        case 9:
+                                x = 2;
+                                y = 10;
+                                direction = 0;
+                                break;
+                        case 10:
+                                if (direction == 0) {
+                                        x = 2;
+                                        y = 11;
+                                } else {
+                                        x = 3;
+                                        y = 9;
+                                }
+                                break;
+                        case 11:
+                                x = 2;
+                                y = 10;
+                                direction = 1;
+                                break;
+                }
+                
+                tui_draw_box(x, y, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);        
+        }
+        return 11;
 }
 
 
