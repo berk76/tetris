@@ -101,7 +101,7 @@ int main() {
                                 break; 
                 }
                         
-                tui_message("\n\x01\x0fPress any key to start ...\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                tui_message("\n\x01\x0f Press any key to start \x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
                 d = _delay;
                 if (play_sound == 1)
                         j3 = w_register_job(6, &snd_play_sound);
@@ -323,8 +323,8 @@ void draw_tetris() {
         tui_cls_win(mainw, FALSE);
 	tetris.element_size = 1;
         tetris.origin_y = 3;
-
         tetris.origin_x = 39;
+        
         tui_draw_box(1, 1, TUI_COL, TUI_BKCOL, gfx_tetris, FALSE);
         
         tui_set_attr(0, LIGHTMAGENTA, TUI_BKCOL);
@@ -345,18 +345,13 @@ void draw_tetris() {
         }
         putch('+');
         
-        gotoxy(5,9);
+        gotoxy(12,11);
         tui_set_attr(0, BROWN, TUI_BKCOL);
         for (i = 0; i < 15; i++)
                 putch('=');
-        tui_draw_box(20, 7, TUI_COL, TUI_BKCOL, gfx_bird_09, FALSE);
-        tui_draw_box(10, 6, TUI_COL, TUI_BKCOL, gfx_bird_07, FALSE);
-                
-        tui_draw_box(2, 12, TUI_COL, TUI_BKCOL, \
-                "For controls use arrows\n\n" \
-                "Pause  ---------- P\n" \
-                "Quit   ---------- Q\n\n", \
-                FALSE);
+        tui_draw_box(4, 9, TUI_COL, TUI_BKCOL, gfx_bird_08, FALSE);
+        tui_draw_box(27, 9, TUI_COL, TUI_BKCOL, gfx_bird_09, FALSE);
+        tui_draw_box(17, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
         
         gotoxy(2, 23);
         tui_set_attr(0, LIGHTGREEN, TUI_BKCOL);
@@ -367,14 +362,20 @@ void draw_tetris() {
         tui_draw_box(12, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
         tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
         
-        tui_draw_box(tetris.origin_x + 23, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
-        tui_draw_box(71, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
-        tui_draw_box(tetris.origin_x + 23, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_05, FALSE);
-
+        tui_draw_box(61, 0, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
 
         score_x = 65;
-        score_y = 12;
+        score_y = 10;        
         update_score(1);
+        
+        tui_set_attr(0, WHITE, TUI_BKCOL);        
+        gotoxy(65, 12);
+        cprintf("Pause .. P");
+        gotoxy(65, 13);
+        cprintf("Quit  .. Q");
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
+        
+        tui_draw_box(62, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_05, FALSE);
         
         if ((play_sound == 1) && (j3 == NULL)) {
                 song.duration = D6;
@@ -448,8 +449,10 @@ int update_score(int reset) {
 
         last_score = tetris.score;
         
-        sprintf(s, "Score: %3d", tetris.score);
-        tui_draw_box(score_x, score_y, WHITE, TUI_BKCOL, s, FALSE);
+        gotoxy(score_x, score_y);
+        tui_set_attr(0, WHITE, TUI_BKCOL);
+        cprintf("Score: %3d", tetris.score);
+        
         return 1;
 }
 
@@ -486,7 +489,9 @@ int process_user_input() {
                                 tui_message("\n\x01\x0fPaused\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
                                 break;
                         case 'q':
-                                if (tui_confirm("\n\x01\x0f Do you want to quit game? (Y/N) \x01\x0b\n", LIGHTCYAN, TUI_BKCOL) == TRUE) {
+                                if (tui_confirm(
+                                  "\n\x01\x0fQuit game? (Y/N)\x01\x0b\n", 
+                                  LIGHTCYAN, TUI_BKCOL) == TRUE) {
                                         result = -1;
                                 }
                 }
@@ -896,6 +901,12 @@ long animate_scr_tet(enum W_ACTION a) {
                                         case 2:
                                                 step = 7;
                                                 break;
+                                        case 3:
+                                                step = 13;
+                                                break;
+                                        case 4:
+                                                step = 17;
+                                                break;
                                 }
                                 break;
                         case 1:
@@ -966,6 +977,56 @@ long animate_scr_tet(enum W_ACTION a) {
                                 return 5;
                         case 12:
                                 tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step = 0;
+                                return 18;
+                                
+                        case 13:
+                                tui_draw_box(16, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 14:
+                                tui_draw_box(15, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 36;
+                        case 15:
+                                tui_draw_box(16, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 5;
+                        case 16:
+                                tui_draw_box(17, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step = 0;
+                                return 18;
+                                
+                        case 17:
+                                tui_draw_box(60, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 9;
+                        case 18:
+                                tui_draw_box(61, 2, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 9;
+                        case 19:
+                                tui_draw_box(61, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 9;
+                        case 20:
+                                tui_draw_box(61, 0, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
