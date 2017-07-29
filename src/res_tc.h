@@ -20,15 +20,17 @@
 static char *floating_text = "Ptakovina game was created in year 2017 " \
         "as part of developers competition published at www.high-voltage.cz. " \
         "I would like thank to Sledge for making such challenges and for " \
-        "pushing us to create crazy DOS games. Also I would like thank to web " \
-        "www.chris.com and all ascii art creators such as jgs, mrf, as, lc " \
+        "inspiring us to create crazy DOS games. Also I would like thank to web " \
+        "www.chris.com and to all ascii art creators such as jgs, mrf, as, lc " \
         "and many others for their wonderful ascii creatures. " \
         "This software consists of three games: 1) ADDTRIS is game invented " \
-        "in 2016 by Vasek Petourka. Game was published at www.8bity.cz. "\
+        "in 2016 by Vasek Petourka. Original game was published at www.8bity.cz. "\
         "2) TETRIS is well known game invented in 1984 by Russian game " \
-        "designer Alexey Pajitnov. 3) X-Tris is my own crazy modification of " \
-        "Tetris game where you can cook by yourself some parameters and " \
-        "create some crazy challenge to manage. - berk -";
+        "designer Alexey Pajitnov. 3) X-TRIS is my own crazy modification of " \
+        "Tetris game. You can cook some parameters by yourself and " \
+        "create crazy challenge to manage. This software is developed and " \
+        "published as open source under GNU/GPL version 3 license. All sources " \
+        "are available at bitbucket.org/berk76/tetris - berk -";
 
 /*
 *       Gtaphics mostly comes from:
@@ -106,11 +108,13 @@ char *gfx_bird_02 = "|\n" \
                     "|\"/\n" \
                     "|'";
 
-char *gfx_bird_03 = "\x01\x06                ,\n" \
-                    " ,_     ,     .'<_\n" \
-                    "_> `'-,'(__.-' __<\n" \
-                    ">_.--(\x01\x0b..\x01\x06 )  =;`\n" \
-                    "     `\x01\x0cV\x01\x06-'`'\\/``";
+char *gfx_bird_03 = "\n" \
+                    " \x01\x06                ,\n" \
+                    "  ,_     ,     .'<_\n" \
+                    " _> `'-,'(__.-' __< \n" \
+                    " >_.--(\x01\x0b..\x01\x06 )  =;`\n" \
+                    "      `\x01\x0cV\x01\x06-'`'\\/``\n" \
+                    "";
 
 char *gfx_bird_04 = "\x01\x0a (\x01\x0e'\x01\x0c<        >\x01\x0e'\x01\x0a)\n" \
                     "\x01\x0a\\(\x01\x0e_)\x01\x0f________\x01\x0e( \x01\x0a\\\n" \
@@ -122,17 +126,13 @@ char *gfx_bird_04 = "\x01\x0a (\x01\x0e'\x01\x0c<        >\x01\x0e'\x01\x0a)\n" 
                     "    _|   |_\n" \
                     "   (_______)";
                     
-char *gfx_bird_06 = " ,_\n" \
-                    ">' )\n" \
-                    "( ( \\\n" \
-                    " ''|\\";
 
-char *gfx_bird_07 = "\x01\x08   .-.\n" \
+char *gfx_bird_06 = "\x01\x08   .-.\n" \
                     "  /\x01\x0e'v'\x01\x08\\\n" \
                     " (/   \\)\n" \
-                    "\x01\x06=\x01\x08'\x01\x06=\x01\x0e\"\x01\x06=\x01\x0e\"\x01\x06==\n" \
+                    "\x01\x06=\x01\x08'\x01\x06=\x01\x0e\"\x01\x06=\x01\x0e\"\x01\x06===\n" \
                     "   \x01\x08|_|";
- 
+                     
 char *gfx_bird_08 = "\x01\x0a  ()\n" \
                     "<)-`\\()\n" \
                     "  <)_>\x01\x06==\x01\x0a\n" \
@@ -248,11 +248,11 @@ char *gfx_rabbit_041 = "\x01\x0f  /)    \n" \
                       "  \\  \\  \n" \
                       "\x01\x0a,,,\x01\x0f))\x01\x0a,\x01\x0f\\\x01\x0a,";
                       
-char *gfx_rabbit_05 = "        //\n" \
+char *gfx_rabbit_05 = "\x01\x07        //\n" \
                       "      _//\n" \
                       "     .. ~~-_\n" \
-                      "___m<___m___~.\n" \
-                      "_|__|__|__|__|__|\n" \
+                      "\x01\x04___\x01\x07m<\x01\x04___\x01\x07m\x01\x04___\x01\x07~.\n" \
+                      "\x01\x04_|__|__|__|__|__|\n" \
                       "|__|__|__|__|__|_";
 
 char *gfx_plant_01 = "    .--.\n" \
