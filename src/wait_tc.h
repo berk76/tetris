@@ -28,6 +28,7 @@ struct JOB {
         long       (*run)(enum W_ACTION);
         long       period;
         clock_t    endwait;
+        int        priority; /* priority: <0 low, =0 normal, >0 high */    
         JOB_T      *prev;
         JOB_T      *next;
 };
@@ -35,7 +36,7 @@ struct JOB {
 #define w_mstotck(ms) (((double) ms) * CLK_TCK / 1000.0)
 
 extern void w_wait(long tck);
-extern JOB_T * w_register_job(long tck, long (*run)(enum W_ACTION));
+extern JOB_T * w_register_job(long tck, int priority, long (*run)(enum W_ACTION));
 extern void w_unregister_job(JOB_T *j);
 
 #endif
