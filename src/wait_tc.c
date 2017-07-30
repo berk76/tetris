@@ -23,7 +23,7 @@ static JOB_T *job_q = NULL;
 
 
 void w_wait(long tck) {
-        long ret;
+        long ret, endwait;
         JOB_T *j, *pq;
         
         /* debug part */
@@ -40,17 +40,23 @@ void w_wait(long tck) {
         gotoxy(1,25);
         */
         
-        tck += clock();
+        endwait = tck + clock();
+        #define PRIORITY 0
+        
         while (1) {
                 pq = job_q;
                 j = NULL;
                 while (pq != NULL) {
-                        if ((j == NULL) || (j->endwait > pq->endwait)) {
+                        if ((j == NULL) || 
+                            (j->endwait > pq->endwait) || 
+                            ((j->endwait == pq->endwait) && (j->priority < pq->priority))) {
                                 j = pq;
                         } 
                         pq = pq->next;
                 }
-                if ((j != NULL) && (clock() >= j->endwait) && (tck > j->endwait)) {
+                if ((j != NULL) && 
+                    (clock() >= j->endwait) && 
+                    ((endwait > j->endwait) || ((endwait == j->endwait) && (PRIORITY < j->priority)))) {
                         ret = j->run(RUN);
                         switch (ret) {
                                 case -1:
@@ -64,20 +70,21 @@ void w_wait(long tck) {
                         }
 
                 } else 
-                if (clock() >= tck) {
+                if (clock() >= endwait) {
                         return;
                 }
         }
 }
 
 
-JOB_T * w_register_job(long tck, long (*run)(enum W_ACTION)) {
+JOB_T * w_register_job(long tck, int priority, long (*run)(enum W_ACTION)) {
         JOB_T *j;
         
         j = (JOB_T *) malloc(sizeof(JOB_T));
         assert(j != NULL);
         
         j->run = run;
+        j->priority = priority;
         j->period = tck;
         j->endwait = tck + clock();
         j->prev = NULL;

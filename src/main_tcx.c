@@ -39,8 +39,15 @@ static int color_vec[] = {LIGHTBLUE,
                           WHITE,
                           BLACK,
                           BLUE};
-static WINDOW_T *mainw = NULL;        
-static JOB_T *j2, *j3, *j4;
+static WINDOW_T *mainw = NULL;
+        
+static JOB_T *j2;       /* floating text */
+#define j2p -1
+static JOB_T *j3;       /* sound */
+#define j3p 1
+static JOB_T *j4;       /* animations */
+#define j4p -1
+
 static SND_SONG song;
 static int play_sound;
 static int _delay;
@@ -69,7 +76,7 @@ int main() {
 
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL) % 37);
-        j2 = w_register_job(4, &draw_floating_text);
+        j2 = w_register_job(4, j2p, &draw_floating_text);
         j3 = NULL;
         j4 = NULL;
         play_sound = 1;
@@ -104,7 +111,7 @@ int main() {
                 tui_message("\n\x01\x0f Press any key to start \x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
                 d = _delay;
                 if (play_sound == 1)
-                        j3 = w_register_job(6, &snd_play_sound);
+                        j3 = w_register_job(6, j3p, &snd_play_sound);
         
                 do {
                         int i;                             
@@ -175,7 +182,7 @@ int draw_mainscreen(TETRIS_T *t) {
                         song.rest = R2;
                         song.song = s2;
                         snd_setsong(&song);
-                        j3 = w_register_job(6, &snd_play_sound);
+                        j3 = w_register_job(6, j3p, &snd_play_sound);
                 }
                 
                 if ((play_sound == 0) && (j3 != NULL)) {
@@ -191,7 +198,7 @@ int draw_mainscreen(TETRIS_T *t) {
                                "\x01\x0f Q) Quit\x01\x0b \n", \
                                (play_sound == 0) ? "off" : "on");
                                
-                j4 = w_register_job(18, &animate_scr_main);
+                j4 = w_register_job(18, j4p, &animate_scr_main);
                 
                 c = tui_option(buff, "123SsQq", LIGHTCYAN, TUI_BKCOL);
                 
@@ -313,7 +320,7 @@ void draw_addtris() {
                 snd_setsong(&song);
         }
         
-        j4 = w_register_job(18, &animate_scr_add);
+        j4 = w_register_job(18, j4p, &animate_scr_add);
 }
 
 
@@ -384,7 +391,7 @@ void draw_tetris() {
                 snd_setsong(&song);
         }
         
-        j4 = w_register_job(18, &animate_scr_tet);
+        j4 = w_register_job(18, j4p, &animate_scr_tet);
 }
 
 
@@ -432,7 +439,7 @@ void draw_xtris() {
                 snd_setsong(&song);
         }
         
-        j4 = w_register_job(18, &animate_scr_xte);
+        j4 = w_register_job(18, j4p, &animate_scr_xte);
 }
 
 
