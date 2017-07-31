@@ -276,6 +276,7 @@ int check_lines(TETRIS_T *tetris) {
 	for (i = tetris->grid_size_y - 1; i >= 0; i--) {
 		while (is_line_full(tetris, i)) {
 			destroy_line(tetris, i);
+                        m_line_destroyed();
 			lines++;
 		}
 	}

@@ -20,7 +20,9 @@
 
 enum W_ACTION {
         RUN,
-        RESET
+        RESET,
+        PAUSE,
+        UNPAUSE
 };
 
 typedef struct JOB JOB_T;

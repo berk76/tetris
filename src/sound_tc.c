@@ -272,6 +272,7 @@ long snd_play_sound(enum W_ACTION a) {
         long i;
         static int pause = 0;
         static SND_PLAY_NOTE *p = NULL;
+        static paused = 0;
         
         if (song == NULL)
                 return 0;
@@ -279,9 +280,21 @@ long snd_play_sound(enum W_ACTION a) {
         if (a == RESET) {
                 p = song->song;
                 return 0;        
-        }            
+        }
+        
+        if (a == PAUSE) {
+                paused = 1;
+                snd_speaker(0);
+        }
+        
+        if (a == UNPAUSE) {
+                paused = 0;
+        }
         
         if (a == RUN) {
+                if (paused != 0)
+                        return 0;
+                        
                 if (p == NULL) {
                         p = song->song;
                 }
