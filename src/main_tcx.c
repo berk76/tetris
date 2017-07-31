@@ -107,8 +107,11 @@ int main() {
                                 draw_addtris();
                                 break; 
                 }
-                        
+                
+                if (j4 != NULL) j4->run(PAUSE);        
                 tui_message("\n\x01\x0f Press any key to start \x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                if (j4 != NULL) j4->run(UNPAUSE);
+                        
                 d = _delay;
                 if (play_sound == 1)
                         j3 = w_register_job(6, j3p, &snd_play_sound);
@@ -426,10 +429,14 @@ void draw_xtris() {
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
         
         tui_draw_box(14, 16, TUI_COL, TUI_BKCOL, gfx_plant_01, FALSE);
-        tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);
+        /* tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE); */
+        
+        tui_draw_box(1, 10, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
+        tui_draw_box(30, 15, TUI_COL, TUI_BKCOL, gfx_bee_01, FALSE);
+        tui_draw_box(25, 8, TUI_COL, TUI_BKCOL, gfx_bee_03, FALSE);
 
-        score_x = 23;
-        score_y = 9;
+        score_x = 25;
+        score_y = 6;
         update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
@@ -466,6 +473,7 @@ int update_score(int reset) {
 
 int process_user_input() {
         int c, result;
+        G_BOOL_T r;
 
         result = 0;
         while (kbhit()) {
@@ -493,12 +501,19 @@ int process_user_input() {
                                 }
                                 break;
                         case 'p':
+                                if (j3 != NULL) j3->run(PAUSE);
+                                if (j4 != NULL) j4->run(PAUSE);
                                 tui_message("\n\x01\x0fPaused\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                                if (j3 != NULL) j3->run(UNPAUSE);
+                                if (j4 != NULL) j4->run(UNPAUSE);
                                 break;
                         case 'q':
-                                if (tui_confirm(
-                                  "\n\x01\x0fQuit game? (Y/N)\x01\x0b\n", 
-                                  LIGHTCYAN, TUI_BKCOL) == TRUE) {
+                                if (j3 != NULL) j3->run(PAUSE);
+                                if (j4 != NULL) j4->run(PAUSE);
+                                r = tui_confirm("\n\x01\x0fQuit game? (Y/N)\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                                if (j3 != NULL) j3->run(UNPAUSE);
+                                if (j4 != NULL) j4->run(UNPAUSE);
+                                if (r == TRUE) {
                                         result = -1;
                                 }
                 }
@@ -515,11 +530,11 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
                 textcolor(color_vec[color]);
                 cprintf("%c%c", 0xdb, 0xdb);
-                textcolor(color_vec[MESH_BK_COLOR]);
+                /* textcolor(color_vec[MESH_BK_COLOR]); */
         } else {
                 textcolor(WHITE);
                 cprintf("%d ", tetris->brick.value);
-                textcolor(color_vec[MESH_BK_COLOR]);
+                /* textcolor(color_vec[MESH_BK_COLOR]) */;
         }
         tui_flush();
 }
@@ -531,6 +546,11 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         gotoxy(x,y);
         printf("  ");
         tui_flush();
+}
+
+
+void m_line_destroyed() {
+        w_wait(0);
 }
 
 
@@ -576,12 +596,24 @@ long draw_floating_text(enum W_ACTION a) {
 
 long animate_scr_main(enum W_ACTION a) {
         static int step = 0;
+        static paused = 0;
 
         if (a == RESET) {
                 return 0;        
+        }
+        
+        if (a == PAUSE) {
+                paused = 1;
+        }
+        
+        if (a == UNPAUSE) {
+                paused = 0;
         }            
         
         if (a == RUN) {
+                if (paused != 0)
+                        return 0;
+                        
                 switch (step) {
                         case 0:
                                 switch (rand() % 10) {
@@ -654,12 +686,24 @@ long animate_scr_main(enum W_ACTION a) {
 
 long animate_scr_add(enum W_ACTION a) {
         static int step = 0;
+        static paused = 0;
 
         if (a == RESET) {
                 return 0;        
+        }
+        
+        if (a == PAUSE) {
+                paused = 1;
+        }
+        
+        if (a == UNPAUSE) {
+                paused = 0;
         }            
         
         if (a == RUN) {
+                if (paused != 0)
+                        return 0;
+                        
                 switch (step) {
                         case 0:
                                 switch (rand() % 20) {
@@ -893,12 +937,25 @@ long animate_scr_add(enum W_ACTION a) {
 
 long animate_scr_tet(enum W_ACTION a) {
         static int step = 0;
+        static paused = 0;
+        
 
         if (a == RESET) {
                 return 0;        
+        }
+        
+        if (a == PAUSE) {
+                paused = 1;
+        }
+        
+        if (a == UNPAUSE) {
+                paused = 0;
         }            
         
         if (a == RUN) {
+                if (paused != 0)
+                        return 0;
+                        
                 switch (step) {
                         case 0:
                                 switch (rand() % 10) {
@@ -1048,12 +1105,26 @@ long animate_scr_xte(enum W_ACTION a) {
         static int x = 2;
         static int y = 10;
         static int direction = 0;
+        static paused = 0;
+        
 
         if (a == RESET) {
                 return 0;        
+        }
+        
+        if (a == PAUSE) {
+                paused = 1;
+        }
+        
+        if (a == UNPAUSE) {
+                paused = 0;
         }            
         
         if (a == RUN) {
+                if (paused != 0)
+                        return 0;
+                        
+                /*
                 switch (y) {
                         case 9:
                                 x = 2;
@@ -1076,7 +1147,8 @@ long animate_scr_xte(enum W_ACTION a) {
                                 break;
                 }
                 
-                tui_draw_box(x, y, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);        
+                tui_draw_box(x, y, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);
+                */        
         }
         return 11;
 }

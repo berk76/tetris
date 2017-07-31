@@ -23,5 +23,6 @@
 
 extern void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color);
 extern void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y);
+extern void m_line_destroyed();
 
 #endif
