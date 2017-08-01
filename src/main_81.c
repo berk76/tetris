@@ -253,6 +253,10 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 #endif
 
 
+void m_line_destroyed() {
+}
+
+
 /*** GUI ***/
 
 static void gui_draw_message(char *msg);

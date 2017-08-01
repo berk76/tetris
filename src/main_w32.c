@@ -488,3 +488,7 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         m_put_mesh_pixel(tetris, x, y, tetris->bk_color);
 }
+
+
+void m_line_destroyed() {
+}

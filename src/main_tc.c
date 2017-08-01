@@ -264,6 +264,10 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 }
 
 
+void m_line_destroyed() {
+}
+
+
 void wait(int ms) {
 	clock_t endwait;
 
