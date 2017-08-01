@@ -452,7 +452,6 @@ void draw_xtris() {
 
 int update_score(int reset) {
         static int last_score;
-        char s[20];
 
         if (reset) {
                 last_score = 0;
