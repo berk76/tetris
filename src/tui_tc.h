@@ -48,6 +48,7 @@ extern void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line);
 extern void tui_flush();
 
 extern void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border);
+extern void tui_del_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border);
 
 extern void tui_message(char *msg, int color, int bkcolor);
 extern G_BOOL_T tui_confirm(char *msg, int color, int bkcolor);
