@@ -25,6 +25,7 @@
 static WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor);
 static void calc_box_size(int *size_x, int *size_y, char *content);
 static void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border);
+static void del_box(int x, int y, int size_x, int size_y);
 static int tui_wait_for_key(char *s);
 static void tui_wait_for_any_key();
 
@@ -111,6 +112,22 @@ void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_
         }
         
         draw_box(x, y, size_x, size_y, msg, add_border);
+}
+
+
+void tui_del_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border) {
+        int size_x, size_y;
+
+        assert(msg != NULL);
+        tui_set_attr(0, color, bkcolor);
+        calc_box_size(&size_x, &size_y, msg);
+        
+        if (add_border == TRUE) {
+                size_x += 4;
+                size_y += 2;
+        }
+        
+        del_box(x, y, size_x, size_y);
 }
 
 
@@ -263,6 +280,20 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
                 putch('+');
         }
 
+        tui_flush();
+}
+
+
+void del_box(int x, int y, int size_x, int size_y) {
+        int n, m;
+        
+        for(n = 0; n < size_y; n++) {
+                for (m = 0; m < size_x; m++) {
+                        gotoxy(x + m, y + n);
+                        putch(' ');
+                }
+        }
+        
         tui_flush();
 }
 
