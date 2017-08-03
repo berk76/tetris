@@ -175,6 +175,7 @@ int draw_mainscreen(TETRIS_T *t) {
                         tui_draw_box(13, 9, TUI_COL, TUI_BKCOL, gfx_bird_10, FALSE);
                         tui_draw_box(57, 9, TUI_COL, TUI_BKCOL, gfx_bird_11, FALSE);
                         tui_draw_box(67, 12, TUI_COL, TUI_BKCOL, gfx_bird_09, FALSE);
+                        tui_draw_box(54, 15, BROWN, TUI_BKCOL, "hjw", FALSE);
                         
                         tui_draw_box(17, 22, LIGHTGREEN, TUI_BKCOL, "- - - = = = (c) 2017 Jaroslav Beran = = = - - -", FALSE);
                         menu_only = 1;
@@ -299,6 +300,7 @@ void draw_addtris() {
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
         tui_draw_box(69, 19, TUI_COL, TUI_BKCOL, gfx_mush_01, FALSE);
         tui_draw_box(6, 8, TUI_COL, TUI_BKCOL, gfx_witch_01, FALSE);
+        tui_draw_box(5, 23, DARKGRAY, TUI_BKCOL, "snd", FALSE);
         
         #define ADD_OWL_X 34
         #define ADD_OWL_Y 6
@@ -371,6 +373,7 @@ void draw_tetris() {
         tui_draw_box(26, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_02, FALSE);        
         tui_draw_box(12, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_03, FALSE);
         tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
+        tui_draw_box(2, 24, BROWN, TUI_BKCOL, "b'ger", FALSE);
         
         tui_draw_box(61, 0, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
 
@@ -428,7 +431,7 @@ void draw_xtris() {
         
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
         
-        tui_draw_box(13, 16, TUI_COL, TUI_BKCOL, gfx_plant_01, FALSE);
+        tui_draw_box(2, 16, TUI_COL, TUI_BKCOL, gfx_plant_03, FALSE);
         /* tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE); */
         
         /* tui_draw_box(2, 11, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE); */
@@ -438,7 +441,7 @@ void draw_xtris() {
         if (tetris.grid_size_x == 10) {
                 tui_draw_box(63, 3, TUI_COL, TUI_BKCOL, gfx_butter_02, FALSE);
                 tui_draw_box(68, 8, TUI_COL, TUI_BKCOL, gfx_butter_03, FALSE);
-                tui_draw_box(61, 15, TUI_COL, TUI_BKCOL, gfx_plant_02, FALSE);        
+                tui_draw_box(62, 17, TUI_COL, TUI_BKCOL, gfx_plant_04, FALSE);        
         }
 
         score_x = 25;
@@ -1123,36 +1126,18 @@ long animate_scr_xte(enum W_ACTION a) {
         static int step = -1;
         static paused = 0;
         
-        static int x1;
-        static int y1;
-        static int d1;
-        static char *ps1;
-        
         static int x2;
         static int y2;
         static int d2;
         static char *ps2;
         
-        static int x3;
-        static int y3;
-        static int d3;
-        
-        
         if ((a == RESET) || (step == -1)) {
                 step = 0;
                 paused = 0;
                 
-                x1 = 29;
-                y1 = 16;
-                d1 = 0;
-                
                 x2 = 25;
-                y2 = 8;
+                y2 = 10;
                 d2 = 0;
-                
-                x3 = 1;
-                y3 = 10;
-                d3 = 0;
                 
                 return 0;        
         }
@@ -1171,7 +1156,7 @@ long animate_scr_xte(enum W_ACTION a) {
                         
                 switch (step) {
                         case 0:
-                                switch (rand() % 3) {
+                                switch (rand() % 10) {
                                         case 1: 
                                                 if (x2 == 25) {
                                                         step = 1;
@@ -1185,65 +1170,33 @@ long animate_scr_xte(enum W_ACTION a) {
                                 
                                 if (step != 0) break;
                                 
-                                /* bee 1 */        
-                                switch (x1) {
-                                        case 29:
-                                                y1 = 16;
-                                                d1 = -1;
-                                                ps1 = gfx_bee_02;
-                                                break;
-                                        case 24:
-                                                y1 = 17;
-                                                d1 = 1;
-                                                ps1 = gfx_bee_01;
-                                                break;
-                                }
-                                x1 += d1;
-                                tui_draw_box(x1, y1, TUI_COL, TUI_BKCOL, ps1, FALSE);
-                                
                                 /* bee 2 */
                                 switch (x2) {
                                         case 25:
-                                                y2 = 8;
+                                                y2 = 10;
                                                 d2 = -1;
                                                 ps2 = gfx_bee_02;
                                                 break;
                                         case 14:
-                                                y2 = 8;
+                                                y2 = 10;
                                                 d2 = 1;
                                                 ps2 = gfx_bee_01;
                                                 break;
                                 }
                                 x2 += d2;
                                 tui_draw_box(x2, y2, TUI_COL, TUI_BKCOL, ps2, FALSE);
-                                
-                                /* butterfly */
-                                switch (y3) {
-                                        case 10:
-                                                d3 = 1;
-                                                break;
-                                        case 11:
-                                                if (d3 == 1)
-                                                        x3 = 1;
-                                                else
-                                                        x3 = 2;
-                                                break;
-                                        case 14:
-                                                d3 = -1;
-                                                break;   
-                                }
-                                y3 += d3;
-                                tui_draw_box(x3, y3, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);
+                                tui_flush();
                                 break;
                         case 1:
                                 /* hornet */
                                 switch (x2) {
                                         case 20:
-                                                tui_del_box(x3, y3, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE);
                                                 tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
+                                                tui_flush();
                                                 break;
                                         case 15:
                                                 tui_draw_box(11, 8, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
+                                                tui_flush();
                                                 x2 += d2;
                                                 return 36;
                                         case 14:
@@ -1251,8 +1204,10 @@ long animate_scr_xte(enum W_ACTION a) {
                                                 tui_del_box(x2, y2, TUI_COL, TUI_BKCOL, ps2, FALSE);
                                                 tui_del_box(2, 10, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
                                                 tui_del_box(11, 8, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
+                                                tui_draw_box(2, 16, TUI_COL, TUI_BKCOL, gfx_plant_03, FALSE);
+                                                tui_flush();
                                                 x2 = 25;
-                                                y2 = 8;
+                                                y2 = 10;
                                                 d2 = -1;
                                                 ps2 = gfx_bee_02;
                                                 break;
@@ -1260,11 +1215,9 @@ long animate_scr_xte(enum W_ACTION a) {
                                 if (step != 1) break;
                                 x2 += d2;
                                 tui_draw_box(x2, y2, TUI_COL, TUI_BKCOL, ps2, FALSE);
+                                tui_flush();
                                 break;
-                }
-
-
-                tui_flush();        
+                }        
         }
         return 5;
 }
