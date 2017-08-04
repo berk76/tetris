@@ -375,7 +375,7 @@ void draw_tetris() {
         tui_draw_box(22, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_04, FALSE);
         tui_draw_box(2, 24, BROWN, TUI_BKCOL, "b'ger", FALSE);
         
-        tui_draw_box(61, 0, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+        tui_draw_box(62, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
 
         score_x = 65;
         score_y = 10;        
@@ -430,13 +430,7 @@ void draw_xtris() {
         putch('+');
         
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
-        
         tui_draw_box(2, 16, TUI_COL, TUI_BKCOL, gfx_plant_03, FALSE);
-        /* tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_butter_01, FALSE); */
-        
-        /* tui_draw_box(2, 11, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE); */
-        /* tui_draw_box(29, 16, TUI_COL, TUI_BKCOL, gfx_bee_02, FALSE); */
-        /* tui_draw_box(25, 8, TUI_COL, TUI_BKCOL, gfx_bee_04, FALSE); */
         
         if (tetris.grid_size_x == 10) {
                 tui_draw_box(63, 3, TUI_COL, TUI_BKCOL, gfx_butter_02, FALSE);
@@ -982,6 +976,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                                 break;
                                 }
                                 break;
+                        /* rabbit */
                         case 1:
                                 tui_draw_box(13, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_031, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
@@ -1024,6 +1019,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 tui_flush();
                                 step = 0;
                                 return 18;
+                        /* rabbit */
                         case 7:
                                 tui_draw_box(21, 19, TUI_COL, TUI_BKCOL, gfx_rabbit_041, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
@@ -1066,7 +1062,7 @@ long animate_scr_tet(enum W_ACTION a) {
                                 tui_flush();
                                 step = 0;
                                 return 18;
-                                
+                        /* bird */
                         case 13:
                                 tui_draw_box(16, 8, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
@@ -1091,27 +1087,31 @@ long animate_scr_tet(enum W_ACTION a) {
                                 tui_flush();
                                 step = 0;
                                 return 18;
-                                
+                        /* bird */        
                         case 17:
-                                tui_draw_box(60, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
-                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
-                                tui_flush();
-                                step++;
-                                return 9;
-                        case 18:
+                                tui_del_box(62, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                                 tui_draw_box(61, 2, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
                                 return 9;
+                        case 18:
+                                tui_del_box(61, 2, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_draw_box(62, 3, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 9;
                         case 19:
-                                tui_draw_box(61, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_del_box(62, 3, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_draw_box(62, 2, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
                                 return 9;
                         case 20:
-                                tui_draw_box(61, 0, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_del_box(62, 2, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+                                tui_draw_box(62, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step = 0;
