@@ -103,6 +103,9 @@ void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_
         int size_x, size_y;
 
         assert(msg != NULL);
+        assert(x > 0);
+        assert(y > 0);
+        
         tui_set_attr(0, color, bkcolor);
         calc_box_size(&size_x, &size_y, msg);
         
@@ -119,6 +122,9 @@ void tui_del_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_b
         int size_x, size_y;
 
         assert(msg != NULL);
+        assert(x > 0);
+        assert(y > 0);
+        
         tui_set_attr(0, color, bkcolor);
         calc_box_size(&size_x, &size_y, msg);
         
