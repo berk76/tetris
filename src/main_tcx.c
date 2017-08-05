@@ -56,6 +56,7 @@ static int score_y;
 
 
 static int draw_mainscreen(TETRIS_T *t);
+static void draw_goodbye();
 static void draw_addtris();
 static void draw_tetris();
 static void draw_xtris();
@@ -86,12 +87,13 @@ int main() {
                 
                 /* Quit game */
                 if (ret == 0) {
-                        w_unregister_job(j2);
                         if (j3 != NULL)
                                 w_unregister_job(j3);
                         if (j4 != NULL)
                                 w_unregister_job(j4);
                         snd_speaker(0);
+                        draw_goodbye();
+                        w_unregister_job(j2);
                         tui_delete_win(mainw);
                         return 0;
                 }
@@ -262,10 +264,51 @@ int draw_mainscreen(TETRIS_T *t) {
                 snd_speaker(0);
         }
         
-        t_create_game(t, game, wide, 20, seg);
+        if (ret == 1)
+                t_create_game(t, game, wide, 20, seg);
         
         /* 0=quit game; 1=game created */
         return ret;
+}
+
+
+void draw_goodbye() {
+        tui_cls_win(mainw, FALSE);
+        tui_draw_box(5, 3, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
+        tui_draw_box(5, 7, BROWN, TUI_BKCOL, "mrf", FALSE);
+        
+        tui_draw_box(22, 3, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
+        tui_draw_box(20, 7, BROWN, TUI_BKCOL, "Joachim Kromm", FALSE);
+        
+        tui_draw_box(37, 3, TUI_COL, TUI_BKCOL, gfx_owl_02, FALSE);
+        tui_draw_box(44, 7, BROWN, TUI_BKCOL, "as", FALSE);
+        
+        tui_draw_box(55, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
+        tui_draw_box(55, 5, BROWN, TUI_BKCOL, "jgs", FALSE);
+        
+        tui_draw_box(55, 9, TUI_COL, TUI_BKCOL, gfx_butter_02, FALSE);
+        tui_draw_box(63, 13, WHITE, TUI_BKCOL, "S-v", FALSE);
+        
+        tui_draw_box(68, 12, TUI_COL, TUI_BKCOL, gfx_butter_03, FALSE);
+        tui_draw_box(77, 16, BLUE, TUI_BKCOL, "S-v", FALSE);
+        
+        tui_draw_box(58, 17, TUI_COL, TUI_BKCOL, gfx_rabbit_05, FALSE);
+        tui_draw_box(58, 23, RED, TUI_BKCOL, "Keely", FALSE);
+        
+        tui_draw_box(42, 18, TUI_COL, TUI_BKCOL, gfx_mush_01, FALSE);
+        tui_draw_box(52, 22, GREEN, TUI_BKCOL, "dwb", FALSE);
+        
+        tui_draw_box(30, 17, TUI_COL, TUI_BKCOL, gfx_bee_02, FALSE);
+        tui_draw_box(35, 21, DARKGRAY, TUI_BKCOL, "sjw", FALSE);
+        
+        tui_draw_box(16, 18, TUI_COL, TUI_BKCOL, gfx_bee_04, FALSE);
+        tui_draw_box(28, 23, DARKGRAY, TUI_BKCOL, "jgs", FALSE);
+        
+        tui_draw_box(4, 11, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
+        tui_draw_box(13, 9, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
+        tui_draw_box(1, 21, LIGHTGRAY, TUI_BKCOL, "jgs", FALSE);
+        
+        tui_message("\n\x01\x0fGood Bye\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
 }
 
 
@@ -302,8 +345,8 @@ void draw_addtris() {
         tui_draw_box(6, 8, TUI_COL, TUI_BKCOL, gfx_witch_01, FALSE);
         tui_draw_box(5, 23, DARKGRAY, TUI_BKCOL, "snd", FALSE);
         
-        #define ADD_OWL_X 34
-        #define ADD_OWL_Y 6
+        #define ADD_OWL_X 35
+        #define ADD_OWL_Y 7
         tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
         tui_draw_box(70, 3, TUI_COL, TUI_BKCOL, gfx_owl_02, FALSE);
 
@@ -724,6 +767,7 @@ long animate_scr_add(enum W_ACTION a) {
                                                 break;
                                 }
                                 break;
+                        /* owl */
                         case 1:
                                 tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_04, FALSE);
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
@@ -748,6 +792,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_flush();
                                 step = 0;
                                 return 18;
+                        /* owl eyes */
                         case 5:
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 gotoxy(73, 4);
@@ -768,7 +813,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_flush();
                                 step = 0;
                                 return 18;
-                                
+                        /* cooking */
                         case 7:
                                 tui_set_attr(0, LIGHTRED, TUI_BKCOL);
                                 gotoxy(14, 22);
@@ -874,7 +919,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;
+                                return 3;
                         case 20:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(13, 14);
@@ -882,7 +927,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;
+                                return 3;
                         case 21:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(16, 12);
@@ -890,7 +935,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;
+                                return 3;
                         case 22:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(16, 12);
@@ -898,7 +943,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;        
+                                return 3;        
                         case 23:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(10, 10);
@@ -906,7 +951,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;
+                                return 3;
                         case 24:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(10, 10);
@@ -914,7 +959,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;        
+                                return 3;        
                         case 25:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(12, 9);
@@ -922,7 +967,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step++;
-                                return 4;
+                                return 3;
                         case 26:
                                 tui_set_attr(0, WHITE, TUI_BKCOL);
                                 gotoxy(12, 9);
@@ -930,7 +975,7 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_set_attr(0, TUI_COL, TUI_BKCOL);
                                 tui_flush();
                                 step=0;
-                                return 4;
+                                return 3;
                 }
         }
         
