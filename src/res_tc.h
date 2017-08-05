@@ -236,8 +236,8 @@ char *gfx_plant_04 = "\x01\x0d       wWWWw   \x01\x0c_\n" \
                      "\x01\x0a^^^^^^^^^^^^^^^^^^^";
                       
 char *gfx_butter_02 = "\x01\x0f __   __\n" \
-                      "\x01\x0f(  \\\x01\x07,\x01\x0f/  )\n" \
-                      " \\_ \x01\x07|\x01\x0f _/\n" \
+                      "(  \\\x01\x0a,\x01\x0f/  )\n" \
+                      " \\_ \x01\x0a|\x01\x0f _/\n" \
                       " (_/ \\_)";
 
 char *gfx_butter_03 = "\x01\x01 ___   ___ \n" \
