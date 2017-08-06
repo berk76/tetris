@@ -84,6 +84,7 @@ JOB_T * w_register_job(long tck, int priority, long (*run)(enum W_ACTION)) {
         assert(j != NULL);
         
         j->run = run;
+        j->run(RESET);
         j->priority = priority;
         j->period = tck;
         j->endwait = tck + clock();
