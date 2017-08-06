@@ -491,8 +491,7 @@ void draw_xtris() {
                 song.song = s5;
                 snd_setsong(&song);
         }
-
-        animate_scr_xte(RESET);        
+        
         j4 = w_register_job(18, j4p, &animate_scr_xte);
 }
 
@@ -607,15 +606,22 @@ long draw_floating_text(enum W_ACTION a) {
         
         static char b[(FT_LEN - 1) * 2];
         static char *p = NULL;
-        static i = 0;
+        static i;
+        
+        if ((a == RESET) || (p == NULL)) {
+                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                gotoxy(FT_X, FT_Y);
+                for(i = 0; i < FT_LEN; i++)
+                        putch(' ');
+                p = floating_text;
+                i = 0;
+                
+                return 0;
+        }
         
         if (a == RUN) {
                 gotoxy(FT_X,FT_Y);
                 tui_set_attr(0, DARKGRAY, TUI_BKCOL);
-                
-                if (p == NULL) {
-                        p = floating_text;
-                }
                 
                 gettext(FT_X + 1 , FT_Y, FT_X + 1 + (FT_LEN - 2), FT_Y, b);
                 puttext(FT_X, FT_Y, FT_X + (FT_LEN - 2), FT_Y, b);
@@ -641,10 +647,13 @@ long draw_floating_text(enum W_ACTION a) {
 
 
 long animate_scr_main(enum W_ACTION a) {
-        static int step = 0;
-        static paused = 0;
+        static int step = -1;
+        static paused;
 
-        if (a == RESET) {
+        if ((a == RESET) || (step == -1)) {
+                step = 0;
+                paused = 0;
+                
                 return 0;        
         }
         
@@ -731,11 +740,14 @@ long animate_scr_main(enum W_ACTION a) {
 
 
 long animate_scr_add(enum W_ACTION a) {
-        static int step = 0;
-        static paused = 0;
+        static int step = -1;
+        static paused;
 
-        if (a == RESET) {
-                return 0;        
+        if ((a == RESET) || (step == -1)) {
+                step = 0;
+                paused = 0;
+                
+                return 0;
         }
         
         if (a == PAUSE) {
@@ -744,7 +756,7 @@ long animate_scr_add(enum W_ACTION a) {
         
         if (a == UNPAUSE) {
                 paused = 0;
-        }            
+        }
         
         if (a == RUN) {
                 if (paused != 0)
@@ -984,11 +996,14 @@ long animate_scr_add(enum W_ACTION a) {
 
 
 long animate_scr_tet(enum W_ACTION a) {
-        static int step = 0;
-        static paused = 0;
+        static int step = -1;
+        static paused;
         
 
-        if (a == RESET) {
+        if ((a == RESET) || (step == -1)) {
+                step = 0;
+                paused = 0;
+                
                 return 0;        
         }
         
