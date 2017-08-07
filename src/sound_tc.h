@@ -19,30 +19,111 @@
 #include "wait_tc.h"
 
 
-enum SND_OCTAVE {
-        O0 = 0,
-        O1 = 1,
-        O2 = 2,
-        O3 = 3,
-        O4 = 4,
-        O5 = 5,
-        O6 = 6,
-        O7 = 7
-};
-
 enum SND_NOTE {
-        C  = 0, 
-        CS = 1,
-        D  = 2,
-        DS = 3,
-        E  = 4,
-        F  = 5,
-        FS = 6,
-        G  = 7,
-        GS = 8,
-        A  = 9,
-        AS = 10,
-        B  = 11,
+        C0  = 0, 
+        C0S = 1,
+        D0  = 2,
+        D0S = 3,
+        E0  = 4,
+        F0  = 5,
+        F0S = 6,
+        G0  = 7,
+        G0S = 8,
+        A0  = 9,
+        A0S = 10,
+        B0  = 11,
+        
+        C1  = 12, 
+        C1S = 13,
+        D1  = 14,
+        D1S = 15,
+        E1  = 16,
+        F1  = 17,
+        F1S = 18,
+        G1  = 19,
+        G1S = 20,
+        A1  = 21,
+        A1S = 22,
+        B1  = 23,
+        
+        C2  = 24, 
+        C2S = 25,
+        D2  = 26,
+        D2S = 27,
+        E2  = 28,
+        F2  = 29,
+        F2S = 30,
+        G2  = 31,
+        G2S = 32,
+        A2  = 33,
+        A2S = 34,
+        B2  = 35,
+        
+        C3  = 36, 
+        C3S = 37,
+        D3  = 38,
+        D3S = 39,
+        E3  = 40,
+        F3  = 41,
+        F3S = 42,
+        G3  = 43,
+        G3S = 44,
+        A3  = 45,
+        A3S = 46,
+        B3  = 47,
+        
+        C4  = 48, 
+        C4S = 49,
+        D4  = 50,
+        D4S = 51,
+        E4  = 52,
+        F4  = 53,
+        F4S = 54,
+        G4  = 55,
+        G4S = 56,
+        A4  = 57,
+        A4S = 58,
+        B4  = 59,
+        
+        C5  = 60, 
+        C5S = 61,
+        D5  = 62,
+        D5S = 63,
+        E5  = 64,
+        F5  = 65,
+        F5S = 66,
+        G5  = 67,
+        G5S = 68,
+        A5  = 69,
+        A5S = 70,
+        B5  = 71,
+        
+        C6  = 72, 
+        C6S = 73,
+        D6  = 74,
+        D6S = 75,
+        E6  = 76,
+        F6  = 77,
+        F6S = 78,
+        G6  = 79,
+        G6S = 80,
+        A6  = 81,
+        A6S = 82,
+        B6  = 83,
+        
+        C7  = 84, 
+        C7S = 85,
+        D7  = 86,
+        D7S = 87,
+        E7  = 88,
+        F7  = 89,
+        F7S = 90,
+        G7  = 91,
+        G7S = 92,
+        A7  = 93,
+        A7S = 94,
+        B7  = 95,
+        
         REST = 98,
         REPEAT = 99,
         STOP = 100
@@ -68,7 +149,6 @@ enum SND_DURATION {
 
 typedef struct {
         enum SND_NOTE note;
-        enum SND_OCTAVE octave;
         enum SND_DURATION duration;
 } SND_PLAY_NOTE;
       
@@ -95,7 +175,7 @@ extern void snd_speaker(int on);
 * Play note
 */      
         
-extern void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o);
+extern void snd_playnote(enum SND_NOTE n);
 
 /*      
 * Setup song

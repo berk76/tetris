@@ -244,11 +244,11 @@ void snd_speaker(int on) {
 * Play note
 */      
         
-void snd_playnote(enum SND_NOTE n, enum SND_OCTAVE o) {
+void snd_playnote(enum SND_NOTE n) {
         if ((n == REST) || (n == REPEAT)) {
                 snd_speaker(0);
         } else {
-                snd_setfreq(not_freq[n + o*12]);
+                snd_setfreq(not_freq[n]);
                 snd_speaker(1);
         }
 }
@@ -299,7 +299,7 @@ long snd_play_sound(enum W_ACTION a) {
                         p = song->song;
                 }
                 if (pause == 0) {
-                        snd_playnote(p->note, p->octave);
+                        snd_playnote(p->note);
                         i = p->duration;
                         switch (p->note) {
                                 case REPEAT:
@@ -314,7 +314,7 @@ long snd_play_sound(enum W_ACTION a) {
                         }
                         pause = 1;
                 } else {
-                        snd_playnote(REST, p->octave);
+                        snd_playnote(REST);
                         pause = 0;
                 }
 
