@@ -184,8 +184,8 @@ int draw_mainscreen(TETRIS_T *t) {
                 }
                 
                 if ((play_sound == 1) && (j3 == NULL)) {
-                        song.duration = D2;
-                        song.rest = R2;
+                        song.duration = SD2;
+                        song.rest = SR2;
                         song.song = s2;
                         snd_setsong(&song);
                         j3 = w_register_job(6, j3p, &snd_play_sound);
@@ -362,8 +362,8 @@ void draw_addtris() {
         tui_set_attr(0, TUI_COL, TUI_BKCOL);
         
         if ((play_sound == 1) && (j3 == NULL)) {
-                song.duration = D4;
-                song.rest = R4;
+                song.duration = SD4;
+                song.rest = SR4;
                 song.song = s4;
                 snd_setsong(&song);
         }
@@ -434,8 +434,8 @@ void draw_tetris() {
         tui_draw_box(62, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_05, FALSE);
         
         if ((play_sound == 1) && (j3 == NULL)) {
-                song.duration = D6;
-                song.rest = R6;
+                song.duration = SD6;
+                song.rest = SR6;
                 song.song = s6;
                 snd_setsong(&song);
         }
@@ -486,8 +486,8 @@ void draw_xtris() {
         update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
-                song.duration = D5;
-                song.rest = R5;
+                song.duration = SD5;
+                song.rest = SR5;
                 song.song = s5;
                 snd_setsong(&song);
         }
