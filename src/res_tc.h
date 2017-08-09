@@ -30,7 +30,7 @@ static char *floating_text = "Ptakovina game was created in year 2017 " \
         "Tetris game. You can cook some parameters by yourself and " \
         "create crazy challenge to manage. This software is developed and " \
         "published as open source under GNU/GPL version 3 license. All sources " \
-        "are available at bitbucket.org/berk76/tetris - berk -";
+        "are available at bitbucket.org/berk76/tetris Enjoy it! - berk -";
 
 /*
 *       Gtaphics mostly comes from:

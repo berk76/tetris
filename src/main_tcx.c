@@ -353,13 +353,6 @@ void draw_addtris() {
         score_x = 69;
         score_y = 11;        
         update_score(1);
-
-        tui_set_attr(0, WHITE, TUI_BKCOL);        
-        gotoxy(69, 13);
-        cprintf("Pause .. P");
-        gotoxy(69, 14);
-        cprintf("Quit  .. Q");
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
         
         if ((play_sound == 1) && (j3 == NULL)) {
                 song.duration = SD4;
@@ -424,13 +417,6 @@ void draw_tetris() {
         score_y = 10;        
         update_score(1);
         
-        tui_set_attr(0, WHITE, TUI_BKCOL);        
-        gotoxy(65, 12);
-        cprintf("Pause .. P");
-        gotoxy(65, 13);
-        cprintf("Quit  .. Q");
-        tui_set_attr(0, TUI_COL, TUI_BKCOL);
-        
         tui_draw_box(62, 18, TUI_COL, TUI_BKCOL, gfx_rabbit_05, FALSE);
         
         if ((play_sound == 1) && (j3 == NULL)) {
@@ -481,8 +467,8 @@ void draw_xtris() {
                 tui_draw_box(62, 17, TUI_COL, TUI_BKCOL, gfx_plant_04, FALSE);        
         }
 
-        score_x = 25;
-        score_y = 6;
+        score_x = 3;
+        score_y = 10;
         update_score(1);
         
         if ((play_sound == 1) && (j3 == NULL)) {
@@ -498,21 +484,65 @@ void draw_xtris() {
 
 int update_score(int reset) {
         static int last_score;
-
-        if (reset) {
-                last_score = 0;
-        }
+        static int hidden = 0;
+        int ret = 0;
+        int redraw = 0;
+        int clear = 0;
+        /*
+          reset:
+          0 = draw only in case of value changes
+          1 = reset value to 0
+          2 = redraw all
+          3 = hide all
+        */
         
-        if ((last_score == tetris.score) && !reset)
-                return 0;
+        switch(reset) {
+                case 0:
+                        if (last_score != tetris.score) {
+                                ret = 1;
+                                if (hidden == 0)
+                                        redraw = 1;
+                        }
+                        break;
+                case 1:
+                        last_score = 0;
+                        hidden = 0;
+                        ret = 1;
+                        redraw = 1;
+                        break;
+                case 2:
+                        redraw = 1;
+                        hidden = 0;
+                        break;
+                case 3:
+                        clear = 1;
+                        hidden = 1;
+                        break;
+        }
 
         last_score = tetris.score;
         
-        gotoxy(score_x, score_y);
-        tui_set_attr(0, WHITE, TUI_BKCOL);
-        cprintf("Score: %3d", tetris.score);
+        if (redraw == 1) {
+                gotoxy(score_x, score_y);
+                tui_set_attr(0, WHITE, TUI_BKCOL);
+                cprintf("Score: %3d", tetris.score);       
+                gotoxy(score_x, score_y + 2);
+                cprintf("Pause .. P");
+                gotoxy(score_x, score_y + 3);
+                cprintf("Quit  .. Q");
+        }
         
-        return 1;
+        if (clear == 1) {
+                gotoxy(score_x, score_y);
+                tui_set_attr(0, WHITE, TUI_BKCOL);
+                cprintf("          ");       
+                gotoxy(score_x, score_y + 2);
+                cprintf("          ");
+                gotoxy(score_x, score_y + 3);
+                cprintf("          ");
+        }
+        
+        return ret;
 }
 
 
@@ -1251,11 +1281,15 @@ long animate_scr_xte(enum W_ACTION a) {
                                 /* hornet */
                                 switch (x2) {
                                         case 20:
+                                                update_score(3); /* hide score */
                                                 tui_draw_box(2, 10, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
                                                 tui_flush();
                                                 break;
                                         case 15:
                                                 tui_draw_box(11, 8, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
+                                                gotoxy(9,11);
+                                                tui_set_attr(0, LIGHTGRAY, TUI_BKCOL);
+                                                putch('-');
                                                 tui_flush();
                                                 x2 += d2;
                                                 return 36;
@@ -1265,6 +1299,7 @@ long animate_scr_xte(enum W_ACTION a) {
                                                 tui_del_box(2, 10, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
                                                 tui_del_box(11, 8, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
                                                 tui_draw_box(2, 16, TUI_COL, TUI_BKCOL, gfx_plant_03, FALSE);
+                                                update_score(2); /* redraw score */
                                                 tui_flush();
                                                 x2 = 25;
                                                 y2 = 10;
