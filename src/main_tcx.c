@@ -804,6 +804,9 @@ long animate_scr_add(enum W_ACTION a) {
                                         case 3:
                                                 step = 5;
                                                 break;
+                                        case 4:
+                                                step = 27;
+                                                break;
                                         default:
                                                 step = 7;
                                                 break;
@@ -1018,6 +1021,23 @@ long animate_scr_add(enum W_ACTION a) {
                                 tui_flush();
                                 step=0;
                                 return 3;
+                        /* eye */
+                        case 27:
+                                tui_set_attr(0, MAGENTA, TUI_BKCOL);
+                                gotoxy(26, 13);
+                                putch('-');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step++;
+                                return 10;
+                        case 28:
+                                tui_set_attr(0, LIGHTCYAN, TUI_BKCOL);
+                                gotoxy(26, 13);
+                                putch('o');
+                                tui_set_attr(0, TUI_COL, TUI_BKCOL);
+                                tui_flush();
+                                step=0;
+                                return 18;
                 }
         }
         

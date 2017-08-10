@@ -27,10 +27,10 @@ static char *floating_text = "Ptakovina game was created in year 2017 " \
         "in 2016 by Vasek Petourka. Original game was published at www.8bity.cz. "\
         "2) TETRIS is well known game invented in 1984 by Russian game " \
         "designer Alexey Pajitnov. 3) X-TRIS is my own crazy modification of " \
-        "Tetris game. You can cook some parameters by yourself and " \
+        "Tetris game. You can change some parameters by yourself and " \
         "create crazy challenge to manage. This software is developed and " \
         "published as open source under GNU/GPL version 3 license. All sources " \
-        "are available at bitbucket.org/berk76/tetris Enjoy it! - berk -";
+        "are available at bitbucket.org/berk76/tetris Enjoy the game! - berk -";
 
 /*
 *       Gtaphics mostly comes from:
@@ -158,7 +158,7 @@ char *gfx_witch_01 = "\x01\x0e(       \"     )\n" \
                      "    \x01\x0f*\x01\x0e (     /           \x01\x01___\n" \
                      "\x01\x0e       \"     \"        \x01\x01_/ /\n" \
                      "\x01\x0e      (   \x01\x0f*\x01\x0e  )    \x01\x01___/   |\n" \
-                     "\x01\x0e        )   \"     \x01\x05_ \x01\x0bo\x01\x05)\x01\x01_'-./__\n" \
+                     "\x01\x0e        )   \"     \x01\x05_\x01\x0boo\x01\x05)\x01\x01_'-./__\n" \
                      "\x01\x0e       \x01\x0f*\x01\x0e  _ )    \x01\x05(_, . \x01\x08$$$\n" \
                      "\x01\x0e       (  )   \x01\x05__ \x01\x04__\x01\x05 7_ \x01\x08$$$$\n" \
                      "\x01\x0e        ( :  \x01\x05{ _)\x01\x04  '---  \x01\x08$\x01\x04\\\n" \
