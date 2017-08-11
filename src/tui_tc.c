@@ -28,6 +28,7 @@ static void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOO
 static void del_box(int x, int y, int size_x, int size_y);
 static int tui_wait_for_key(char *s);
 static void tui_wait_for_any_key();
+static int get_attribute();
 
 
 /* External functions */
@@ -229,10 +230,12 @@ void calc_box_size(int *size_x, int *size_y, char *content) {
 
 void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border) {
         int i, len, offx, offy;
+        int orig_a, curr_a;
         char *p;
 
         /* 1st line */
         if (add_border == TRUE) {
+                orig_a = get_attribute();
                 gotoxy(x, y);
                 putch('+');
                 for (i = 0; i < (size_x - 2); i++) {
@@ -250,8 +253,11 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
         p = content;
         for (i = 0; i < (size_y - 2*offy); i++) {
                 gotoxy(x, y + i + offy);
-                if (add_border == TRUE) { 
+                if (add_border == TRUE) {
+                        curr_a = get_attribute();
+                        textattr(orig_a); 
                         cprintf("%c ", '|');
+                        textattr(curr_a);
                 }
                 len = size_x - 2*offx;
                  
@@ -271,13 +277,17 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
                         len--;
                 }
                 if (add_border == TRUE) {
+                        curr_a = get_attribute();
+                        textattr(orig_a);
                         cprintf(" %c", '|');
+                        textattr(curr_a);
                 }
                 p++;
         }
         
         /* last line */
         if (add_border == TRUE) {
+                textattr(orig_a);
                 gotoxy(x, y + size_y - 1);
                 putch('+');
                 for (i = 0; i < (size_x - 2); i++) {
@@ -328,4 +338,13 @@ void tui_wait_for_any_key() {
         }
         getch();
 }
+
+
+int get_attribute() {
+        struct text_info i;
+        
+        gettextinfo(&i);
+        return i.attribute;
+}
+
 
