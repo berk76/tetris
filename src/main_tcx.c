@@ -111,7 +111,7 @@ int main() {
                 }
                 
                 if (j4 != NULL) j4->run(PAUSE);        
-                tui_message("\n\x01\x0f Press any key to start \x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                tui_message("\n\x01\x0f Press any key to start \n", LIGHTCYAN, TUI_BKCOL);
                 if (j4 != NULL) j4->run(UNPAUSE);
                         
                 d = _delay;
@@ -150,7 +150,7 @@ int main() {
                 }
                 
                 if (c != -1)
-                        tui_message("\n\x01\x0fGAME OVER\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                        tui_message("\n\x01\x0fGAME OVER\n", LIGHTCYAN, TUI_BKCOL);
                 
         } while (1);
 }
@@ -197,11 +197,12 @@ int draw_mainscreen(TETRIS_T *t) {
                         snd_speaker(0);
                 }
                 
-                sprintf(buff, "\n\x01\x0f 1) Addtris\x01\x0b \n\n" \
-                               "\x01\x0f 2) Tetris\x01\x0b \n\n" \
-                               "\x01\x0f 3) X-Tris\x01\x0b \n\n" \
-                               "\x01\x0f S) Sound: %s\x01\x0b \n\n" \
-                               "\x01\x0f Q) Quit\x01\x0b \n", \
+                sprintf(buff, "\x01\x0f\n"
+                               " 1) Addtris \n\n" \
+                               " 2) Tetris \n\n" \
+                               " 3) X-Tris \n\n" \
+                               " S) Sound: %s \n\n" \
+                               " Q) Quit \n", \
                                (play_sound == 0) ? "off" : "on");
                                
                 j4 = w_register_job(18, j4p, &animate_scr_main);
@@ -228,9 +229,9 @@ int draw_mainscreen(TETRIS_T *t) {
                                 break;
                         case '3':
                                 game = XTRIS;
-                                c = tui_option("\n\x01\x0f Brick size? (1..9)\x01\x0b \n", "123456789", LIGHTCYAN, TUI_BKCOL);
+                                c = tui_option("\n\x01\x0f Brick size? (1..9) \n", "123456789", LIGHTCYAN, TUI_BKCOL);
                                 seg = c - '0';
-                                c = tui_option("\n\x01\x0f (S)tandard grid or (D)ouble wide?\x01\x0b \n", "sSdD", LIGHTCYAN, TUI_BKCOL);
+                                c = tui_option("\n\x01\x0f (S)tandard grid or (D)ouble wide? \n", "sSdD", LIGHTCYAN, TUI_BKCOL);
                                 if (c == 's' || c == 'S') {
                                         wide = 10;
                                 } else {
@@ -308,7 +309,7 @@ void draw_goodbye() {
         tui_draw_box(13, 9, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
         tui_draw_box(1, 21, LIGHTGRAY, TUI_BKCOL, "jgs", FALSE);
         
-        tui_message("\n\x01\x0fGood Bye\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+        tui_message("\n\x01\x0fGood Bye\n", LIGHTCYAN, TUI_BKCOL);
 }
 
 
@@ -525,11 +526,13 @@ int update_score(int reset) {
         if (redraw == 1) {
                 gotoxy(score_x, score_y);
                 tui_set_attr(0, WHITE, TUI_BKCOL);
-                cprintf("Score: %3d", tetris.score);       
+                cprintf("Score: %3d", tetris.score);
                 gotoxy(score_x, score_y + 2);
                 cprintf("Pause .. P");
                 gotoxy(score_x, score_y + 3);
                 cprintf("Quit  .. Q");
+                gotoxy(score_x, score_y + 4);
+                cprintf("Help  .. H");
         }
         
         if (clear == 1) {
@@ -539,6 +542,8 @@ int update_score(int reset) {
                 gotoxy(score_x, score_y + 2);
                 cprintf("          ");
                 gotoxy(score_x, score_y + 3);
+                cprintf("          ");
+                gotoxy(score_x, score_y + 4);
                 cprintf("          ");
         }
         
@@ -575,17 +580,40 @@ int process_user_input() {
                                                 break;
                                 }
                                 break;
+                        case 'h':
+                                if (j3 != NULL) j3->run(PAUSE);
+                                if (j4 != NULL) j4->run(PAUSE);
+                                switch (tetris.game) {
+                                        case ADDTRIS:
+                                                tui_message(
+                                                        addtris_help, 
+                                                        LIGHTCYAN, TUI_BKCOL);
+                                                break;
+                                        case TETRIS:
+                                                tui_message(
+                                                        tetris_help, 
+                                                        LIGHTCYAN, TUI_BKCOL);
+                                                break;
+                                        case XTRIS:
+                                                tui_message(
+                                                        xtris_help, 
+                                                        LIGHTCYAN, TUI_BKCOL);
+                                                break; 
+                                }
+                                if (j3 != NULL) j3->run(UNPAUSE);
+                                if (j4 != NULL) j4->run(UNPAUSE);
+                                break;
                         case 'p':
                                 if (j3 != NULL) j3->run(PAUSE);
                                 if (j4 != NULL) j4->run(PAUSE);
-                                tui_message("\n\x01\x0fPaused\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                                tui_message("\n\x01\x0fPaused\n", LIGHTCYAN, TUI_BKCOL);
                                 if (j3 != NULL) j3->run(UNPAUSE);
                                 if (j4 != NULL) j4->run(UNPAUSE);
                                 break;
                         case 'q':
                                 if (j3 != NULL) j3->run(PAUSE);
                                 if (j4 != NULL) j4->run(PAUSE);
-                                r = tui_confirm("\n\x01\x0fQuit game? (Y/N)\x01\x0b\n", LIGHTCYAN, TUI_BKCOL);
+                                r = tui_confirm("\n\x01\x0fQuit game? (Y/N)\n", LIGHTCYAN, TUI_BKCOL);
                                 if (j3 != NULL) j3->run(UNPAUSE);
                                 if (j4 != NULL) j4->run(UNPAUSE);
                                 if (r == TRUE) {
@@ -605,11 +633,9 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
                 textcolor(color_vec[color]);
                 cprintf("%c%c", 0xdb, 0xdb);
-                /* textcolor(color_vec[MESH_BK_COLOR]); */
         } else {
                 textcolor(WHITE);
                 cprintf("%d ", tetris->brick.value);
-                /* textcolor(color_vec[MESH_BK_COLOR]) */;
         }
         tui_flush();
 }

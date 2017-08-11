@@ -17,20 +17,54 @@
 #define _RES_TC_
 
 
-static char *floating_text = "Ptakovina game was created in year 2017 " \
-        "as part of developers competition published at www.high-voltage.cz. " \
-        "I would like thank to Sledge for making such challenges and for " \
-        "inspiring us to create crazy DOS games. Also I would like thank to web " \
-        "www.chris.com and to all ascii art creators such as jgs, mrf, as, lc " \
-        "and many others for their wonderful ascii creatures. " \
-        "This software consists of three games: 1) ADDTRIS is game invented " \
-        "in 2016 by Vasek Petourka. Original game was published at www.8bity.cz. "\
-        "2) TETRIS is well known game invented in 1984 by Russian game " \
-        "designer Alexey Pajitnov. 3) X-TRIS is my own crazy modification of " \
-        "Tetris game. You can change some parameters by yourself and " \
-        "create crazy challenge to manage. This software is developed and " \
-        "published as open source under GNU/GPL version 3 license. All sources " \
+static char *floating_text = "Ptakovina game was created in year 2017 "
+        "as part of developers competition published at www.high-voltage.cz. "
+        "I would like thank to Sledge for making such challenges and for " 
+        "inspiring us to create crazy DOS games. Also I would like thank to web " 
+        "www.chris.com and to all ascii art creators such as jgs, mrf, as, lc " 
+        "and many others for their wonderful ascii creatures. " 
+        "This software consists of three games: 1) ADDTRIS is game invented " 
+        "in 2016 by Vasek Petourka. Original game was published at www.8bity.cz. "
+        "2) TETRIS is well known game invented in 1984 by Russian game " 
+        "designer Alexey Pajitnov. 3) X-TRIS is my own crazy modification of " 
+        "Tetris game. You can change some parameters by yourself and " 
+        "create crazy challenge to manage. This software is developed and " 
+        "published as open source under GNU/GPL version 3 license. All sources " 
         "are available at bitbucket.org/berk76/tetris Enjoy the game! - berk -";
+        
+        
+static char *addtris_help =
+        "\x01\x0f\n"
+        "The target of Addtris game is to put number\n" 
+        "above two others so that value of number at\n" 
+        "the top is sum of two underlying. If the sum\n"
+        "of two lower is for ex. 14 you should put 4\n"
+        "above them.\n"
+        "\n"
+        "For controls use arrows. By arrow up you can\n"
+        "change value of falling number as to be\n" 
+        "completion to 10.\n";
+
+
+static char *tetris_help =
+        "\x01\x0f\n"
+        "The target of Tetris game is to fill and clear\n" 
+        "horizontal lines by manipulating of falling objects.\n" 
+        "Line is cleared at the moment when every square\n" 
+        "of the row is filled.\n"
+        "\n"
+        "For control of falling objects use arrows.\n";
+
+
+static char *xtris_help =
+        "\x01\x0f\n"
+        "The target of X-Tris game is to fill and clear\n" 
+        "horizontal lines by manipulating of falling objects.\n" 
+        "Line is cleared at the moment when every square\n" 
+        "of the row is filled.\n"
+        "\n"
+        "For control of falling objects use arrows.\n";
+
 
 /*
 *       Gtaphics mostly comes from:
