@@ -37,7 +37,7 @@ T_SCORE score_table[SC_TABLE_LEN];
 
 static char fn_addtris[] = "addtris.dat";
 static char fn_tetris[] = "tetris.dat";
-static char fn_xtris[] = "xtris.dat";
+static char fn_xtris[] = "xtris%d%s.dat";
 
 
 #define TUI_COL LIGHTGRAY
@@ -1393,6 +1393,7 @@ void show_score(int my_score) {
         int i;
         char *filename;
         char report[300];
+        char fnbuff[13];
         FILE *f;
         
         /* choose filename */
@@ -1404,7 +1405,8 @@ void show_score(int my_score) {
                        filename = fn_tetris;
                         break;
                 case XTRIS:
-                        filename = fn_xtris;
+                        sprintf(fnbuff, fn_xtris, tetris.brick.shape_size, (tetris.grid_size_x == 10) ? "s" : "s");
+                        filename = fnbuff;
                         break; 
         }
         
