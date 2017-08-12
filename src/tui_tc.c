@@ -171,6 +171,69 @@ int tui_option(char *msg, char *options, int color, int bkcolor) {
 }
 
 
+void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
+        WINDOW_T *w;
+        int x, y, size_x, size_y;
+        char s[256];
+        char *p;
+        int c;
+        
+        assert(msg != NULL);
+        
+        /* draw box */
+        sprintf(s, "\n%s\n\n", msg);
+        calc_box_size(&size_x, &size_y, s);
+
+        size_x += 4;
+        size_y += 2;
+
+        x = (TUI_SCR_X_SIZE - size_x) / 2;
+        y = (TUI_SCR_Y_SIZE - size_y) / 2;
+        w = tui_create_win(x, y, size_x, size_y, color, bkcolor, ' ');
+
+        draw_box(x, y, size_x, size_y, s, TRUE);
+
+        /* read input */
+        p = buff;
+        *p = '\0';
+                
+        do {
+                while (kbhit()) {
+                        c = getch();
+                        switch (c) {
+                                case 13:
+                                        /* enter */
+                                        break;
+                                case 8:
+                                        /* backspace */
+                                        if (p > buff) {
+                                                p--;
+                                                *p = '\0';
+                                                gotoxy(x + 2, y + 3);
+                                                tui_set_attr(0, WHITE, bkcolor);
+                                                cprintf("%s ", buff);
+                                                tui_flush();
+                                        }
+                                        break;
+                                default:
+                                        /* letter */
+                                        if ((c > 31) && ((p - buff) < (len - 1))) {
+                                                *p = c;
+                                                p++;
+                                                *p = '\0';
+                                                gotoxy(x + 2, y + 3);
+                                                tui_set_attr(0, WHITE, bkcolor);
+                                                cprintf("%s", buff);
+                                                tui_flush();
+                                        }
+                        }
+                }
+                w_wait(2);
+        } while (c != 13);
+        tui_delete_win(w);
+}
+
+
 void tui_set_attr(int blink, int color, int bkcolor) {
         textattr(calcattr(blink, color, bkcolor));
 }
