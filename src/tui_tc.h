@@ -53,6 +53,7 @@ extern void tui_del_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_
 extern void tui_message(char *msg, int color, int bkcolor);
 extern G_BOOL_T tui_confirm(char *msg, int color, int bkcolor);
 extern int tui_option(char *msg, char *options, int color, int bkcolor);
+extern void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor);
 
 extern void tui_set_attr(int blink, int color, int bkcolor);
 

@@ -25,6 +25,21 @@
 #include "main.h"
 
 
+#define SC_NAME_LEN 10
+#define SC_TABLE_LEN 5
+
+typedef struct {
+        char name[SC_NAME_LEN];
+        int score;
+} T_SCORE;
+
+T_SCORE score_table[SC_TABLE_LEN];
+
+static char fn_addtris[] = "addtris.dat";
+static char fn_tetris[] = "tetris.dat";
+static char fn_xtris[] = "xtris.dat";
+
+
 #define TUI_COL LIGHTGRAY
 #define TUI_BKCOL BLACK
 
@@ -68,6 +83,8 @@ static long animate_scr_main(enum W_ACTION a);
 static long animate_scr_add(enum W_ACTION a);
 static long animate_scr_tet(enum W_ACTION a);
 static long animate_scr_xte(enum W_ACTION a);
+/* Score */
+static void show_score(int my_score);
 
 
 int main() {
@@ -149,8 +166,10 @@ int main() {
                         j4 = NULL;
                 }
                 
-                if (c != -1)
+                if (c != -1) {
                         tui_message("\n\x01\x0fGAME OVER\n", LIGHTCYAN, TUI_BKCOL);
+                        show_score(tetris.score);
+                }
                 
         } while (1);
 }
@@ -614,11 +633,12 @@ int process_user_input() {
                                 if (j3 != NULL) j3->run(PAUSE);
                                 if (j4 != NULL) j4->run(PAUSE);
                                 r = tui_confirm("\n\x01\x0fQuit game? (Y/N)\n", LIGHTCYAN, TUI_BKCOL);
-                                if (j3 != NULL) j3->run(UNPAUSE);
-                                if (j4 != NULL) j4->run(UNPAUSE);
                                 if (r == TRUE) {
+                                        show_score(tetris.score);
                                         result = -1;
                                 }
+                                if (j3 != NULL) j3->run(UNPAUSE);
+                                if (j4 != NULL) j4->run(UNPAUSE);
                 }
         }
         
@@ -1361,6 +1381,75 @@ long animate_scr_xte(enum W_ACTION a) {
                 }        
         }
         return 5;
+}
+
+
+int cmp_score(const void *a, const void *b) {
+        return (((T_SCORE *)b)->score - ((T_SCORE *)a)->score);
+}
+
+
+void show_score(int my_score) {
+        int i;
+        char *filename;
+        char report[300];
+        FILE *f;
+        
+        /* choose filename */
+        switch (tetris.game) {
+                case ADDTRIS:
+                        filename = fn_addtris; 
+                        break;
+                case TETRIS:
+                       filename = fn_tetris;
+                        break;
+                case XTRIS:
+                        filename = fn_xtris;
+                        break; 
+        }
+        
+        /* load from file */
+        f = fopen(filename, "r");
+        if (f != NULL) {
+                fread(score_table, sizeof(T_SCORE), SC_TABLE_LEN, f);
+                fclose(f);
+        } else {
+                for (i = 0; i < SC_TABLE_LEN; i++) {
+                        strcpy(score_table[i].name, "empty");
+                        score_table[i].score = 0;
+                }
+        }
+        
+        /* update table */
+        if (my_score > score_table[4].score) {
+                tui_input("\x01\x0fPlease enter your name:", 
+                        score_table[4].name, SC_NAME_LEN, 
+                        LIGHTCYAN, TUI_BKCOL);
+                score_table[4].score = my_score;         
+        }
+        qsort(score_table, SC_TABLE_LEN, sizeof(T_SCORE), cmp_score);
+        
+        /* show hall of fame */
+        sprintf(report, "\n\x01\x0f Hall Of Fame\n\n"
+                        "\x01\x0f 1.\x01\x0e %-10s ... %4d \n"
+                        "\x01\x0f 2.\x01\x0d %-10s ... %4d \n"
+                        "\x01\x0f 3.\x01\x0c %-10s ... %4d \n"
+                        "\x01\x0f 4.\x01\x0b %-10s ... %4d \n"
+                        "\x01\x0f 5.\x01\x0a %-10s ... %4d \n", 
+                        score_table[0].name, score_table[0].score,
+                        score_table[1].name, score_table[1].score,
+                        score_table[2].name, score_table[2].score,
+                        score_table[3].name, score_table[3].score,
+                        score_table[4].name, score_table[4].score
+                        );
+        tui_message(report, LIGHTCYAN, TUI_BKCOL);
+        
+        /* write to file file */
+        f = fopen(filename, "w");
+        if (f != NULL) {
+                fwrite(score_table, sizeof(T_SCORE), SC_TABLE_LEN, f);
+                fclose(f);
+        } 
 }
 
 
