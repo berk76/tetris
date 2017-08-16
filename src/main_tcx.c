@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include <assert.h>
 #include "sound_tc.h"
 #include "tetris.h"
 #include "tui_tc.h"
@@ -25,6 +26,7 @@
 #include "main.h"
 
 
+#define BUFF_LEN 512
 #define SC_NAME_LEN 10
 #define SC_TABLE_LEN 5
 
@@ -177,7 +179,7 @@ int main() {
 
 int draw_mainscreen(TETRIS_T *t) {
         int i, c, seg, wide, ret;
-        char buff[512];
+        char buff[BUFF_LEN];
         GAME_T game;
         int menu_only;
         
@@ -223,6 +225,7 @@ int draw_mainscreen(TETRIS_T *t) {
                                " S) Sound: %s \n\n" \
                                " Q) Quit \n", \
                                (play_sound == 0) ? "off" : "on");
+                assert(strlen(buff) < BUFF_LEN);
                                
                 j4 = w_register_job(18, j4p, &animate_scr_main);
                 
@@ -1390,8 +1393,9 @@ int cmp_score(const void *a, const void *b) {
 void show_score(int my_score) {
         int i;
         char *filename;
-        char report[400];
-        char fnbuff[13];
+        char report[BUFF_LEN];
+        #define FNBUFFLEN 13
+        char fnbuff[FNBUFFLEN];
         FILE *f;
         
         /* choose filename */
@@ -1404,6 +1408,7 @@ void show_score(int my_score) {
                         break;
                 case XTRIS:
                         sprintf(fnbuff, fn_xtris, tetris.brick.shape_size, (tetris.grid_size_x == 10) ? "s" : "d");
+                        assert(strlen(fnbuff) < FNBUFFLEN);
                         filename = fnbuff;
                         break; 
         }
@@ -1443,6 +1448,7 @@ void show_score(int my_score) {
                         score_table[3].name, score_table[3].score,
                         score_table[4].name, score_table[4].score
                         );
+        assert(strlen(report) < BUFF_LEN);
         tui_message(report, LIGHTCYAN, TUI_BKCOL);
         
         /* write to file file */
