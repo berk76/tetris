@@ -174,7 +174,8 @@ int tui_option(char *msg, char *options, int color, int bkcolor) {
 void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         WINDOW_T *w;
         int x, y, size_x, size_y;
-        char s[256];
+        #define SLEN 256
+        char s[SLEN];
         char *p;
         int c;
         
@@ -182,6 +183,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         
         /* draw box */
         sprintf(s, "\n%s\n\n", msg);
+        assert(strlen(s) < SLEN);
         calc_box_size(&size_x, &size_y, s);
 
         size_x += 4;
