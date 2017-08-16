@@ -17,10 +17,10 @@
 #define _RES_TC_
 
 
-static char *floating_text = "Ptakovina game was created in year 2017 "
+static char *floating_text = "Ptakovina game was created in 2017 "
         "as part of developers competition published at www.high-voltage.cz. "
         "I would like thank to Sledge for making such challenges and for " 
-        "inspiring us to create crazy DOS games. Also I would like thank to web " 
+        "inspiring us creating new DOS games. Also I would like thank to web " 
         "www.chris.com and to all ascii art creators such as jgs, mrf, as, lc " 
         "and many others for their wonderful ascii creatures. " 
         "This software consists of three games: 1) ADDTRIS is game invented " 

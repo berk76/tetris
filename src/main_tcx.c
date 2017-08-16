@@ -370,7 +370,7 @@ void draw_addtris() {
         tui_draw_box(ADD_OWL_X, ADD_OWL_Y, TUI_COL, TUI_BKCOL, gfx_owl_03, FALSE);
         tui_draw_box(70, 3, TUI_COL, TUI_BKCOL, gfx_owl_02, FALSE);
 
-        score_x = 69;
+        score_x = 70;
         score_y = 11;        
         update_score(1);
         
@@ -433,7 +433,7 @@ void draw_tetris() {
         
         tui_draw_box(62, 1, TUI_COL, TUI_BKCOL, gfx_bird_03, FALSE);
 
-        score_x = 65;
+        score_x = 66;
         score_y = 10;        
         update_score(1);
         
@@ -600,7 +600,6 @@ int process_user_input() {
                                 }
                                 break;
                         case 'h':
-                                if (j3 != NULL) j3->run(PAUSE);
                                 if (j4 != NULL) j4->run(PAUSE);
                                 switch (tetris.game) {
                                         case ADDTRIS:
@@ -619,7 +618,6 @@ int process_user_input() {
                                                         LIGHTCYAN, TUI_BKCOL);
                                                 break; 
                                 }
-                                if (j3 != NULL) j3->run(UNPAUSE);
                                 if (j4 != NULL) j4->run(UNPAUSE);
                                 break;
                         case 'p':
@@ -1291,7 +1289,7 @@ long animate_scr_xte(enum W_ACTION a) {
                 step = 0;
                 paused = 0;
                 
-                x2 = 25;
+                x2 = 26;
                 y2 = 10;
                 d2 = 0;
                 
@@ -1314,9 +1312,9 @@ long animate_scr_xte(enum W_ACTION a) {
                         case 0:
                                 switch (rand() % 10) {
                                         case 1: 
-                                                if (x2 == 25) {
+                                                if (x2 == 26) {
                                                         step = 1;
-                                                        x2 = 25;
+                                                        x2 = 26;
                                                         y2 = 8;
                                                         d2 = -1;
                                                         ps2 = gfx_bee_04;
@@ -1328,12 +1326,12 @@ long animate_scr_xte(enum W_ACTION a) {
                                 
                                 /* bee 2 */
                                 switch (x2) {
-                                        case 25:
+                                        case 26:
                                                 y2 = 10;
                                                 d2 = -1;
                                                 ps2 = gfx_bee_02;
                                                 break;
-                                        case 14:
+                                        case 15:
                                                 y2 = 10;
                                                 d2 = 1;
                                                 ps2 = gfx_bee_01;
@@ -1367,7 +1365,7 @@ long animate_scr_xte(enum W_ACTION a) {
                                                 tui_draw_box(2, 16, TUI_COL, TUI_BKCOL, gfx_plant_03, FALSE);
                                                 update_score(2); /* redraw score */
                                                 tui_flush();
-                                                x2 = 25;
+                                                x2 = 26;
                                                 y2 = 10;
                                                 d2 = -1;
                                                 ps2 = gfx_bee_02;
@@ -1392,7 +1390,7 @@ int cmp_score(const void *a, const void *b) {
 void show_score(int my_score) {
         int i;
         char *filename;
-        char report[300];
+        char report[400];
         char fnbuff[13];
         FILE *f;
         
@@ -1405,7 +1403,7 @@ void show_score(int my_score) {
                        filename = fn_tetris;
                         break;
                 case XTRIS:
-                        sprintf(fnbuff, fn_xtris, tetris.brick.shape_size, (tetris.grid_size_x == 10) ? "s" : "s");
+                        sprintf(fnbuff, fn_xtris, tetris.brick.shape_size, (tetris.grid_size_x == 10) ? "s" : "d");
                         filename = fnbuff;
                         break; 
         }
@@ -1432,12 +1430,13 @@ void show_score(int my_score) {
         qsort(score_table, SC_TABLE_LEN, sizeof(T_SCORE), cmp_score);
         
         /* show hall of fame */
-        sprintf(report, "\n\x01\x0f Hall Of Fame\n\n"
-                        "\x01\x0f 1.\x01\x0e %-10s ... %4d \n"
-                        "\x01\x0f 2.\x01\x0d %-10s ... %4d \n"
-                        "\x01\x0f 3.\x01\x0c %-10s ... %4d \n"
-                        "\x01\x0f 4.\x01\x0b %-10s ... %4d \n"
-                        "\x01\x0f 5.\x01\x0a %-10s ... %4d \n", 
+        sprintf(report, "\n\x01\x0f - - - = = = Hall Of Fame = = = - - - \n\n"
+                        "\x01\x0f 1.\x01\x0e %-10s . . . . . . . . . %4d \n"
+                        "\x01\x0f 2.\x01\x0d %-10s . . . . . . . . . %4d \n"
+                        "\x01\x0f 3.\x01\x0c %-10s . . . . . . . . . %4d \n"
+                        "\x01\x0f 4.\x01\x0b %-10s . . . . . . . . . %4d \n"
+                        "\x01\x0f 5.\x01\x0a %-10s . . . . . . . . . %4d \n"
+                        "\n\x01\x0f - - - = = = Best Of Best = = = - - - \n", 
                         score_table[0].name, score_table[0].score,
                         score_table[1].name, score_table[1].score,
                         score_table[2].name, score_table[2].score,
@@ -1451,6 +1450,9 @@ void show_score(int my_score) {
         if (f != NULL) {
                 fwrite(score_table, sizeof(T_SCORE), SC_TABLE_LEN, f);
                 fclose(f);
+        } else {
+                perror(filename);
+                exit(-1);
         } 
 }
 
