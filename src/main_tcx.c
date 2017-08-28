@@ -1414,7 +1414,7 @@ void show_score(int my_score) {
         }
         
         /* load from file */
-        f = fopen(filename, "r");
+        f = fopen(filename, "rb");
         if (f != NULL) {
                 fread(score_table, sizeof(T_SCORE), SC_TABLE_LEN, f);
                 fclose(f);
@@ -1452,7 +1452,7 @@ void show_score(int my_score) {
         tui_message(report, LIGHTCYAN, TUI_BKCOL);
         
         /* write to file file */
-        f = fopen(filename, "w");
+        f = fopen(filename, "wb");
         if (f != NULL) {
                 fwrite(score_table, sizeof(T_SCORE), SC_TABLE_LEN, f);
                 fclose(f);
