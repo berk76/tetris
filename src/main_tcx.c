@@ -330,6 +330,8 @@ void draw_goodbye() {
         tui_draw_box(4, 11, TUI_COL, TUI_BKCOL, gfx_spray_01, FALSE);
         tui_draw_box(13, 9, TUI_COL, TUI_BKCOL, gfx_spray_02, FALSE);
         tui_draw_box(1, 21, LIGHTGRAY, TUI_BKCOL, "jgs", FALSE);
+
+        tui_draw_box(71, 24, DARKGRAY, TUI_BKCOL, "ver 1.0.1", FALSE);
         
         tui_message("\n\x01\x0fGood Bye\n", LIGHTCYAN, TUI_BKCOL);
 }
