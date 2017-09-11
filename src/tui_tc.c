@@ -27,8 +27,8 @@ static void calc_box_size(int *size_x, int *size_y, char *content);
 static void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border);
 static void del_box(int x, int y, int size_x, int size_y);
 static int tui_wait_for_key(char *s);
-static void tui_wait_for_any_key();
-static int get_attribute();
+static void tui_wait_for_any_key(void);
+static int get_attribute(void);
 
 
 /* External functions */
@@ -95,7 +95,7 @@ void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line) {
 }
 
 
-void tui_flush() {
+void tui_flush(void) {
 	gotoxy(1,25);
 }
 
@@ -393,7 +393,7 @@ int tui_wait_for_key(char *s) {
 }
 
 
-void tui_wait_for_any_key() {
+void tui_wait_for_any_key(void) {
         while (kbhit()) {
                 getch();
         }
@@ -405,7 +405,7 @@ void tui_wait_for_any_key() {
 }
 
 
-int get_attribute() {
+int get_attribute(void) {
         struct text_info i;
         
         gettextinfo(&i);

@@ -73,12 +73,12 @@ static int score_y;
 
 
 static int draw_mainscreen(TETRIS_T *t);
-static void draw_goodbye();
-static void draw_addtris();
-static void draw_tetris();
-static void draw_xtris();
+static void draw_goodbye(void);
+static void draw_addtris(void);
+static void draw_tetris(void);
+static void draw_xtris(void);
 static int update_score(int reset);
-static int process_user_input();
+static int process_user_input(void);
 /* Jobs */
 static long draw_floating_text(enum W_ACTION a);
 static long animate_scr_main(enum W_ACTION a);
@@ -295,7 +295,7 @@ int draw_mainscreen(TETRIS_T *t) {
 }
 
 
-void draw_goodbye() {
+void draw_goodbye(void) {
         tui_cls_win(mainw, FALSE);
         tui_draw_box(5, 3, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
         tui_draw_box(5, 7, BROWN, TUI_BKCOL, "mrf", FALSE);
@@ -335,7 +335,7 @@ void draw_goodbye() {
 }
 
 
-void draw_addtris() {
+void draw_addtris(void) {
         int x, y;
 
         tui_cls_win(mainw, FALSE);
@@ -388,7 +388,7 @@ void draw_addtris() {
 }
 
 
-void draw_tetris() {
+void draw_tetris(void) {
         int i, x, y;
 
         tui_cls_win(mainw, FALSE);
@@ -453,7 +453,7 @@ void draw_tetris() {
 }
 
 
-void draw_xtris() {
+void draw_xtris(void) {
         int x, y;
 
         tui_cls_win(mainw, FALSE);
@@ -573,7 +573,7 @@ int update_score(int reset) {
 }
 
 
-int process_user_input() {
+int process_user_input(void) {
         int c, result;
         G_BOOL_T r;
 
@@ -671,7 +671,7 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 }
 
 
-void m_line_destroyed() {
+void m_line_destroyed(void) {
         w_wait(0);
 }
 
