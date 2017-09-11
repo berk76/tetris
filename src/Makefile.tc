@@ -19,8 +19,8 @@ MODEL=s
 CC=tcc
 LD=tcc
 AR=tlib
-CFLAGS=-O2 -G -Z -m$(MODEL) -IC:\TC\include -LC:\TC\lib
-LDFLAGS=-m$(MODEL) -IC:\TC\include -LC:\TC\lib -f
+CFLAGS=-O2 -G -Z -m$(MODEL)
+LDFLAGS=-m$(MODEL) -f
 
 
 all: ptakovin.exe
