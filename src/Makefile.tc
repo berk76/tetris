@@ -1,0 +1,48 @@
+#       Makefile.tc
+#       Turbo C 2.01
+#
+#       To use, do "make -fmakefile.tc"
+#       To compile in small model, set below: MODEL=s
+#       
+#       This file is part of Tetris game.
+#       https://bitbucket.org/berk76/tetris
+#
+#       Tetris is free software; you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation; either version 3 of the License, or
+#       (at your option) any later version. <http://www.gnu.org/licenses/>
+#
+#       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 11.9.2017
+
+
+MODEL=s
+CC=tcc
+LD=tcc
+AR=tlib
+CFLAGS=-O2 -G -Z -m$(MODEL) -IC:\TC\include -LC:\TC\lib
+LDFLAGS=-m$(MODEL) -IC:\TC\include -LC:\TC\lib -f
+
+
+all: ptakovin.exe
+
+.c.obj:
+	$(CC) -c $(CFLAGS) $*.c
+
+main_tcx.obj: main_tcx.c sound_tc.h tetris.h tui_tc.h wait_tc.h res_tc.h main.h
+
+shape.obj: shape.c shape.h
+
+sound_tc.obj: sound_tc.c sound_tc.h wait_tc.h 
+
+tetris.obj: tetris.c shape.h tetris.h main.h
+
+tui_tc.obj: tui_tc.c wait_tc.h tui_tc.h
+
+wait_tc.obj: wait_tc.c wait_tc.h
+
+ptakovin.exe: main_tcx.obj shape.obj sound_tc.obj tetris.obj tui_tc.obj wait_tc.obj  
+	$(LD) $(LDFLAGS) -eptakovin.exe main_tcx.obj shape.obj sound_tc.obj tetris.obj tui_tc.obj wait_tc.obj
+
+clean:
+	-del *.obj
+	-del *.exe 
