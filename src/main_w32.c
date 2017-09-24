@@ -2,7 +2,7 @@
 *       main_w32.c
 *       
 *       This file is part of Tetris game.
-*       https://bitbucket.org/berk76/tetris
+*       https://github.com/berk76/tetris
 *       
 *       Tetris is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                         SendMessage(hwnd, WM_CLOSE, 0, 0);
                                         break;
                                 case ID_ABOUT:
-                                        _stprintf(chText, "Tetris %s\nhttps://bitbucket.org/berk76/tetris\n(c) 2015 Jaroslav Beran", TETRIS_VERSION);
+                                        _stprintf(chText, "Tetris %s\nhttps://github.com/berk76/tetris\n(c) 2015 Jaroslav Beran", TETRIS_VERSION);
                                         MessageBox(hwnd, chText,
                                                 "About Tetris", MB_ICONINFORMATION);
                                         break;

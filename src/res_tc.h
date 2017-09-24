@@ -2,7 +2,7 @@
 *       res_tc.h
 *
 *       This file is part of Tetris game.
-*       https://bitbucket.org/berk76/tetris
+*       https://github.com/berk76/tetris
 *
 *       Tetris is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ static char *floating_text = "Ptakovina game was created in 2017 "
         "Tetris game. You can change some parameters by yourself and " 
         "create crazy challenge to manage. This software is developed and " 
         "published as open source under GNU/GPL version 3 license. All sources " 
-        "are available at bitbucket.org/berk76/tetris Enjoy the game! - berk -";
+        "are available at github.com/berk76/tetris Enjoy the game! - berk -";
         
         
 static char *addtris_help =
