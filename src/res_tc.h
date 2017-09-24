@@ -30,7 +30,7 @@ static char *floating_text = "Ptakovina game was created in 2017 "
         "Tetris game. You can change some parameters by yourself and " 
         "create crazy challenge to manage. This software is developed and " 
         "published as open source under GNU/GPL version 3 license. All sources " 
-        "are available at bitbucket.org/berk76/tetris Enjoy the game! - berk -";
+        "are available at github.com/berk76/tetris Enjoy the game! - berk -";
         
         
 static char *addtris_help =
