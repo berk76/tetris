@@ -1,30 +1,21 @@
-Tetris README
-=============
-      
-How to build
-------------
+# Tetris
 
-* Windows (MinGw)  
-  a) download and install MinGw  
-     http://www.mingw.org/  
-  b) run  
-     make -f Makefile.w32  
-     
-* UNIX / Linux (Console)  
-  a) run  
-     make -f Makefile.con  
+## Supported platforms
 
-* DOS (Turbo C 2.01)  
-  a) download and install Turbo C:  
-     http://edn.embarcadero.com/article/20841  
-  b) download and extract Tetris sources into tetris directory  
-  c) copy *.BGI drivers from Turbo C directory to tetris sources directory  
-  d) run Turbo C  
-  e) go to Project->Project name and choose TETRIS.PRJ or PTAKOVIN.PRJ  
-  f) go to Compile->Make EXE file  
+### MS Windows
+  1. download and install MinGw (http://www.mingw.org/)
+  1. run `make -f Makefile.w32`
 
-* ZX Spectrum (Z88DK)  
-  a) download and install Z88DK  
-     http://www.z88dk.org  
-  b) run  
-     make -f Makefile.zx  
+### UNIX / Linux Console  
+  1. run `make -f Makefile.con`
+
+### DOS (Turbo C 2.01)
+  1. download and install Turbo C from http://edn.embarcadero.com/article/20841
+  1. download and extract Tetris sources into tetris directory
+  1. go to tetris/src
+  1. run `make -fMakefile.tc`
+
+### ZX Spectrum
+  1. download and install Z88DK from http://www.z88dk.org
+  1. run `make -f Makefile.zx`
+
