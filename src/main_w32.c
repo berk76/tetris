@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <assert.h>
 #include "tetris.h"
 #include "main.h"
 #include "resource.h"
@@ -198,7 +199,8 @@ BOOL DeleteApp() {
 
 
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-        TCHAR chText[100];
+        #define textlen 100
+        TCHAR chText[textlen];
         int ret;
         
         switch (uMsg) {
@@ -253,6 +255,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                         break;
                                 case ID_ABOUT:
                                         _stprintf(chText, "Tetris %s\nhttps://github.com/berk76/tetris\n(c) 2015 Jaroslav Beran", TETRIS_VERSION);
+                                        assert(strlen(chText) < textlen);
                                         MessageBox(hwnd, chText,
                                                 "About Tetris", MB_ICONINFORMATION);
                                         break;
