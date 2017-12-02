@@ -17,15 +17,17 @@ CFLAGS = -O2 -Wall -c -o $@
 
 all: Tetris
 
-Tetris: src/main_con.o src/tetris.o src/shape.o
-	$(CC) -Wall -o $@ src/main_con.o src/tetris.o src/shape.o
+Tetris: src/main_con.o src/tetris.o src/shape.o src/tui_con.o
+	$(CC) -Wall -o $@ src/main_con.o src/tetris.o src/shape.o src/tui_con.o
 
 
-src/main_con.o: src/main_con.c src/main.h src/tetris.h
+src/main_con.o: src/main_con.c src/main.h src/tetris.h src/tui_con.h
 
-src/tetris.o: src/tetris.h src/main.h src/shape.h
+src/tetris.o: src/tetris.c src/tetris.h src/main.h src/shape.h
 
-src/shape.o: src/shape.h
+src/shape.o: src/shape.c src/shape.h
+
+src/tui_con.o: src/tui_con.c src/tui_con.h
 
 clean:
 	rm -f src/*.o *.exe src/*.res Tetris 

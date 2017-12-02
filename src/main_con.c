@@ -20,6 +20,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include "tetris.h"
+#include "tui_con.h"
 #include "main.h"
 
 
@@ -34,6 +35,11 @@ static int MESH_BK_COLOR = 7;
 static TETRIS_T tetris;
 static useconds_t _delay;
 static int color_vec[] = {44,42,46,41,45,43,47,40,47};
+
+
+#define TUI_COL LIGHTGRAY
+#define TUI_BKCOL BLACK
+static WINDOW_T *mainw = NULL;
                           
 
 static void g_draw_mesh(int grid_size);
@@ -47,19 +53,16 @@ static int gui_confirm(char *msg);
 static int gui_option(char *msg, char *options);
 static int gui_getk();
 static void gui_nonblock(int state);
-static void gui_gotoxy(int x, int y);
-static void gui_flush();
-static void gui_cls();
 static void gui_cleanup();
 
 
 int main() {
-	int c, seg, wide, ret;
+        int c, seg, wide, ret;
         GAME_T game;
 
-	gui_nonblock(NB_ENABLE);
+        gui_nonblock(NB_ENABLE);
         atexit(gui_cleanup);
-	gui_cls();
+        mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL));
 
 	do {
@@ -98,11 +101,11 @@ int main() {
                         for (i = 0; i < 5; i++) {
 		              process_user_input();
 		              usleep(_delay);
-                              gui_flush();
+                              tui_flush();
                         }
                         ret = t_go(&tetris);
                         g_update_score();
-                        gui_flush();
+                        tui_flush();
                 } while (ret != -1);
                 
                 t_delete_game(&tetris);
@@ -118,51 +121,51 @@ int main() {
 void g_draw_mesh(int grid_size) {
         int i;
 
-	gui_cls();
+	tui_cls_win(mainw, TRUE);
 	tetris.element_size = grid_size;
         tetris.origin_x = 30;
         tetris.origin_y = 1;
 
-	gui_gotoxy(1,1);
+	tui_gotoxy(1,1);
 	printf("Tetris %s", TETRIS_VERSION);
         
 	printf("%c[%um", 27, 33);
 	for (i = 0; i < tetris.element_size * tetris.grid_size_y; i++) {
-		gui_gotoxy(tetris.origin_x - 1, i + 1);
+		tui_gotoxy(tetris.origin_x - 1, i + 1);
 		printf("*");
-		gui_gotoxy(tetris.origin_x + tetris.element_size * 2 * tetris.grid_size_x, i + 1);
+		tui_gotoxy(tetris.origin_x + tetris.element_size * 2 * tetris.grid_size_x, i + 1);
 		printf("*");
 	}
 
 	for (i = 0; i < tetris.element_size * 2 * tetris.grid_size_x; i++) {
-		gui_gotoxy( tetris.origin_x + i, tetris.element_size * tetris.grid_size_y + 1);
+		tui_gotoxy( tetris.origin_x + i, tetris.element_size * tetris.grid_size_y + 1);
 		printf("*");
 	}
 	printf("%c[%um", 27, 37);
         
 	g_print_controls();
 	g_update_score();
-        gui_flush();
+        tui_flush();
 }
 
 
 void g_print_controls() {
 
-	gui_gotoxy(1,5);
+	tui_gotoxy(1,5);
 	printf("Controls:");
 
-	gui_gotoxy(1,7);
+	tui_gotoxy(1,7);
 	printf("Left   ... 7");
-	gui_gotoxy(1,8);
+	tui_gotoxy(1,8);
 	printf("Right  ... 9");
-	gui_gotoxy(1,9);
+	tui_gotoxy(1,9);
 	printf("Rotate ... 8");
-	gui_gotoxy(1,10);
+	tui_gotoxy(1,10);
 	printf("Drop   ... 4");
 
-	gui_gotoxy(1,12);
+	tui_gotoxy(1,12);
 	printf("Pause  ... P");
-	gui_gotoxy(1,13);
+	tui_gotoxy(1,13);
 	printf("Quit   ... Q");
 }
 
@@ -174,7 +177,7 @@ void g_update_score() {
                 return;
                 
         last_score = tetris.score;
-	gui_gotoxy(1,3);
+	tui_gotoxy(1,3);
 	printf("Score: %4d", tetris.score);
 }
 
@@ -212,7 +215,7 @@ void process_user_input() {
 void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         x = tetris->origin_x + x * tetris->element_size * 2;
 	y = tetris->origin_y + y * tetris->element_size; 
-	gui_gotoxy(x, y);
+	tui_gotoxy(x, y);
 	if (tetris->game == TETRIS) {
 		printf("%c[%um", 27, color_vec[color]);
         	printf("OO");
@@ -226,7 +229,7 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
 void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         x = tetris->origin_x + x * tetris->element_size * 2;
 	y = tetris->origin_y + y * tetris->element_size;
-	gui_gotoxy(x,y);
+	tui_gotoxy(x,y);
         printf("  ");
 }
 
@@ -273,16 +276,16 @@ int gui_option(char *msg, char *options) {
 
 
 void gui_draw_message(char *msg) {
-	gui_gotoxy(1,22);
+	tui_gotoxy(1,22);
         printf("%s", msg);
-        gui_flush();
+        tui_flush();
 }
 
 
 void gui_delete_message() {
-	gui_gotoxy(1,22);
+	tui_gotoxy(1,22);
 	printf("                                                  ");
-        gui_flush();
+        tui_flush();
 }
 
 
@@ -359,24 +362,8 @@ void gui_nonblock(int state) {
 }
 
 
-void gui_gotoxy(int x, int y) {
-	printf("%c[%u;%uH",27,y,x);
-}
-
-
-void gui_flush() {
-	gui_gotoxy(1,22);
-        printf("\n");
-}
-
-
-void gui_cls() {
-        printf("%c[m",27); //set default text attributes
-	printf("%c[2J",27); // erases the screen with the background colour and moves the cursor to home.
-}
-
-
 void gui_cleanup() {
         printf("%c[m",27); //set default text attributes
+        printf("%c[2J",27); // erases the screen with the background colour and moves the cursor to home.
         gui_nonblock(NB_DISABLE);
 }
