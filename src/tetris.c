@@ -9,7 +9,7 @@
 *       the Free Software Foundation; either version 3 of the License, or
 *       (at your option) any later version. <http://www.gnu.org/licenses/>
 *       
-*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 28.6.2014        
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 28.6.2014
 */
 
 

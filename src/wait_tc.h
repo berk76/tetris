@@ -30,7 +30,7 @@ struct JOB {
         long       (*run)(enum W_ACTION);
         long       period;
         clock_t    endwait;
-        int        priority; /* priority: <0 low, =0 normal, >0 high */    
+        int        priority; /* priority: <0 low, =0 normal, >0 high */
         JOB_T      *prev;
         JOB_T      *next;
 };
