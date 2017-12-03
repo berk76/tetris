@@ -17,18 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <termios.h>
 #include <unistd.h>
 #include "tetris.h"
 #include "tui_con.h"
 #include "main.h"
-
-
-#define G_FALSE 0
-#define G_TRUE  1
-
-#define NB_ENABLE 1
-#define NB_DISABLE 0
 
 
 static int MESH_BK_COLOR = 7;
@@ -47,26 +39,18 @@ static void g_print_controls();
 static void g_update_score();
 static void process_user_input();
 
-/* gui functions */
-static void gui_message(char *msg);
-static int gui_confirm(char *msg);
-static int gui_option(char *msg, char *options);
-static int gui_getk();
-static void gui_nonblock(int state);
-static void gui_cleanup();
-
 
 int main() {
         int c, seg, wide, ret;
         GAME_T game;
 
-        gui_nonblock(NB_ENABLE);
-        atexit(gui_cleanup);
+        tui_init();
+        atexit(tui_cleanup);
         mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL));
 
         do {
-                c = gui_option("(A)ddtrix or (T)etris?", "tTaA");
+                c = tui_option("(A)ddtrix or (T)etris?", "tTaA", TUI_COL, TUI_BKCOL);
                 if (c == 'a' || c == 'A') {
                         game = ADDTRIS;
                         seg = 1;
@@ -74,14 +58,14 @@ int main() {
                         _delay = 100000;
                 } else {
                         game = TETRIS;
-                        c = gui_option("(S)tandard tetris or (M)odification?", "sSmM");
+                        c = tui_option("(S)tandard tetris or (M)odification?", "sSmM", TUI_COL, TUI_BKCOL);
                         if (c == 's' || c == 'S') {
                                 seg = 4;
                                 wide = 10;
                         } else {
-                                c = gui_option("Brick size? (1..9)", "123456789");
+                                c = tui_option("Brick size? (1..9)", "123456789", TUI_COL, TUI_BKCOL);
                                 seg = c - '0';
-                                c = gui_option("(S)tandard grid or (D)ouble wide?", "sSdD");
+                                c = tui_option("(S)tandard grid or (D)ouble wide?", "sSdD", TUI_COL, TUI_BKCOL);
                                 if (c == 's' || c == 'S') {
                                         wide = 10;
                                 } else {
@@ -94,7 +78,7 @@ int main() {
                 t_create_game(&tetris, game, wide, 20, seg);
                 
                 g_draw_mesh(1);
-                gui_message("Press any key to start ...");
+                tui_message("Press any key to start ...", TUI_COL, TUI_BKCOL);
 
                 do {
                         int i;
@@ -109,11 +93,11 @@ int main() {
                 } while (ret != -1);
 
                 t_delete_game(&tetris);
-                gui_message("GAME OVER");
-                c = gui_option("(N)ew Game or (Q)uit", "nNqQ");
+                tui_message("GAME OVER", TUI_COL, TUI_BKCOL);
+                c = tui_option("(N)ew Game or (Q)uit", "nNqQ", TUI_COL, TUI_BKCOL);
         } while ((c == 'n') || (c == 'N'));
         
-        gui_nonblock(NB_DISABLE);
+
         return 0;
 }
 
@@ -185,7 +169,7 @@ void g_update_score() {
 void process_user_input() {
         int c;
 
-        while ((c = gui_getk()) != 0) {
+        while ((c = tui_getk()) != 0) {
 
                 switch (c) {
                         case '7':
@@ -202,10 +186,10 @@ void process_user_input() {
                                         ;
                                 break;
                         case 'p':
-                                gui_message("Paused");
+                                tui_message("Paused", TUI_COL, TUI_BKCOL);
                                 break;
                         case 'q':
-                                if (gui_confirm("Do you want to quit game? (Y/N)") == G_TRUE)
+                                if (tui_confirm("Do you want to quit game? (Y/N)", TUI_COL, TUI_BKCOL) == TRUE)
                                 exit(0);
                 }
         }
@@ -237,133 +221,3 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
 void m_line_destroyed() {
 }
 
-/*** GUI ***/
-
-static void gui_draw_message(char *msg);
-static void gui_delete_message();
-static int gui_wait_for_key(char *s);
-static void gui_wait_for_any_key();
-static int gui_kbhit();
-
-
-void gui_message(char *msg) {
-        gui_draw_message(msg);
-        gui_wait_for_any_key();
-        gui_delete_message();
-}
-
-
-int gui_confirm(char *msg) {
-        int c;
-
-        gui_draw_message(msg);
-        c = gui_wait_for_key("yYnN");
-        gui_delete_message();
-
-        return ((c == 'y') || (c == 'Y')) ? G_TRUE : G_FALSE;
-}
-
-
-int gui_option(char *msg, char *options) {
-        int c;
-
-        gui_draw_message(msg);
-        c = gui_wait_for_key(options);
-        gui_delete_message();
-
-        return c;
-}
-
-
-void gui_draw_message(char *msg) {
-        tui_gotoxy(1,22);
-        printf("%s", msg);
-        tui_flush();
-}
-
-
-void gui_delete_message() {
-        tui_gotoxy(1,22);
-        printf("                                                  ");
-        tui_flush();
-}
-
-
-int gui_wait_for_key(char *s) {
-        int c;
-
-        while (1) {
-                while ((c = gui_getk()) != 0) {
-                        if (strchr(s, c) != NULL)
-                                return c;
-                }
-                usleep(10000);
-        }
-}
-
-
-void gui_wait_for_any_key() {
-        while (gui_getk()) {
-        }
-
-        while (!gui_getk()) {
-                usleep(10000);
-        }
-}
-
-
-int gui_getk() {
-        int result;
-
-        result = 0;
-
-        if (gui_kbhit()) {
-                result = getchar();
-        }
-
-        return result;
-}
-
-
-int gui_kbhit() {
-        struct timeval tv;
-        fd_set fds;
-
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        FD_ZERO(&fds);
-        FD_SET(STDIN_FILENO, &fds); //STDIN_FILENO is 0
-        select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
-        return FD_ISSET(STDIN_FILENO, &fds);
-}
-
-
-void gui_nonblock(int state) {
-        struct termios ttystate;
-
-        //get the terminal state
-        tcgetattr(STDIN_FILENO, &ttystate);
-
-        if (state==NB_ENABLE) {
-                //turn off canonical mode
-                ttystate.c_lflag &= ~ICANON;
-                ttystate.c_lflag &= ~ECHO;
-                //minimum of number input read.
-                ttystate.c_cc[VTIME] = 0;
-                ttystate.c_cc[VMIN] = 0;
-        }
-        else if (state==NB_DISABLE) {
-                //turn on canonical mode
-                ttystate.c_lflag |= ICANON;
-                ttystate.c_lflag |= ECHO;
-        }
-        //set the terminal attributes.
-        tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
-}
-
-
-void gui_cleanup() {
-        printf("%c[m",27); //set default text attributes
-        printf("%c[2J",27); // erases the screen with the background colour and moves the cursor to home.
-        gui_nonblock(NB_DISABLE);
-}

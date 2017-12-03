@@ -61,6 +61,9 @@ typedef struct {
 } WINDOW_T;
 
 
+extern void tui_init();
+extern void tui_cleanup();
+
 extern WINDOW_T *tui_create_win(int x, int y, int size_x, int size_y, int color, int bkcolor, char bkchar);
 extern void tui_delete_win(WINDOW_T *w);
 extern void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line);
@@ -76,6 +79,7 @@ extern int tui_option(char *msg, char *options, int color, int bkcolor);
 extern void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor);
 
 extern void tui_set_attr(int blink, int color, int bkcolor);
+extern int tui_getk();
 
 #endif
 
