@@ -19,6 +19,7 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include "wait_con.h"
 #include "tui_con.h"
 
 
@@ -252,7 +253,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
                                         }
                         }
                 }
-                //w_wait(2);
+                w_wait(2);
         } while (c != 13);
         tui_delete_win(w);
 }

@@ -17,6 +17,8 @@
 #define _RES_TC_
 
 
+#ifdef _WAIT_TC_
+
 static char *floating_text = "Ptakovina game was created in 2017 "
         "as part of developers competition published at www.high-voltage.cz. "
         "I would like thank to Sledge for making such challenges and for " 
@@ -31,7 +33,7 @@ static char *floating_text = "Ptakovina game was created in 2017 "
         "create crazy challenge to manage. This software is developed and " 
         "published as open source under GNU/GPL version 3 license. All sources " 
         "are available at github.com/berk76/tetris Enjoy the game! - berk -";
-        
+#endif        
         
 static char *addtris_help =
         "\x01\x0f\n"
@@ -318,6 +320,8 @@ char *gfx_spray_02 = "       . '  .\n" \
                      "     . (' `.  )\n" \
                      "        ` .  `";
 
+#ifdef _SOUND_TC_
+
 /*
 *       Sounds
 */
@@ -498,6 +502,7 @@ static SND_PLAY_NOTE s6[] = {{D4,N8},{A4,N8},{A4,N8},{B4,N8},
                              {G4,N4},{REST,N4},
                              {REPEAT,N1}
                 };
-                
+
+#endif                
 #endif
-
+

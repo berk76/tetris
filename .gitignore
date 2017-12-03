@@ -4,6 +4,7 @@
 *.DAT
 *.o
 *.exe
+*.dat
 *.res
 Tetris
 

@@ -101,6 +101,7 @@ int main() {
         j4 = NULL;
         play_sound = 1;
 
+        c = 0;
         do {
                 ret = draw_mainscreen(&tetris);
                 
@@ -727,7 +728,7 @@ long draw_floating_text(enum W_ACTION a) {
 
 long animate_scr_main(enum W_ACTION a) {
         static int step = -1;
-        static paused;
+        static int paused;
 
         if ((a == RESET) || (step == -1)) {
                 step = 0;
@@ -820,7 +821,7 @@ long animate_scr_main(enum W_ACTION a) {
 
 long animate_scr_add(enum W_ACTION a) {
         static int step = -1;
-        static paused;
+        static int paused;
 
         if ((a == RESET) || (step == -1)) {
                 step = 0;
@@ -1096,7 +1097,7 @@ long animate_scr_add(enum W_ACTION a) {
 
 long animate_scr_tet(enum W_ACTION a) {
         static int step = -1;
-        static paused;
+        static int paused;
         
 
         if ((a == RESET) || (step == -1)) {
@@ -1283,7 +1284,7 @@ long animate_scr_tet(enum W_ACTION a) {
 
 long animate_scr_xte(enum W_ACTION a) {
         static int step = -1;
-        static paused = 0;
+        static int paused = 0;
         
         static int x2;
         static int y2;
