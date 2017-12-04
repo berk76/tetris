@@ -580,8 +580,8 @@ void m_put_mesh_pixel(TETRIS_T *tetris, int x, int y, int color) {
         y = tetris->origin_y + y * tetris->element_size;
         tui_gotoxy(x, y);
         if ((tetris->game == TETRIS) || (tetris->game == XTRIS)) {
-                tui_set_attr(0, color_vec[color], color_vec[color]);
-                puts("  ");
+                tui_set_attr(0, TUI_COL, color_vec[color]);
+                puts("OO");
         } else {
                 tui_set_attr(0, WHITE, TUI_BKCOL);
                 printf("%d ", tetris->brick.value);
@@ -594,6 +594,7 @@ void m_empty_mesh_pixel(TETRIS_T *tetris, int x, int y) {
         x = tetris->origin_x + x * tetris->element_size * 2;
         y = tetris->origin_y + y * tetris->element_size;
         tui_gotoxy(x,y);
+        tui_set_attr(0, TUI_COL, TUI_BKCOL);
         printf("  ");
         tui_flush();
 }

@@ -22,8 +22,8 @@
 static JOB_T *job_q = NULL;
 
 
-void w_wait(long tck) {
-        long ret, endwait;
+void w_wait(clock_t tck) {
+        clock_t ret, endwait;
         JOB_T *j, *pq;
 
         tck = w_tck_to_clocks(tck);
@@ -68,6 +68,7 @@ void w_wait(long tck) {
                                         j->endwait = j->period + clock();
                                         break;
                                 default:
+                                        ret = w_tck_to_clocks(ret);
                                         j->endwait = ret + clock();
                         }
 
@@ -79,10 +80,10 @@ void w_wait(long tck) {
 }
 
 
-JOB_T * w_register_job(long tck, int priority, long (*run)(enum W_ACTION)) {
+JOB_T * w_register_job(clock_t tck, int priority, long (*run)(enum W_ACTION)) {
         JOB_T *j;
 
-        tck = w_tck_to_clocks(tck);        
+        tck = w_tck_to_clocks(tck);
 
         j = (JOB_T *) malloc(sizeof(JOB_T));
         assert(j != NULL);
