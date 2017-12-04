@@ -223,13 +223,13 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         *p = '\0';
                 
         do {
-                while ((c = tui_getk()) != 0) {
+                while ((c != '\n') && (c = tui_getk()) != 0) {
 
                         switch (c) {
-                                case 13:
+                                case '\n':
                                         /* enter */
                                         break;
-                                case 8:
+                                case 127:
                                         /* backspace */
                                         if (p > buff) {
                                                 p--;
@@ -254,7 +254,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
                         }
                 }
                 w_wait(2);
-        } while (c != 13);
+        } while (c != '\n');
         tui_delete_win(w);
 }
 
