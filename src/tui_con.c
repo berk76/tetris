@@ -223,7 +223,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         *p = '\0';
                 
         do {
-                while ((c != '\n') && (c = tui_getk()) != 0) {
+                while ((c != '\n') && ((c = tui_getk()) != 0)) {
 
                         switch (c) {
                                 case '\n':

@@ -200,7 +200,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         *p = '\0';
                 
         do {
-                while (kbhit()) {
+                while ((c != 13) && kbhit()) {
                         c = getch();
                         switch (c) {
                                 case 13:
