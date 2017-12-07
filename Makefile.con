@@ -13,12 +13,13 @@
 
 CC = cc
 CFLAGS = -O2 -Wall -c -o $@
+LDFLAGS=-lncurses
 
 
 all: Tetris
 
 Tetris: src/main_con.o src/tetris.o src/shape.o src/tui_con.o src/wait_con.o
-	$(CC) -Wall -o $@ src/main_con.o src/tetris.o src/shape.o src/tui_con.o src/wait_con.o
+	$(CC) -Wall -o $@ src/main_con.o src/tetris.o src/shape.o src/tui_con.o src/wait_con.o $(LDFLAGS)
 
 
 src/main_con.o: src/main_con.c src/main.h src/tetris.h src/tui_con.h src/wait_con.h

@@ -17,6 +17,9 @@
 #define _TUI_CON_
 
 
+#include <ncurses.h>
+
+
 #define ESC 27
 #define TUI_SCR_X_SIZE 80
 #define TUI_SCR_Y_SIZE 25
@@ -44,8 +47,8 @@ typedef enum {
 
 
 typedef enum {
-        FALSE,
-        TRUE
+        G_FALSE,
+        G_TRUE
 } G_BOOL_T;
 
 
@@ -68,7 +71,7 @@ extern WINDOW_T *tui_create_win(int x, int y, int size_x, int size_y, int color,
 extern void tui_delete_win(WINDOW_T *w);
 extern void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line);
 extern void tui_flush(void);
-#define tui_gotoxy(x, y) printf("%c[%u;%uH",27,(y),(x))
+#define tui_gotoxy(x, y) move((y-1),(x-1))
 
 extern void tui_draw_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border);
 extern void tui_del_box(int x, int y, int color, int bkcolor, char *msg, G_BOOL_T add_border);
@@ -79,7 +82,12 @@ extern int tui_option(char *msg, char *options, int color, int bkcolor);
 extern void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor);
 
 extern void tui_set_attr(int blink, int color, int bkcolor);
+#define textattr(color) tui_set_attr(0, (color), 0)
 extern int tui_getk();
+
+#define tui_printf printw
+#define tui_putchar addch
+#define tui_puts addstr
 
 #endif
 

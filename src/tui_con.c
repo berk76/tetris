@@ -23,21 +23,7 @@
 #include "tui_con.h"
 
 
-typedef enum {
-        NB_DISABLE = 0,
-        NB_ENABLE = 1
-} NBLOCK_T;
-
-
-typedef struct {
-        int FG_COLOR;
-        int BG_COLOR;
-} ATTR_T;
-
-
-static ATTR_T curr_attr;
-static const char FG_COLORS[][5] = {"30","34","32","36","31","35","33","37","1;30","1;34","1;32","1;36","1;31","1;35","1;33","1;37"};
-static const char BG_COLORS[][5] = {"40","44","42","46","41","45","43","47","100", "104", "102", "106", "101" ,"105" ,"103", "107"};
+static COLOR_T curr_attr = -1;
 
 
 static WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor);
@@ -47,23 +33,43 @@ static void del_box(int x, int y, int size_x, int size_y);
 static int tui_wait_for_key(char *s);
 static void tui_wait_for_any_key(void);
 static int get_attribute(void);
-static void textattr(int color);
 static int tui_kbhit();
-static void tui_nonblock(NBLOCK_T state);
 
 
 /* External functions */
 
 
 void tui_init() {
-        tui_nonblock(NB_ENABLE);
+        initscr();
+        keypad(stdscr, TRUE);
+        cbreak();
+        noecho();
+        nodelay(stdscr, TRUE);
+
+        start_color();
+        init_pair(0, COLOR_BLACK,   COLOR_BLACK);
+        init_pair(1, COLOR_BLUE,    COLOR_BLACK);
+        init_pair(2, COLOR_GREEN,   COLOR_BLACK);
+        init_pair(3, COLOR_CYAN,    COLOR_BLACK);
+        init_pair(4, COLOR_RED,     COLOR_BLACK);
+        init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+        init_pair(6, COLOR_YELLOW,  COLOR_BLACK);
+        init_pair(7, COLOR_WHITE,   COLOR_BLACK);
+
+        init_pair(8,  COLOR_BLACK,   COLOR_BLACK);
+        init_pair(9,  COLOR_BLUE,    COLOR_BLACK);
+        init_pair(10, COLOR_GREEN,   COLOR_BLACK);
+        init_pair(11, COLOR_CYAN,    COLOR_BLACK);
+        init_pair(12, COLOR_RED,     COLOR_BLACK);
+        init_pair(13, COLOR_MAGENTA, COLOR_BLACK);
+        init_pair(14, COLOR_YELLOW,  COLOR_BLACK);
+        init_pair(15, COLOR_WHITE,   COLOR_BLACK);
+
 }
 
 
 void tui_cleanup() {
-        printf("%c[m",27); //set default text attributes
-        printf("%c[2J",27); // erases the screen with the background colour and moves the cursor to home.
-        tui_nonblock(NB_DISABLE);
+        endwin();
 }
 
 
@@ -109,7 +115,7 @@ void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line) {
         for (a = 0; a < (w->size_y - c); a++) {
                 tui_gotoxy(w->x, w->y + a);
                 for (b = 0; b < w->size_x; b++) {
-                        putchar(w->bkchar);
+                        tui_putchar(w->bkchar);
                 }
         }
         tui_flush();
@@ -119,7 +125,7 @@ void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line) {
 
 void tui_flush(void) {
         tui_gotoxy(1,22);
-        printf("\n");
+        tui_printf("\n");
 }
 
 
@@ -229,14 +235,14 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
                                 case '\n':
                                         /* enter */
                                         break;
-                                case 127:
+                                case KEY_BACKSPACE:
                                         /* backspace */
                                         if (p > buff) {
                                                 p--;
                                                 *p = '\0';
                                                 tui_gotoxy(x + 2, y + 3);
                                                 tui_set_attr(0, WHITE, bkcolor);
-                                                printf("%s ", buff);
+                                                tui_printf("%s ", buff);
                                                 tui_flush();
                                         }
                                         break;
@@ -248,7 +254,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
                                                 *p = '\0';
                                                 tui_gotoxy(x + 2, y + 3);
                                                 tui_set_attr(0, WHITE, bkcolor);
-                                                printf("%s", buff);
+                                                tui_printf("%s", buff);
                                                 tui_flush();
                                         }
                         }
@@ -262,9 +268,12 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
 void tui_set_attr(int blink, int color, int bkcolor) {
         assert((color > -1) && (color < 16));
         assert((bkcolor > -1) && (bkcolor < 16));
-        curr_attr.FG_COLOR = color;
-        curr_attr.BG_COLOR = bkcolor;
-        printf("%c[%s;%sm", ESC, FG_COLORS[color], BG_COLORS[bkcolor]);
+
+        if (curr_attr != -1)
+                attroff(COLOR_PAIR(curr_attr));
+
+        attron(COLOR_PAIR(color));
+        curr_attr = color;
 }
 
 
@@ -274,7 +283,7 @@ int tui_getk() {
         result = 0;
 
         if (tui_kbhit()) {
-                result = getchar();
+                result = getch();
         }
 
         return result;
@@ -342,11 +351,11 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
         if (add_border == TRUE) {
                 orig_a = get_attribute();
                 tui_gotoxy(x, y);
-                putchar('+');
+                tui_putchar('+');
                 for (i = 0; i < (size_x - 2); i++) {
-                        putchar('-');
+                        tui_putchar('-');
                 }
-                putchar('+');
+                tui_putchar('+');
                 offx = 2;
                 offy = 1;
         } else {
@@ -361,7 +370,7 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
                 if (add_border == TRUE) {
                         curr_a = get_attribute();
                         textattr(orig_a); 
-                        printf("%c ", '|');
+                        tui_printf("%c ", '|');
                         textattr(curr_a);
                 }
                 len = size_x - 2*offx;
@@ -373,18 +382,18 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
                                 p++;
                                 continue;
                         }
-                        putchar(*p);
+                        tui_putchar(*p);
                         p++;
                         len--;
                 }
                 while (len != 0) {
-                        putchar(' ');
+                        tui_putchar(' ');
                         len--;
                 }
                 if (add_border == TRUE) {
                         curr_a = get_attribute();
                         textattr(orig_a);
-                        printf(" %c", '|');
+                        tui_printf(" %c", '|');
                         textattr(curr_a);
                 }
                 p++;
@@ -394,11 +403,11 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
         if (add_border == TRUE) {
                 textattr(orig_a);
                 tui_gotoxy(x, y + size_y - 1);
-                putchar('+');
+                tui_putchar('+');
                 for (i = 0; i < (size_x - 2); i++) {
-                        putchar('-');
+                        tui_putchar('-');
                 }
-                putchar('+');
+                tui_putchar('+');
         }
 
         tui_flush();
@@ -411,7 +420,7 @@ void del_box(int x, int y, int size_x, int size_y) {
         for(n = 0; n < size_y; n++) {
                 for (m = 0; m < size_x; m++) {
                         tui_gotoxy(x + m, y + n);
-                        putchar(' ');
+                        tui_putchar(' ');
                 }
         }
         
@@ -443,50 +452,18 @@ void tui_wait_for_any_key(void) {
 
 
 int get_attribute(void) {
-        return curr_attr.FG_COLOR;
-}
-
-
-void textattr(int color) {
-        assert((color > -1) && (color < 16));
-        curr_attr.FG_COLOR = color;
-        printf("%c[%sm", ESC, FG_COLORS[color]);
+        return curr_attr;
 }
 
 
 int tui_kbhit() {
-        struct timeval tv;
-        fd_set fds;
+        int ch = getch();
 
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        FD_ZERO(&fds);
-        FD_SET(STDIN_FILENO, &fds); //STDIN_FILENO is 0
-        select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
-        return FD_ISSET(STDIN_FILENO, &fds);
-}
-
-
-void tui_nonblock(NBLOCK_T state) {
-        struct termios ttystate;
-
-        //get the terminal state
-        tcgetattr(STDIN_FILENO, &ttystate);
-
-        if (state==NB_ENABLE) {
-                //turn off canonical mode
-                ttystate.c_lflag &= ~ICANON;
-                ttystate.c_lflag &= ~ECHO;
-                //minimum of number input read.
-                ttystate.c_cc[VTIME] = 0;
-                ttystate.c_cc[VMIN] = 0;
+        if (ch != ERR) {
+                ungetch(ch);
+                return 1;
         }
-        else if (state==NB_DISABLE) {
-                //turn on canonical mode
-                ttystate.c_lflag |= ICANON;
-                ttystate.c_lflag |= ECHO;
-        }
-        //set the terminal attributes.
-        tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+
+        return 0;
 }
 
