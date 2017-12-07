@@ -45,8 +45,11 @@ void tui_init() {
         cbreak();
         noecho();
         nodelay(stdscr, TRUE);
+        curs_set(0);
 
         start_color();
+
+        /* Foreground colors */
         init_pair(0, COLOR_BLACK,   COLOR_BLACK);
         init_pair(1, COLOR_BLUE,    COLOR_BLACK);
         init_pair(2, COLOR_GREEN,   COLOR_BLACK);
@@ -56,7 +59,7 @@ void tui_init() {
         init_pair(6, COLOR_YELLOW,  COLOR_BLACK);
         init_pair(7, COLOR_WHITE,   COLOR_BLACK);
 
-        init_pair(8,  COLOR_BLACK,   COLOR_BLACK);
+        init_pair(8,  COLOR_WHITE,   COLOR_BLACK);
         init_pair(9,  COLOR_BLUE,    COLOR_BLACK);
         init_pair(10, COLOR_GREEN,   COLOR_BLACK);
         init_pair(11, COLOR_CYAN,    COLOR_BLACK);
@@ -65,6 +68,25 @@ void tui_init() {
         init_pair(14, COLOR_YELLOW,  COLOR_BLACK);
         init_pair(15, COLOR_WHITE,   COLOR_BLACK);
 
+
+        /* Background colors */
+        init_pair(16, COLOR_BLACK, COLOR_BLACK);
+        init_pair(17, COLOR_BLACK, COLOR_BLUE);
+        init_pair(18, COLOR_BLACK, COLOR_GREEN);
+        init_pair(19, COLOR_BLACK, COLOR_CYAN);
+        init_pair(20, COLOR_BLACK, COLOR_RED);
+        init_pair(21, COLOR_BLACK, COLOR_MAGENTA);
+        init_pair(22, COLOR_BLACK, COLOR_YELLOW);
+        init_pair(23, COLOR_BLACK, COLOR_WHITE);
+
+        init_pair(24, COLOR_BLACK, COLOR_WHITE);
+        init_pair(25, COLOR_BLACK, COLOR_BLUE);
+        init_pair(26, COLOR_BLACK, COLOR_GREEN);
+        init_pair(27, COLOR_BLACK, COLOR_CYAN);
+        init_pair(28, COLOR_BLACK, COLOR_RED);
+        init_pair(29, COLOR_BLACK, COLOR_MAGENTA);
+        init_pair(30, COLOR_BLACK, COLOR_YELLOW);
+        init_pair(31, COLOR_BLACK, COLOR_WHITE);
 }
 
 
@@ -124,8 +146,7 @@ void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line) {
 
 
 void tui_flush(void) {
-        tui_gotoxy(1,22);
-        tui_printf("\n");
+        tui_gotoxy(1,25);
 }
 
 
@@ -266,8 +287,8 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
 
 
 void tui_set_attr(int blink, int color, int bkcolor) {
-        assert((color > -1) && (color < 16));
-        assert((bkcolor > -1) && (bkcolor < 16));
+        assert((color > -1) && (color < 32));
+        assert((bkcolor > -1) && (bkcolor < 32));
 
         if (curr_attr != -1)
                 attroff(COLOR_PAIR(curr_attr));
