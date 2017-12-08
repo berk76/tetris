@@ -58,7 +58,6 @@ static int color_vec[] = {LIGHTBLUE,
                           WHITE,
                           BLACK,
                           BLUE};
-static WINDOW_T *mainw = NULL;
         
 
 static JOB_T *j4;       /* animations */
@@ -94,7 +93,6 @@ int main() {
         tui_init();
         atexit(tui_cleanup);
 
-        mainw = tui_create_win(1, 1, TUI_SCR_X_SIZE, TUI_SCR_Y_SIZE, TUI_COL, TUI_BKCOL, ' ');
         srand(time(NULL));
         j4 = NULL;
 
@@ -107,7 +105,6 @@ int main() {
                         if (j4 != NULL)
                                 w_unregister_job(j4);
                         draw_goodbye();
-                        tui_delete_win(mainw);
                         return 0;
                 }
                          
@@ -174,7 +171,7 @@ int draw_mainscreen(TETRIS_T *t) {
         menu_only = 0;
         do {
                 if (menu_only == 0) {
-                        tui_cls_win(mainw, FALSE);
+                        tui_cls();
                         tui_draw_box(15, 1, TUI_COL, TUI_BKCOL, gfx_ptakovina, FALSE);
                         
                         tui_gotoxy(23,14);
@@ -254,7 +251,7 @@ int draw_mainscreen(TETRIS_T *t) {
 
 
 void draw_goodbye(void) {
-        tui_cls_win(mainw, FALSE);
+        tui_cls();
         tui_draw_box(5, 3, TUI_COL, TUI_BKCOL, gfx_bird_06, FALSE);
         tui_draw_box(5, 7, BROWN, TUI_BKCOL, "mrf", FALSE);
         
@@ -298,7 +295,7 @@ void draw_goodbye(void) {
 void draw_addtris(void) {
         int x, y;
 
-        tui_cls_win(mainw, FALSE);
+        tui_cls();
 	tetris.element_size = 1;
         tetris.origin_y = 3;
 
@@ -344,7 +341,7 @@ void draw_addtris(void) {
 void draw_tetris(void) {
         int i, x, y;
 
-        tui_cls_win(mainw, FALSE);
+        tui_cls();
 	tetris.element_size = 1;
         tetris.origin_y = 3;
         tetris.origin_x = 39;
@@ -402,7 +399,7 @@ void draw_tetris(void) {
 void draw_xtris(void) {
         int x, y;
 
-        tui_cls_win(mainw, FALSE);
+        tui_cls();
 	tetris.element_size = 1;
         tetris.origin_y = 3;
 

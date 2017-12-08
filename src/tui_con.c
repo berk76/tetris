@@ -26,9 +26,13 @@
 static COLOR_T curr_attr = -1;
 
 
+#define tui_gotoxy_w(w, x, y) wmove((w),(y-1),(x-1))
+#define textattrw(w, color) tui_set_attr_w((w), 0, (color), 0)
+static void tui_set_attr_w(WINDOW *w, int blink, int color, int bkcolor);
 static WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor);
 static void calc_box_size(int *size_x, int *size_y, char *content);
 static void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border);
+static void draw_box_w(WINDOW *w, int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border);
 static void del_box(int x, int y, int size_x, int size_y);
 static int tui_wait_for_key(char *s);
 static void tui_wait_for_any_key(void);
@@ -109,6 +113,10 @@ WINDOW_T *tui_create_win(int x, int y, int size_x, int size_y, int color, int bk
         w->bkcolor = bkcolor;
         w->bkchar = bkchar;
 
+        w->window = newwin(size_y, size_x, y, x);
+        box(w->window, 0 , 0);
+        wrefresh(w->window);
+
         tui_cls_win(w, TRUE);
 
         return w;
@@ -117,10 +125,20 @@ WINDOW_T *tui_create_win(int x, int y, int size_x, int size_y, int color, int bk
 
 void tui_delete_win(WINDOW_T *w) {
 
+        if (w->window != NULL) {
+                wborder(w->window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+                wrefresh(w->window);
+                delwin(w->window);
+                w->window = NULL;
+        }
+
         if (w != NULL) {
                 free((void *) w);
                 w = NULL;
         }
+
+        redrawwin(stdscr);
+        refresh();
 }
 
 
@@ -133,20 +151,21 @@ void tui_cls_win(WINDOW_T *w, G_BOOL_T incl_status_line) {
                 c = 0;
         }
 
-        tui_set_attr(0, w->color, w->bkcolor);
+        tui_set_attr_w(w->window, 0, w->color, w->bkcolor);
         for (a = 0; a < (w->size_y - c); a++) {
-                tui_gotoxy(w->x, w->y + a);
+                wmove(w->window, w->x, w->y + a);
                 for (b = 0; b < w->size_x; b++) {
-                        tui_putchar(w->bkchar);
+                        waddch(w->window, w->bkchar);
                 }
         }
+        wrefresh(w->window);
         tui_flush();
-
 }
 
 
 void tui_flush(void) {
         tui_gotoxy(1,25);
+        refresh();
 }
 
 
@@ -243,7 +262,9 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         y = (TUI_SCR_Y_SIZE - size_y) / 2;
         w = tui_create_win(x, y, size_x, size_y, color, bkcolor, ' ');
 
-        draw_box(x, y, size_x, size_y, s, TRUE);
+        x = 1;
+        y = 1;
+        draw_box_w(w->window, x, y, size_x, size_y, s, TRUE);
 
         /* read input */
         p = buff;
@@ -261,9 +282,10 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
                                         if (p > buff) {
                                                 p--;
                                                 *p = '\0';
-                                                tui_gotoxy(x + 2, y + 3);
-                                                tui_set_attr(0, WHITE, bkcolor);
-                                                tui_printf("%s ", buff);
+                                                tui_gotoxy_w(w->window, x + 2, y + 3);
+                                                tui_set_attr_w(w->window, 0, WHITE, bkcolor);
+                                                wprintw(w->window, "%s ", buff);
+                                                wrefresh(w->window);
                                                 tui_flush();
                                         }
                                         break;
@@ -273,9 +295,10 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
                                                 *p = c;
                                                 p++;
                                                 *p = '\0';
-                                                tui_gotoxy(x + 2, y + 3);
-                                                tui_set_attr(0, WHITE, bkcolor);
-                                                tui_printf("%s", buff);
+                                                tui_gotoxy_w(w->window, x + 2, y + 3);
+                                                tui_set_attr_w(w->window, 0, WHITE, bkcolor);
+                                                wprintw(w->window, "%s", buff);
+                                                wrefresh(w->window);
                                                 tui_flush();
                                         }
                         }
@@ -287,14 +310,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
 
 
 void tui_set_attr(int blink, int color, int bkcolor) {
-        assert((color > -1) && (color < 32));
-        assert((bkcolor > -1) && (bkcolor < 32));
-
-        if (curr_attr != -1)
-                attroff(COLOR_PAIR(curr_attr));
-
-        attron(COLOR_PAIR(color));
-        curr_attr = color;
+        tui_set_attr_w(stdscr, blink, color, bkcolor);
 }
 
 
@@ -313,6 +329,19 @@ int tui_getk() {
 
 /* Static functions */
 
+
+void tui_set_attr_w(WINDOW *w, int blink, int color, int bkcolor) {
+        assert((color > -1) && (color < 32));
+        assert((bkcolor > -1) && (bkcolor < 32));
+
+        //if (curr_attr != -1)
+        //        attroff(COLOR_PAIR(curr_attr));
+
+        wattron(w, COLOR_PAIR(color));
+        curr_attr = color;
+}
+
+
 WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         WINDOW_T *w;
         int x, y, size_x, size_y;
@@ -328,7 +357,7 @@ WINDOW_T *tui_draw_message(char *msg, int color, int bkcolor) {
         y = (TUI_SCR_Y_SIZE - size_y) / 2;
         w = tui_create_win(x, y, size_x, size_y, color, bkcolor, ' ');
 
-        draw_box(x, y, size_x, size_y, msg, TRUE);
+        draw_box_w(w->window, 1, 1, size_x, size_y, msg, TRUE);
         return w;
 }
 
@@ -364,6 +393,11 @@ void calc_box_size(int *size_x, int *size_y, char *content) {
 
 
 void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border) {
+        draw_box_w(stdscr, x, y, size_x, size_y, content, add_border);
+}
+
+
+void draw_box_w(WINDOW *w, int x, int y, int size_x, int size_y, char * content, G_BOOL_T add_border) {
         int i, len, offx, offy;
         int orig_a = 0, curr_a = 0;
         char *p;
@@ -371,12 +405,12 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
         /* 1st line */
         if (add_border == TRUE) {
                 orig_a = get_attribute();
-                tui_gotoxy(x, y);
-                tui_putchar('+');
+                tui_gotoxy_w(w, x, y);
+                waddch(w, '+');
                 for (i = 0; i < (size_x - 2); i++) {
-                        tui_putchar('-');
+                        waddch(w,'-');
                 }
-                tui_putchar('+');
+                waddch(w, '+');
                 offx = 2;
                 offy = 1;
         } else {
@@ -387,50 +421,51 @@ void draw_box(int x, int y, int size_x, int size_y, char * content, G_BOOL_T add
         /* n-th line */
         p = content;
         for (i = 0; i < (size_y - 2*offy); i++) {
-                tui_gotoxy(x, y + i + offy);
+                tui_gotoxy_w(w, x, y + i + offy);
                 if (add_border == TRUE) {
                         curr_a = get_attribute();
-                        textattr(orig_a); 
-                        tui_printf("%c ", '|');
-                        textattr(curr_a);
+                        textattrw(w, orig_a); 
+                        wprintw(w, "%c ", '|');
+                        textattrw(w, curr_a);
                 }
                 len = size_x - 2*offx;
                  
 		while ((*p != '\n') && (*p != '\0')) {
                         if (*p == TUI_ATTR_LEADING) {
                                 p++;
-                                textattr(*p);
+                                textattrw(w, *p);
                                 p++;
                                 continue;
                         }
-                        tui_putchar(*p);
+                        waddch(w, *p);
                         p++;
                         len--;
                 }
                 while (len != 0) {
-                        tui_putchar(' ');
+                        waddch(w, ' ');
                         len--;
                 }
                 if (add_border == TRUE) {
                         curr_a = get_attribute();
-                        textattr(orig_a);
-                        tui_printf(" %c", '|');
-                        textattr(curr_a);
+                        textattrw(w, orig_a);
+                        wprintw(w, " %c", '|');
+                        textattrw(w, curr_a);
                 }
                 p++;
         }
         
         /* last line */
         if (add_border == TRUE) {
-                textattr(orig_a);
+                textattrw(w, orig_a);
                 tui_gotoxy(x, y + size_y - 1);
-                tui_putchar('+');
+                waddch(w, '+');
                 for (i = 0; i < (size_x - 2); i++) {
-                        tui_putchar('-');
+                        waddch(w, '-');
                 }
-                tui_putchar('+');
+                waddch(w, '+');
         }
 
+        wrefresh(w);
         tui_flush();
 }
 

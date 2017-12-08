@@ -12,6 +12,7 @@
 ![WIN32.PNG](doc/WIN32.PNG)
 
 ### UNIX / Linux Console
+  1. install ncurses `apt-get install ncurses-dev`
   1. download project `git clone https://github.com/berk76/tetris Tetris`
   1. go into project directory `cd Tetris`
   1. run `make -f Makefile.con`

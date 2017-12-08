@@ -60,7 +60,7 @@ typedef struct {
         int color;
         int bkcolor;
         char bkchar;
-        char *old_content;
+        WINDOW *window;
 } WINDOW_T;
 
 
@@ -88,6 +88,7 @@ extern int tui_getk();
 #define tui_printf printw
 #define tui_putchar addch
 #define tui_puts addstr
+#define tui_cls erase
 
 #endif
 
