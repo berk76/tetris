@@ -198,6 +198,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         /* read input */
         p = buff;
         *p = '\0';
+        c = 0;        
                 
         do {
                 while ((c != 13) && kbhit()) {
