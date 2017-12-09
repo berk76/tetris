@@ -16,65 +16,58 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "wait_con.h"
 
 
 static JOB_T *job_q = NULL;
 
 
-void w_wait(clock_t tck) {
-        clock_t ret, endwait;
-        JOB_T *j, *pq;
+static void add_ms(struct timeval *tv, long ms);
+static long tv_diff_ms(struct timeval *start, struct timeval *end);
 
-        tck = w_tck_to_clocks(tck);
-        
-        /* debug part */
-        /*
-        int i;
-        i = 0;
-        pq = job_q;
-        while (pq != NULL) {
-                i++;
-                pq = pq->next;
-        }
-        gotoxy(1,25);
-        printf("%d", i);
-        gotoxy(1,25);
-        */
-        
-        endwait = tck + clock();
+
+void w_wait(clock_t tck) {
+        clock_t ret;
+        JOB_T *j, *pq;
+        struct timeval  endwait, tv_current;
+
+        add_ms(&endwait, w_tck_to_ms(tck));
         #define PRIORITY 0
         
         while (1) {
+                gettimeofday(&tv_current, NULL);
                 pq = job_q;
                 j = NULL;
                 while (pq != NULL) {
-                        if ((j == NULL) || 
-                            (j->endwait > pq->endwait) || 
-                            ((j->endwait == pq->endwait) && (j->priority < pq->priority))) {
+                        if ((j == NULL) ||
+                            (tv_diff_ms(&(pq->endwait), &(j->endwait)) > 0) ||
+                            ((tv_diff_ms(&(pq->endwait), &(j->endwait)) == 0) && (j->priority < pq->priority))) {
                                 j = pq;
                         } 
                         pq = pq->next;
                 }
                 if ((j != NULL) && 
-                    (clock() >= j->endwait) && 
-                    ((endwait > j->endwait) || ((endwait == j->endwait) && (PRIORITY < j->priority)))) {
+                    (tv_diff_ms(&(j->endwait), &tv_current) >= 0) &&
+                    ((tv_diff_ms(&(j->endwait), &endwait) > 0) || ((tv_diff_ms(&(j->endwait), &endwait) == 0) && (PRIORITY < j->priority)))) {
                         ret = j->run(RUN);
                         switch (ret) {
                                 case -1:
                                         w_unregister_job(j);
                                         break;
                                 case 0:
-                                        j->endwait = j->period + clock();
+                                        add_ms(&(j->endwait), j->period);
                                         break;
                                 default:
-                                        ret = w_tck_to_clocks(ret);
-                                        j->endwait = ret + clock();
+                                        add_ms(&(j->endwait), w_tck_to_ms(ret));
                         }
 
-                } else 
-                if (clock() >= endwait) {
-                        return;
+                } else { 
+                        if (tv_diff_ms(&endwait, &tv_current) >= 0) {
+                                return;
+                        } else {
+                                usleep(tv_diff_ms(&tv_current, &endwait) * 1000);
+                        }
                 }
         }
 }
@@ -83,16 +76,14 @@ void w_wait(clock_t tck) {
 JOB_T * w_register_job(clock_t tck, int priority, long (*run)(enum W_ACTION)) {
         JOB_T *j;
 
-        tck = w_tck_to_clocks(tck);
-
         j = (JOB_T *) malloc(sizeof(JOB_T));
         assert(j != NULL);
         
         j->run = run;
         j->run(RESET);
         j->priority = priority;
-        j->period = tck;
-        j->endwait = tck + clock();
+        j->period = w_tck_to_ms(tck);
+        add_ms(&(j->endwait), j->period);
         j->prev = NULL;
         j->next = job_q;
         job_q = j;
@@ -120,5 +111,30 @@ void w_unregister_job(JOB_T *j) {
         }
         
         free((void *) j);
+}
+
+
+void add_ms(struct timeval *tv, long ms) {
+        long s, usec;
+
+        gettimeofday(tv, NULL);
+        usec = tv->tv_usec + (ms * 1000);
+        s = usec / 1000000;
+
+        tv->tv_usec = usec % 1000000;
+        tv->tv_sec = tv->tv_sec + s;
+}
+
+
+long tv_diff_ms(struct timeval *start, struct timeval *end) {
+        long result;
+        long seconds; 
+        long useconds;
+
+        seconds  = end->tv_sec  - start->tv_sec;
+        useconds = end->tv_usec - start->tv_usec;
+        result = (seconds*1000 + useconds/1000);
+
+        return result;
 }
 
