@@ -587,6 +587,7 @@ int process_user_input(void) {
                 c = getch();
 
                 switch (c) {
+                        /* Cursor keys */
                         case 0 :
                                 c = getch();
                                 switch (c) {
@@ -605,6 +606,20 @@ int process_user_input(void) {
                                                 break;
                                 }
                                 break;
+                        /* Normal keys */
+                        case '7':
+				t_move_left(&tetris);
+				break;
+			case '8':
+				t_rotate(&tetris, 1);
+				break;
+			case '9':
+				t_move_right(&tetris);
+				break;
+			case '4':
+				while(t_move_down(&tetris) != -1)
+					w_wait(0);
+				break;
                         case 'h':
                                 if (j4 != NULL) j4->run(PAUSE);
                                 switch (tetris.game) {

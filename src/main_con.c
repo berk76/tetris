@@ -518,15 +518,19 @@ int process_user_input(void) {
 
 
                 switch (c) {
+                        case '7':
                         case KEY_LEFT:
                                 t_move_left(&tetris);
                                 break;
+                        case '8':
                         case KEY_UP:
                                 t_rotate(&tetris, 1);
                                 break;
+                        case '9':
                         case KEY_RIGHT:
                                 t_move_right(&tetris);
                                 break;
+                        case '4':
                         case KEY_DOWN:
                                 while(t_move_down(&tetris) != -1)
                                         ;

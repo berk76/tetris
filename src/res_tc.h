@@ -43,9 +43,9 @@ static char *addtris_help =
         "of two lower is for ex. 14 you should put 4\n"
         "above them.\n"
         "\n"
-        "For controls use arrows. By arrow up you can\n"
-        "change value of falling number as to be\n" 
-        "completion to 10.\n";
+        "For controls use arrows or keys 7,8,9,4.\n" 
+        "By arrow up you can change value of falling\n"
+        "number as to be completion to 10.\n";
 
 
 static char *tetris_help =
@@ -55,7 +55,8 @@ static char *tetris_help =
         "Line is cleared at the moment when every square\n" 
         "of the row is filled.\n"
         "\n"
-        "For control of falling objects use arrows.\n";
+        "For control of falling objects use arrows or\n" 
+        "keys 7,8,9,4.\n";
 
 
 static char *xtris_help =
@@ -65,7 +66,8 @@ static char *xtris_help =
         "Line is cleared at the moment when every square\n" 
         "of the row is filled.\n"
         "\n"
-        "For control of falling objects use arrows.\n";
+        "For control of falling objects use arrows or\n" 
+        "keys 7,8,9,4.\n";
 
 
 /*
