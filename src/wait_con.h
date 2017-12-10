@@ -35,9 +35,9 @@ struct JOB {
         JOB_T           *next;
 };
 
-#define CLK_TCK 18.2
-#define w_ms_to_tck(ms) (((double) ms) * CLK_TCK / 1000.0)
-#define w_tck_to_ms(tck) (55 * (tck)) /* 1000 / CLK_TCK = 54.94 */
+#define DOS_CLK_TCK 18.2
+#define w_ms_to_tck(ms) (((double) ms) * DOS_CLK_TCK / 1000.0)
+#define w_tck_to_ms(tck) (55 * (tck)) /* 1000 / DOS_CLK_TCK = 54.94 */
 
 extern void w_wait(clock_t tck);
 extern JOB_T * w_register_job(clock_t tck, int priority, long (*run)(enum W_ACTION));

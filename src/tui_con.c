@@ -246,7 +246,7 @@ void tui_input(char *msg, char *buff, size_t len, int color, int bkcolor) {
         #define SLEN 256
         char s[SLEN];
         char *p;
-        int c;
+	int c = 0;
         
         assert(msg != NULL);
         
