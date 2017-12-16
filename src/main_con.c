@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "tetris.h"
 #include "tui_con.h"
 #include "wait_con.h"
@@ -40,10 +41,7 @@ typedef struct {
 T_SCORE score_table[SC_TABLE_LEN];
 
 
-static char fn_addtris[] = "addtris.dat";
-static char fn_tetris[] = "tetris.dat";
-static char fn_xtris[] = "xtris%d%s.dat";
-
+static char data_dir[] = ".ptakovina";
 
 #define TUI_COL LIGHTGRAY
 #define TUI_BKCOL BLACK
@@ -1277,21 +1275,34 @@ void show_score(int my_score) {
         int i;
         char *filename;
         char report[BUFF_LEN];
-        #define FNBUFFLEN 13
+        #define FNBUFFLEN 255
         char fnbuff[FNBUFFLEN];
+        struct stat sb;
         FILE *f;
-        
+
+        /* create data dir if not exists */
+        if (getenv("HOME") == NULL) {
+                return;
+        } else {
+                snprintf(fnbuff, FNBUFFLEN, "%s/%s", getenv("HOME"), data_dir);
+        }
+
+        if ((stat(fnbuff, &sb) != 0) || !S_ISDIR(sb.st_mode)) {
+                mkdir(fnbuff, 0777);
+        }
+
         /* choose filename */
         switch (tetris.game) {
                 case ADDTRIS:
-                        filename = fn_addtris; 
+                        snprintf(fnbuff, FNBUFFLEN, "%s/%s/%s", getenv("HOME"), data_dir, "addtris.dat");
+                        filename = fnbuff;
                         break;
                 case TETRIS:
-                       filename = fn_tetris;
+                        snprintf(fnbuff, FNBUFFLEN, "%s/%s/%s", getenv("HOME"), data_dir, "tetris.dat");
+                        filename = fnbuff;
                         break;
                 case XTRIS:
-                        sprintf(fnbuff, fn_xtris, tetris.brick.shape_size, (tetris.grid_size_x == 10) ? "s" : "d");
-                        assert(strlen(fnbuff) < FNBUFFLEN);
+                        snprintf(fnbuff, FNBUFFLEN, "%s/%s/xtris%d%s.dat", getenv("HOME"), data_dir, tetris.brick.shape_size, (tetris.grid_size_x == 10) ? "s" : "d");
                         filename = fnbuff;
                         break;
                 default:
