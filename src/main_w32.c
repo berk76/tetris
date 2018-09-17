@@ -286,10 +286,6 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                         break;
                 case WM_CLOSE:
                         pauseGame(TRUE);
-                        if (MessageBox(hwnd, "Do you want quit?", _AppName,
-                                MB_YESNO | MB_ICONQUESTION) != IDYES) {
-                                        return 0;
-                                }
                         t_delete_game(&g_tetris);
                         DestroyWindow(hwnd);
                         break;
