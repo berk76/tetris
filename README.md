@@ -1,5 +1,7 @@
 # Tetris
 
+![build](https://github.com/berk76/tetris/workflows/build/badge.svg)
+
 ## Supported platforms
 
 ### UNIX / Linux Console
