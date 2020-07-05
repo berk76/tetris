@@ -1,0 +1,32 @@
+#       Makefile.ans
+#       
+#       This file is part of Tetris game.
+#       https://github.com/berk76/tetris
+#       
+#       Tetris is free software; you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation; either version 3 of the License, or
+#       (at your option) any later version. <http://www.gnu.org/licenses/>
+#       
+#       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 25.7.2016
+
+
+CC = cc
+CFLAGS = -O2 -Wall -c -o $@
+
+
+all: Tetris
+
+Tetris: src/main_ans.o src/tetris.o src/shape.o
+	$(CC) -Wall -o $@ src/main_ans.o src/tetris.o src/shape.o
+
+
+src/main_ans.o: src/main_ans.c src/main.h src/tetris.h
+
+src/tetris.o: src/tetris.h src/main.h src/shape.h
+
+src/shape.o: src/shape.h
+
+clean:
+	rm -f src/*.o *.exe src/*.res Tetris 
+

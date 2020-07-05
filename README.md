@@ -5,6 +5,8 @@
 ## Supported platforms
 
 ### UNIX / Linux Console
+
+#### With ncurses
   1. install ncurses `apt-get install ncurses-dev`
   1. download project `git clone https://github.com/berk76/tetris Tetris`
   1. go into project directory `cd Tetris`
@@ -12,6 +14,12 @@
   1. find and run Tetris
 
 ![Linux.PNG](doc/Linux.PNG)
+
+#### Without ncurses
+  1. download project `git clone https://github.com/berk76/tetris Tetris`
+  1. go into project directory `cd Tetris`
+  1. run `make -f Makefile.ans`
+  1. find and run Tetris
 
 ### DOS
   1. download and install Turbo C from http://edn.embarcadero.com/article/20841
