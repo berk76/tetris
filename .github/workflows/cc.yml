@@ -3,13 +3,17 @@ name: build
 on: [push]
 
 jobs:
-  build:
-
+  build-with-ncurses:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: sudo apt-get install ncurses-dev
     - name: make
       run: make -f Makefile.con
+  build-ansi:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: make
+      run: make -f Makefile.ans
