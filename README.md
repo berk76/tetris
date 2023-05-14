@@ -22,7 +22,7 @@
   1. find and run Tetris
 
 ### DOS
-  1. download and install Turbo C from http://edn.embarcadero.com/article/20841
+  1. make sure you have Turbo C 2.0 installed
   1. download project `git clone https://github.com/berk76/tetris Tetris`
   1. go to tetris/src directory 
   1. run `make -fMakefile.tc`
